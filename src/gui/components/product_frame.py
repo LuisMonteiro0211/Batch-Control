@@ -5,13 +5,16 @@ from src.gui.theme import COLORS, FONTS
 class ProductFrame(CTkFrame):
     def __init__(self, master):
         super().__init__(master)
+        self._configure_layout()
+        self._build_widgets()
+        self._layout_widgets()
 
 
     def _configure_layout(self):
         self.configure(
             width=720,
-            height=500,
-            fg_color=COLORS.fundo_primario,
+            height=580,
+            fg_color=COLORS.fundo_secundario,
             corner_radius=0,
         )
 
@@ -33,6 +36,5 @@ class ProductFrame(CTkFrame):
     def _layout_widgets(self):
         self._title_product.place(x=12, y=18, anchor="nw")
         self._title_product.pack_propagate(False)
-
-        self._subtitle_product.place(x=12, y=34, anchor="nw")
+        self._subtitle_product.place(x=12, y=40, anchor="nw")
         self._subtitle_product.pack_propagate(False)
