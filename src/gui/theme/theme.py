@@ -26,34 +26,36 @@ ctk.CtkButton(
 
 from dataclasses import dataclass
 
-@dataclass
+@dataclass(frozen=True)
 class Colors:
-    fundo_primario = "#1A1A1A"
-    fundo_secundario = "#242424"
-    elevado = "#2E2E2E"
-    bordas = "#3A3A3A"
-    texto_principal = "#E8E8E8"
-    texto_secundario = "#A0A0A0"
-    desabilitado = "#666666"
-    botao_principal = "#5C8FBF"
-    botao_selecionado = "#1E3A52"
-    texto_houver = "#4C79A3"
-    sucesso = "#4CAF82"
-    alerta = "#E0A040"
-    erro = "#C0504D"
+    fundo_primario: str = "#1A1A1A"
+    fundo_secundario: str = "#242424"
+    elevado: str = "#2E2E2E"
+    bordas: str = "#3A3A3A"
+    texto_principal: str = "#E8E8E8"
+    texto_secundario: str = "#A0A0A0"
+    desabilitado: str = "#666666"
+    botao_principal: str = "#5C8FBF"
+    botao_selecionado: str = "#1E3A52"
+    texto_houver: str = "#4C79A3"
+    sucesso: str = "#4CAF82"
+    alerta: str = "#E0A040"
+    erro: str = "#C0504D"
+    texto_selecionado: str = "#4C79A3"
+    transparente: str = "transparent"
 
-@dataclass
+@dataclass(frozen=True)
 class Fontes:
-    titulo_tela = "Inter", "Bold", 18
-    subtitulo_tela = "Inter", "Regular", 13
-    valor = "Inter", "Regular", 13
-    botao_primario = "Inter", "Bold", 13
-    botao_secundario = "Inter", "Regular", 13
-    subtitulo_menor = "Inter", "Regular", 11
+    titulo_tela: str = "Inter"
+    subtitulo_tela: str = "Inter"
+    valor: str = "Inter"
+    botao_primario: str = "Inter"
+    botao_secundario: str = "Inter"
+    subtitulo_menor: str = "Inter"
 
-@dataclass
+@dataclass(frozen=True)
 class Settings:
-    tema = "dark"
+    tema: str = "dark"
 
 COLORS = Colors()
 FONTS = Fontes()
