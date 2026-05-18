@@ -17,6 +17,7 @@ class Sidebar(CTkFrame):
         self.configure(
             width=190,
             height=580,
+            corner_radius=0,
         )
 
     def _build_widgets(self):
