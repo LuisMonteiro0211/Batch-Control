@@ -52,6 +52,7 @@ class Fontes:
     botao_primario: str = "Inter"
     botao_secundario: str = "Inter"
     subtitulo_menor: str = "Inter"
+    texto_tabela: str = "Inter"
 
 @dataclass(frozen=True)
 class Settings:
