@@ -18,7 +18,6 @@ class Sidebar(CTkFrame):
             width=190,
             height=580,
         )
-        pass
 
     def _build_widgets(self):
         # Título da sidebar
