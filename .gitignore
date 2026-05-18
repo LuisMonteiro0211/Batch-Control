@@ -1,0 +1,20 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+.env/
+
+# Packaging
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Testing / tools
+.pytest_cache/
+.coverage
+htmlcov/
