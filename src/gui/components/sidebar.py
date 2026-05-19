@@ -1,9 +1,36 @@
+"""
+Módulo para criação da sidebar do aplicativo.
+
+Métodos públicos:
+    - handler_click_product(): Callback para lidar com o clique no botão de produtos.
+    - handler_click_batch(): Callback para lidar com o clique no botão de lotes.
+
+Uso recomendado:
+    >>> from src.gui.components.sidebar import Sidebar
+    >>> sidebar = Sidebar(parent, on_click_product=lambda: print("Produtos"), on_click_batch=lambda: print("Lotes"))
+    >>> sidebar.pack(side="left", fill="y")
+    >>> sidebar.pack_propagate(False)
+
+    >>> sidebar.handler_click_product()
+    >>> sidebar.handler_click_batch()
+"""
+
+
+
 from customtkinter import CTkFrame, CTkLabel, CTkFont
 from .menu_button import MenuButton
-from src.gui.theme import COLORS, FONTS, SETTINGS
+from src.gui.theme import COLORS, FONTS
 from typing import Callable
 
 class Sidebar(CTkFrame):
+    """
+    Classe para criação da sidebar do aplicativo.
+
+    Args:
+        parent: Widget pai da sidebar.
+        on_click_product: Função a ser executada quando o botão de produtos for clicado.
+        on_click_batch: Função a ser executada quando o botão de lotes for clicado.
+    """
     def __init__(self, parent, on_click_product: Callable, on_click_batch: Callable):
         self._on_click_product = on_click_product
         self._on_click_batch = on_click_batch
