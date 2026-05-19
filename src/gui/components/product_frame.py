@@ -1,6 +1,6 @@
 from customtkinter import CTkFrame, CTkLabel, CTkFont
 from src.gui.theme import COLORS, FONTS
-
+from .new_product_frame import NewProductFrame
 
 class ProductFrame(CTkFrame):
     def __init__(self, master):
@@ -33,8 +33,13 @@ class ProductFrame(CTkFrame):
             font=CTkFont(family=FONTS.subtitulo_tela, size=11, weight="normal")
         )
 
+        self._new_product_frame = NewProductFrame(self)
+
     def _layout_widgets(self):
         self._title_product.place(x=12, y=18, anchor="nw")
         self._title_product.pack_propagate(False)
         self._subtitle_product.place(x=12, y=40, anchor="nw")
         self._subtitle_product.pack_propagate(False)
+
+        self._new_product_frame.place(x=12, y=65, anchor="nw")
+        self._new_product_frame.pack_propagate(False)
