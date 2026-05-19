@@ -104,6 +104,9 @@ class NewProductFrame(CTkFrame):
         self._save_product_button.place(x=232, y=167, anchor="nw")
         self._save_product_button.pack_propagate(False)
 
+        self._cancel_product_button.place(x=148, y=167, anchor="nw")
+        self._cancel_product_button.pack_propagate(False)
+
     def get_values_from_frame(self):
         """Método para obter os valores do frame de novo produto.
         
