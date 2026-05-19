@@ -2,7 +2,7 @@ from customtkinter import CTkButton, CTkFont, CTkFrame, CTkLabel
 from src.gui.theme import COLORS
 from src.gui.theme.theme import FONTS
 from src.gui.components.field_factory import FieldFactory
-
+from src.dtos.product_dto import ProductDTO
 class NewProductFrame(CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
