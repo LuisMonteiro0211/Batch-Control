@@ -40,5 +40,5 @@ class ProductFrame(CTkFrame):
         self._subtitle_product.place(x=12, y=40, anchor="nw")
         self._subtitle_product.pack_propagate(False)
 
-        self._new_product_frame.place(x=12, y=65, anchor="nw")
+        self._new_product_frame.place(x=12, y=70, anchor="nw")
         self._new_product_frame.pack_propagate(False)
