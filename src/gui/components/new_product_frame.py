@@ -113,6 +113,28 @@ class NewProductFrame(CTkFrame):
         Args:
             None
         Returns:
-            dict: DTO com os valores do frame de novo produto.
+            ProductDTO: Objeto DTO com os valores do frame de novo produto.
         """
-        pass
+        return ProductDTO(
+            name=self._name_product.get(),
+            minimun_balance=self._minimun_balance.get(),
+            product_firm=self._product_firm.get(),
+            product_code_chb=self._product_code_chb.get(),
+        )
+
+    def clear_fields(self):
+        """Método para limpar os campos do frame de novo produto.
+        
+        Args:
+            None
+        Returns:
+            None
+        """
+        list_fields = [self._name_product, 
+        self._minimun_balance, 
+        self._product_firm, 
+        self._product_code_chb]
+
+        for field in list_fields:
+            field.delete(0, "end")
+            field.configure(placeholder_text=field.cget("placeholder_text"))
