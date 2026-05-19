@@ -76,6 +76,21 @@ class NewProductFrame(CTkFrame):
             corner_radius=5,
         )
 
+        self._cancel_product_button = CTkButton(
+            self,
+            text="Cancelar",
+            fg_color=COLORS.elevado,
+            text_color=COLORS.texto_botao_principal,
+            font=CTkFont(family=FONTS.botao_primario, size=13, weight="normal"),
+            command=self.clear_fields
+        )
+        self._cancel_product_button.configure(
+            width=69,
+            height=27,
+            corner_radius=5,
+            border_width=1,
+            border_color=COLORS.bordas,
+        )
 
     def _layout_widgets(self):
         self._title_new_product.place(x=10, y=4, anchor="nw")
