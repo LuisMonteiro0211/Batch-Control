@@ -22,7 +22,7 @@ Uso recomendado:
     >>> btn.deselect()
 """
 
-from customtkinter import CTkButton, CTkFont
+from customtkinter import CTkButton
 from src.gui.theme import COLORS, FONTS
 from src.helpers.image_helper import icon_button
 from typing import Callable
@@ -48,7 +48,7 @@ class MenuButton(CTkButton):
             command=command,
             fg_color=COLORS.transparente,
             text_color=COLORS.desabilitado,
-            font=CTkFont(family=FONTS.valor, size=13, weight="normal"),
+            font=FONTS.valor,
             image=self._icon_disabled,
             compound="left",
             anchor="w",

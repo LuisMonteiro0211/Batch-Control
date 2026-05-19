@@ -17,7 +17,7 @@ Uso recomendado:
 
 
 
-from customtkinter import CTkFrame, CTkLabel, CTkFont
+from customtkinter import CTkFrame, CTkLabel
 from .menu_button import MenuButton
 from src.gui.theme import COLORS, FONTS
 from typing import Callable
@@ -52,13 +52,13 @@ class Sidebar(CTkFrame):
         self._title_sidebar = CTkLabel(self, 
         text="LoteCtrl",
         text_color=COLORS.texto_principal,
-        font=CTkFont(family=FONTS.titulo_tela, size=16, weight="bold"))
+        font=FONTS.titulo_tela)
 
         # Subtítulo da sidebar
         self._subtitle_sidebar = CTkLabel(self,
         text="Controle de Lote",
         text_color=COLORS.desabilitado,
-        font=CTkFont(family="Inter", size=13, weight="normal"))
+        font=FONTS.valor)
 
         # Linha separadora
         self._separator_sidebar = CTkFrame(self,
@@ -69,7 +69,7 @@ class Sidebar(CTkFrame):
         self._label_cadastro = CTkLabel(self,
         text="CADASTRO",
         text_color=COLORS.desabilitado,
-        font=CTkFont(family="Inter", size=13, weight="normal"))
+        font=FONTS.valor)
 
         # Botões da sidebar
         self._product_button = MenuButton(self, "Produtos", "produtos", command=self.handler_click_product)

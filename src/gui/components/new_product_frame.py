@@ -1,6 +1,5 @@
-from customtkinter import CTkButton, CTkFont, CTkFrame, CTkLabel
-from src.gui.theme import COLORS
-from src.gui.theme.theme import FONTS
+from customtkinter import CTkButton, CTkFrame, CTkLabel
+from src.gui.theme import COLORS, FONTS
 from src.gui.components.field_factory import FieldFactory
 from src.dtos.product_dto import ProductDTO
 class NewProductFrame(CTkFrame):
@@ -28,33 +27,33 @@ class NewProductFrame(CTkFrame):
             self,
             text="NOVO PRODUTO",
             text_color=COLORS.desabilitado,
-            font=CTkFont(family=FONTS.texto_tabela, size=12, weight="normal")
+            font=FONTS.texto_tabela
         )
 
         self._name_product_label = CTkLabel(
             self,
             text="Produto",
             text_color=COLORS.desabilitado,
-            font=CTkFont(family=FONTS.texto_tabela, size=12, weight="normal")
+            font=FONTS.texto_tabela
         )
 
         self._minimun_balance_label = CTkLabel(
             self,
             text="Saldo mínimo",
             text_color=COLORS.desabilitado,
-            font=CTkFont(family=FONTS.texto_tabela, size=12, weight="normal")
+            font=FONTS.texto_tabela
         )
         self._product_firm_label = CTkLabel(
             self,
             text="Fabricante",
             text_color=COLORS.desabilitado,
-            font=CTkFont(family=FONTS.texto_tabela, size=12, weight="normal")
+            font=FONTS.texto_tabela
         )
         self._product_code_chb_label = CTkLabel(
             self,
             text="Código CHB",
             text_color=COLORS.desabilitado,
-            font=CTkFont(family=FONTS.texto_tabela, size=12, weight="normal")
+            font=FONTS.texto_tabela
         )
 
         self._name_product = FieldFactory.create_entry(master=self, placeholder="Nome do produto")
@@ -67,7 +66,7 @@ class NewProductFrame(CTkFrame):
             text="Salvar Produto",
             fg_color=COLORS.botao_principal,
             text_color=COLORS.texto_botao_principal,
-            font=CTkFont(family=FONTS.botao_primario, size=13, weight="normal"),
+            font=FONTS.botao_primario,
             command=None
         )
         self._save_product_button.configure(
@@ -81,7 +80,7 @@ class NewProductFrame(CTkFrame):
             text="Cancelar",
             fg_color=COLORS.elevado,
             text_color=COLORS.texto_botao_principal,
-            font=CTkFont(family=FONTS.botao_primario, size=13, weight="normal"),
+            font=FONTS.botao_primario,
             command=self.clear_fields
         )
         self._cancel_product_button.configure(

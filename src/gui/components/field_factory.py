@@ -19,7 +19,7 @@ Uso recomendado:
 """
 
 
-from customtkinter import CTkEntry, CTkTextbox, CTkFont
+from customtkinter import CTkEntry, CTkTextbox
 from src.gui.theme import COLORS, FONTS
 
 class FieldFactory:
@@ -47,7 +47,7 @@ class FieldFactory:
             border_width=1,
             border_color=COLORS.bordas,
             text_color=COLORS.desabilitado,
-            font=CTkFont(family=FONTS.subtitulo_menor, size=11, weight="normal"),
+            font=FONTS.subtitulo_menor,
         )
         return entry
     @staticmethod
@@ -69,7 +69,7 @@ class FieldFactory:
             border_width=1,
             border_color=COLORS.bordas,
             text_color=COLORS.desabilitado,
-            font=CTkFont(family=FONTS.subtitulo_menor, size=11, weight="normal"),
+            font=FONTS.subtitulo_menor,
         )
         def format_data(event):
             """

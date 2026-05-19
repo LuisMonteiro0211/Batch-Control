@@ -25,6 +25,7 @@ ctk.CtkButton(
 """
 
 from dataclasses import dataclass
+from customtkinter import CTkFont
 
 @dataclass(frozen=True)
 class Colors:
@@ -43,16 +44,41 @@ class Colors:
     erro: str = "#C0504D"
     texto_selecionado: str = "#4C79A3"
     transparente: str = "transparent"
+    texto_botao_principal: str = "#FFFFFF"
 
 @dataclass(frozen=True)
+class _FontSpec:
+    family: str
+    size: int
+    weight: str = "normal"
+
 class Fontes:
-    titulo_tela: str = "Inter"
-    subtitulo_tela: str = "Inter"
-    valor: str = "Inter"
-    botao_primario: str = "Inter"
-    botao_secundario: str = "Inter"
-    subtitulo_menor: str = "Inter"
-    texto_tabela: str = "Inter"
+    """Fontes do tema. CTkFont só é criado no primeiro acesso (após a janela raiz existir)."""
+
+    _FONT_SPECS: dict[str, _FontSpec] = {
+        "titulo_tela": _FontSpec("Inter", 18, "bold"),
+        "subtitulo_tela": _FontSpec("Inter", 11),
+        "valor": _FontSpec("Inter", 13),
+        "botao_primario": _FontSpec("Inter", 13),
+        "botao_secundario": _FontSpec("Inter", 13),
+        "subtitulo_menor": _FontSpec("Inter", 11),
+        "texto_tabela": _FontSpec("Inter", 12),
+    }
+
+    def __init__(self) -> None:
+        self._cache: dict[str, CTkFont] = {}
+
+    def __getattr__(self, name: str) -> CTkFont:
+        if name not in self._FONT_SPECS:
+            raise AttributeError(f"Fonte '{name}' não definida no tema.")
+        if name not in self._cache:
+            spec = self._FONT_SPECS[name]
+            self._cache[name] = CTkFont(
+                family=spec.family,
+                size=spec.size,
+                weight=spec.weight,
+            )
+        return self._cache[name]
 
 @dataclass(frozen=True)
 class Settings:

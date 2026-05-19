@@ -1,4 +1,4 @@
-from customtkinter import CTkFrame, CTkLabel, CTkFont
+from customtkinter import CTkFrame, CTkLabel
 from src.gui.theme import COLORS, FONTS
 from .new_product_frame import NewProductFrame
 
@@ -22,14 +22,14 @@ class ProductFrame(CTkFrame):
             self,
             text="Produtos",
             text_color=COLORS.texto_principal,
-            font=CTkFont(family=FONTS.titulo_tela, size=18, weight="normal")
+            font=FONTS.titulo_tela
         )
 
         self._subtitle_product = CTkLabel(
             self,
             text="Gerencie o catálogo de produtos",
             text_color=COLORS.desabilitado,
-            font=CTkFont(family=FONTS.subtitulo_tela, size=11, weight="normal")
+            font=FONTS.subtitulo_tela
         )
 
         self._new_product_frame = NewProductFrame(self)
