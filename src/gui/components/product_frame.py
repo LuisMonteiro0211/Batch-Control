@@ -9,7 +9,6 @@ class ProductFrame(CTkFrame):
         self._build_widgets()
         self._layout_widgets()
 
-
     def _configure_layout(self):
         self.configure(
             width=720,
