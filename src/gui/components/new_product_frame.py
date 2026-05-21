@@ -1,6 +1,6 @@
 from customtkinter import CTkButton, CTkFrame, CTkLabel
 from src.gui.theme import COLORS, FONTS
-from src.gui.components.field_factory import FieldFactory
+from src.gui.components.factory import FieldFactory
 from src.dtos.product_dto import ProductDTO
 class NewProductFrame(CTkFrame):
     def __init__(self, parent):
