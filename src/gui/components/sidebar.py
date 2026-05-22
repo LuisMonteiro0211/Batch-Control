@@ -50,7 +50,7 @@ class Sidebar(CTkFrame):
     def _build_widgets(self):
         # Título da sidebar
         self._title_sidebar = CTkLabel(self, 
-        text="LoteCtrl",
+        text="BranchCtrl",
         text_color=COLORS.texto_principal,
         font=FONTS.titulo_tela)
 
@@ -76,7 +76,7 @@ class Sidebar(CTkFrame):
         self._batch_button = MenuButton(self, "Lotes", "lotes", command=self.handler_click_batch)
 
     def _layout_widgets(self):
-        self._title_sidebar.place(x=14, y=10, anchor="nw")
+        self._title_sidebar.place(x=14, y=8, anchor="nw")
         self._title_sidebar.pack_propagate(False)
 
         self._subtitle_sidebar.place(x=14, y=30, anchor="nw")
