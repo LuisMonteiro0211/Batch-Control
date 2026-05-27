@@ -56,10 +56,10 @@ class NewProductFrame(CTkFrame):
             font=FONTS.texto_tabela
         )
 
-        self._name_product = FieldFactory.create_entry(master=self, placeholder="Nome do produto")
-        self._minimun_balance = FieldFactory.create_entry(master=self, placeholder="Saldo mínimo")
-        self._product_firm = FieldFactory.create_entry(master=self, placeholder="Fabricante")
-        self._product_code_chb = FieldFactory.create_entry(master=self, placeholder="Código CHB")
+        self._name_product = FieldFactory.create_entry(master=self, placeholder="Nome do produto", width=159, height=27)
+        self._minimun_balance = FieldFactory.create_entry(master=self, placeholder="Saldo mínimo", width=159, height=27)
+        self._product_firm = FieldFactory.create_entry(master=self, placeholder="Fabricante", width=159, height=27)
+        self._product_code_chb = FieldFactory.create_entry(master=self, placeholder="Código CHB", width=159, height=27)
 
         self._save_product_button = CTkButton(
             self,
