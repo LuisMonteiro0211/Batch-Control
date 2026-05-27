@@ -77,5 +77,3 @@ class ProductFrame(CTkFrame):
 
         self._product_table.place(x=16, y=365, anchor="nw")
         self._product_table.pack_propagate(False)
-
-        self._product_table.message("Nenhum produto encontrado")
