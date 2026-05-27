@@ -238,20 +238,3 @@ class NewBatchFrame(CTkFrame):
         list_fields = [self._field_batch, self._field_code_chb, self._field_manufacturer_date, self._field_expiration_date, self._field_product_firm, self._field_product, self._field_quantity, self._field_nf]
         for field in list_fields:
             field.delete(0, "end")
-
-    def set_values_to_frame(self, batch: BatchDTO):
-        """Método para setar os valores do frame de novo lote.
-        
-        Args:
-            batch: BatchDTO com os valores do lote.
-        Returns:
-            None
-        """
-        self._field_batch.insert(0, batch.batch)
-        self._field_code_chb.insert(0, batch.code_chb)
-        self._field_manufacturer_date.insert(0, batch.manufacturer_date)
-        self._field_expiration_date.insert(0, batch.expiration_date)
-        self._field_product_firm.insert(0, batch.product_firm)
-        self._field_product.insert(0, batch.product)
-        self._field_quantity.insert(0, batch.quantity)
-        self._field_nf.insert(0, batch.nf)
