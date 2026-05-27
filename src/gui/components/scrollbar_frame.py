@@ -99,12 +99,14 @@ class ScrollbarFrame(CTkFrame):
         frame_item.pack(side="top", fill="x")
         frame_item.pack_propagate(False)
 
-    def message(self, message: str):
+    def initialization_message(self, message: str, icon_path: str):
         """
         Método para criar um label com uma mensagem de informação no meio do frame.
         """
         self._message_label = CTkLabel(
             self,
+            image=icon_path,
+            compound="left",
             text=message,
             text_color=COLORS.texto_principal,
             font=FONTS.subtitulo_tela,
