@@ -1,9 +1,8 @@
 from customtkinter import CTkFrame, CTkLabel
 from src.gui.theme import COLORS, FONTS
-from .new_product_frame import NewProductFrame
 from src.gui.components.factory import FieldFactory
-from src.gui.components.scrollbar_frame import ScrollbarFrame
-from src.gui.components.product_table import ProductTable
+from .new_product_frame import NewProductFrame
+from .product_table import ProductTable
 class ProductFrame(CTkFrame):
     def __init__(self, master):
         super().__init__(master)

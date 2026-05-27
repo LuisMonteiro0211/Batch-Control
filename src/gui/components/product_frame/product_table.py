@@ -1,7 +1,7 @@
 from customtkinter import CTkFrame
 from src.gui.components.scrollbar_frame import ScrollbarFrame
 from src.gui.components.factory import LabelValueTable
-from src.gui.theme.theme import COLORS
+from src.gui.theme import COLORS
 from src.helpers.image_helper import icon_button
 
 class ProductTable(ScrollbarFrame):
