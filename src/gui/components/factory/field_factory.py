@@ -19,7 +19,7 @@ Uso recomendado:
 """
 
 
-from customtkinter import CTkEntry, CTkTextbox
+from customtkinter import CTkEntry, CTkTextbox, StringVar
 from src.gui.theme import COLORS, FONTS
 
 class FieldFactory:
@@ -64,8 +64,8 @@ class FieldFactory:
         Returns:
             CTkEntry: Campo de entrada de data.
         """
-        data_entry = CTkEntry(master=master, placeholder_text=placeholder)
-        data_entry.configure(
+        date_entry = CTkEntry(master=master, placeholder_text=placeholder)
+        date_entry.configure(
             width=width,
             height=height,
             corner_radius=5,
@@ -83,22 +83,32 @@ class FieldFactory:
             Returns:
                 None
             """
-            data = data_entry.get()
+            # Ignora teclas de navegação/controle para não quebrar o cursor
+            if event.keysym in ("BackSpace", "Delete", "Left", "Right", "Tab"):
+                return
 
-            number = "".join(filter(str.isdigit, data))
-            number = number[:9]
+            date = date_entry.get()
 
-            if len(number) == 2:
-                number += "/"
-            elif len(number) == 5:
-                number += "/"
+            # Extrai só os dígitos e limita a 8 (DDMMAAAA)
+            date_number = "".join(filter(str.isdigit, date))
+            date_number = date_number[:8]
 
-            data_entry.delete(0, "end")
-            data_entry.insert(0, number)
+            # Reconstrói a string com as barras
+            new_date = date_number
+            if len(date_number) > 4:
+                new_date = date_number[:2] + "/" + date_number[2:4] + "/" + date_number[4:]
+            elif len(date_number) > 2:
+                new_date = date_number[:2] + "/" + date_number[2:]
 
-        data_entry.bind("<KeyRelease>", format_data)
+            # Atualiza o campo só se mudou
+            if date_entry.get() != new_date:
+                date_entry.delete(0, "end")
+                date_entry.insert(0, new_date)
 
-        return data_entry
+        # Vincula a função ao evento de tecla solta
+        date_entry.bind("<KeyRelease>", format_data)
+
+        return date_entry
 
     @staticmethod
     def create_locked_entry(self, master, label, value)-> CTkEntry:
