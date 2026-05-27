@@ -1,7 +1,7 @@
 from customtkinter import CTkFrame, CTkLabel, CTkButton
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
-
+from src.dtos.batch_dto import BatchDTO
 class NewBatchFrame(CTkFrame):
     def __init__(self, master):
         super().__init__(master)
@@ -207,3 +207,51 @@ class NewBatchFrame(CTkFrame):
 
         self._cancel_batch_button.place(x=391, y=167, anchor="nw")
         self._cancel_batch_button.pack_propagate(False)
+
+    def get_values_from_frame(self):
+        """Método para obter os valores do frame de novo lote.
+        
+        Args:
+            None
+        Returns:
+            BatchDTO: Objeto DTO com os valores do frame de novo lote.
+        """
+        return BatchDTO(
+            batch=self._field_batch.get(),
+            code_chb=self._field_code_chb.get(),
+            manufacturer_date=self._field_manufacturer_date.get(),
+            expiration_date=self._field_expiration_date.get(),
+            product_firm=self._field_product_firm.get(),
+            product=self._field_product.get(),
+            quantity=self._field_quantity.get(),
+            nf=self._field_nf.get(),
+        )
+
+    def clear_fields(self):
+        """Método para limpar os campos do frame de novo lote.
+        
+        Args:
+            None
+        Returns:
+            None
+        """
+        list_fields = [self._field_batch, self._field_code_chb, self._field_manufacturer_date, self._field_expiration_date, self._field_product_firm, self._field_product, self._field_quantity, self._field_nf]
+        for field in list_fields:
+            field.delete(0, "end")
+
+    def set_values_to_frame(self, batch: BatchDTO):
+        """Método para setar os valores do frame de novo lote.
+        
+        Args:
+            batch: BatchDTO com os valores do lote.
+        Returns:
+            None
+        """
+        self._field_batch.insert(0, batch.batch)
+        self._field_code_chb.insert(0, batch.code_chb)
+        self._field_manufacturer_date.insert(0, batch.manufacturer_date)
+        self._field_expiration_date.insert(0, batch.expiration_date)
+        self._field_product_firm.insert(0, batch.product_firm)
+        self._field_product.insert(0, batch.product)
+        self._field_quantity.insert(0, batch.quantity)
+        self._field_nf.insert(0, batch.nf)
