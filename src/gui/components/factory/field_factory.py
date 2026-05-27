@@ -27,21 +27,23 @@ class FieldFactory:
     Classe para criar campos de entrada de texto.
     """
     @staticmethod
-    def create_entry(master, placeholder)-> CTkEntry:
+    def create_entry(master, placeholder, width=159, height=27) -> CTkEntry:
         """
         Método para criar um campo de entrada de texto.
 
         Args:
             master: Widget pai do campo de entrada.
             placeholder: Texto de placeholder do campo de entrada.
+            width: Largura do campo de entrada.
+            height: Altura do campo de entrada.
 
         Returns:
             CTkEntry: Campo de entrada de texto.
         """
         entry = CTkEntry(master=master, placeholder_text=placeholder)
         entry.configure(
-            width=159,
-            height=27,
+            width=width,
+            height=height,
             corner_radius=5,
             fg_color=COLORS.elevado,
             border_width=1,
@@ -51,19 +53,21 @@ class FieldFactory:
         )
         return entry
     @staticmethod
-    def create_data_entry(master, placeholder)-> CTkEntry:
+    def create_data_entry(master, placeholder, width=159, height=27) -> CTkEntry:
         """
         Método para criar um campo de entrada de data já com formatação.
         Args:
             master: Widget pai do campo de entrada.
             placeholder: Texto de placeholder do campo de entrada.
+            width: Largura do campo de entrada.
+            height: Altura do campo de entrada.
         Returns:
             CTkEntry: Campo de entrada de data.
         """
         data_entry = CTkEntry(master=master, placeholder_text=placeholder)
         data_entry.configure(
-            width=155,
-            height=30,
+            width=width,
+            height=height,
             corner_radius=5,
             fg_color=COLORS.elevado,
             border_width=1,
