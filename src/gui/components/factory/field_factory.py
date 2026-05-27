@@ -75,7 +75,17 @@ class FieldFactory:
             text_color=COLORS.desabilitado,
             font=FONTS.subtitulo_menor,
         )
-        def format_data(event):
+
+        def _limitar(novo_valor):
+            apenas_numeros = "".join(filter(str.isdigit, novo_valor))
+            return len(apenas_numeros) <= 8
+
+        validar = master.register(_limitar)
+        date_entry.configure(
+        validate="key",
+        validatecommand=(validar, "%P"))
+
+        def _format_data(event):
             """
             Método para formatar a data de entrada de texto.
             Args:
@@ -91,7 +101,6 @@ class FieldFactory:
 
             # Extrai só os dígitos e limita a 8 (DDMMAAAA)
             date_number = "".join(filter(str.isdigit, date))
-            date_number = date_number[:8]
 
             # Reconstrói a string com as barras
             new_date = date_number
@@ -106,7 +115,7 @@ class FieldFactory:
                 date_entry.insert(0, new_date)
 
         # Vincula a função ao evento de tecla solta
-        date_entry.bind("<KeyRelease>", format_data)
+        date_entry.bind("<KeyRelease>", _format_data)
 
         return date_entry
 
