@@ -8,10 +8,14 @@ funciona quando este arquivo está na raiz do projeto.
 """
 
 from src.gui.app import BatchControlApp
+from src.gui.splash_screen import SplashScreen
 
 
 def main() -> None:
-    app = BatchControlApp()
+    splash = SplashScreen()
+    splash.mainloop()
+
+    app = BatchControlApp(context=splash.context)
     app.run()
 
 

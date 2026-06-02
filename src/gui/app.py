@@ -6,15 +6,17 @@ from customtkinter import CTk
 from src.gui.components import Sidebar, Homepage
 from src.gui.theme import COLORS
 from src.gui.app_controller import AppController
+from src.bootstrap import AppContext
 
 class BatchControlApp(CTk):
-    def __init__(self):
+    def __init__(self, context: AppContext):
         super().__init__()
         self.title("Batch Control")
         self.geometry("900x580")
         self.configure(fg_color=COLORS.fundo_primario)
         self.resizable(False, False)
         self._create_homepage()
+        self.context = context
         self._controller = AppController(self, self._homepage)
         self._build_widgets()
         self._layout_widgets()
