@@ -2,19 +2,19 @@ from PIL import Image
 from customtkinter import CTkImage 
 from pathlib import Path
 
-def image_processing(file_name: str, gap: int) -> Image:
+def image_processing(file_name: str, gap: int, size: tuple[int, int]) -> Image:
     """
     Processa uma imagem para adicionar um gap entre a imagem e a borda.
 
     Args:
         file_name: Nome do arquivo da imagem.
         gap: Tamanho do gap em pixels.
-
+        size: Tamanho da imagem em pixels.
     Returns:
         Image: Imagem processada com o gap.
     """
     image = Image.open(file_name).convert("RGBA")
-    image = image.resize((16, 16), Image.LANCZOS)
+    image = image.resize(size, Image.LANCZOS)
     width, height = image.size
     new_width = width + gap
 
@@ -24,18 +24,21 @@ def image_processing(file_name: str, gap: int) -> Image:
 
     return new_image
 
-def icon_button(file_name: str) -> CTkImage:
+def icon_button(file_name: str, size: tuple[int, int], gap: int = 6) -> CTkImage:
     """
-    Retorna um ícone para o botão já tradado com o tamanho necessário de 22x16 pixels
+    Retorna um ícone para o botão já tratado com o tamanho informado.
 
     Args:
         file_name: Nome do arquivo da imagem.
+        size: Tamanho da imagem em pixels (largura, altura).
+        gap: Espaço transparente à direita do ícone, em pixels.
 
     Returns:
-        CTkImage: Ícone para o botão já tradado com o tamanho necessário de 22x16 pixels.
+        CTkImage: Ícone pronto para uso em botões ou labels.
     """
 
     path_icon = Path(__file__).parent.parent / "icons" / file_name
-    pil_icon = image_processing(path_icon, 6)
+    pil_icon = image_processing(path_icon, gap, size)
+    display_size = (size[0] + gap, size[1])
 
-    return CTkImage(light_image=pil_icon, dark_image=pil_icon, size=(22, 16))
+    return CTkImage(light_image=pil_icon, dark_image=pil_icon, size=display_size)

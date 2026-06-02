@@ -39,8 +39,8 @@ class MenuButton(CTkButton):
 
     def __init__(self, master, text: str, name_icon: str, command: Callable|None):
         self._is_selected = False
-        self._icon_enabled = icon_button(name_icon+"_habilitado.png")
-        self._icon_disabled = icon_button(name_icon+"_desabilitado.png")
+        self._icon_enabled = icon_button(name_icon + "_habilitado.png", size=(16, 16))
+        self._icon_disabled = icon_button(name_icon + "_desabilitado.png", size=(16, 16))
 
         super().__init__(
             master=master,

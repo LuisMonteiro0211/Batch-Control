@@ -12,7 +12,7 @@ class BatchTable(ScrollbarFrame):
     def _setup_ui(self):
         self._create_header_frame()
         self._layout_table_header()
-        self._icon_check = icon_button("check.png")
+        self._icon_check = icon_button("check.png", size=(16, 16))
 
     def _create_header_frame(self):
         self._header_frame = CTkFrame(
