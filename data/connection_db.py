@@ -48,10 +48,17 @@ def get_connection(database_name: str):
     try:
         connection = connect(path_db)
         cursor = connection.cursor()
-        yield cursor
-
     except DatabaseError as e:
-        raise DatabaseError(f"Erro ao conectar ao banco de dados: {e}")
+        raise DatabaseError(f"Erro ao conectar ao banco de dados: {e}") from e
+
+    try:
+        yield cursor
+        connection.commit()
+
+    except Exception as e:
+        "No caso de um erro inesperado, o rollback é feito para desfazer as alterações feitas no banco de dados e o raise é usado para relançar o erro para ser tratado pelo chamador."
+        connection.rollback()
+        raise
 
     finally:
 
