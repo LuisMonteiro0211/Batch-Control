@@ -118,7 +118,3 @@ class FieldFactory:
         date_entry.bind("<KeyRelease>", _format_data)
 
         return date_entry
-
-    @staticmethod
-    def create_locked_entry(self, master, label, value)-> CTkEntry:
-        pass
