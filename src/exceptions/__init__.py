@@ -4,6 +4,7 @@ from src.exceptions.exceptions import (
     ProductNotFoundError,
     DuplicateSkuError,
     DatabaseOperationError,
+    ProductHasBalanceError,
 )
 
 __all__ = [
@@ -12,4 +13,5 @@ __all__ = [
     "ProductNotFoundError",
     "DuplicateSkuError",
     "DatabaseOperationError",
+    "ProductHasBalanceError",
 ]

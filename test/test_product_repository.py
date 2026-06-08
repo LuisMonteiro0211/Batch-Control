@@ -32,21 +32,21 @@ def test_get_product_by_id():
     product = test_product_repository.get_by_id(1)
 
     assert product is not None
-    assert product.nome_produto == "Paracetamol 500mg"
-    assert product.empresa == "Farmácia ABC"
-    assert product.saldo_min == 100
-    assert product.cod_sku == 1001
-    assert product.consumo_mensal == 150.5
+    assert product["nome_produto"] == "Paracetamol 500mg"
+    assert product["empresa"] == "Farmácia ABC"
+    assert product["saldo_min"] == 100
+    assert product["cod_sku"] == 1001
+    assert product["consumo_mensal"] == 150.5
 
 def test_get_product_by_cod_sku():
     product = test_product_repository.get_by_cod_sku(1001)
 
     assert product is not None
-    assert product.nome_produto == "Paracetamol 500mg"
-    assert product.empresa == "Farmácia ABC"
-    assert product.saldo_min == 100
-    assert product.cod_sku == 1001
-    assert product.consumo_mensal == 150.5
+    assert product["nome_produto"] == "Paracetamol 500mg"
+    assert product["empresa"] == "Farmácia ABC"
+    assert product["saldo_min"] == 100
+    assert product["cod_sku"] == 1001
+    assert product["consumo_mensal"] == 150.5
 
 def test_create_product_sku_duplicado():
     product = Product(

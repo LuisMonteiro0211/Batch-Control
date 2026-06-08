@@ -30,7 +30,7 @@ from src.exceptions import (
     DuplicateSkuError,
     ProductNotFoundError,
 )
-from src.helpers.helpers import product_to_model
+from src.helpers.helpers import row_to_dict
 from src.interface.entity import Entity
 from src.model.product import Product
 
@@ -135,7 +135,7 @@ class ProductRepository (Entity):
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao deletar produto: {e}") from e # Erro personalizado para erro de banco de dados
 
-    def get_all(self) -> List[Any]:
+    def get_all(self) -> List[dict[str, Any]]:
         """
         Obtém todos os produtos do banco de dados.
 
@@ -143,7 +143,7 @@ class ProductRepository (Entity):
             None
 
         Returns:
-            List[Any]: Lista de produtos.
+            List[dict[str, Any]]: Lista de produtos como dicionários.
         """
 
         try:
@@ -154,12 +154,12 @@ class ProductRepository (Entity):
 
                 if not products:
                     raise ProductNotFoundError("Não há produtos cadastrados.")
-                else:
-                    return [product_to_model(product) for product in products]
+
+                return [row_to_dict(cursor, product) for product in products]
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao obter todos os produtos: {e}") from e # Erro personalizado para erro de banco de dados
 
-    def get_by_id(self, id: int) -> Optional[Product]:
+    def get_by_id(self, id: int) -> dict[str, Any]:
         """
         Obtém um produto pelo ID.
 
@@ -167,7 +167,7 @@ class ProductRepository (Entity):
             id: ID do produto a ser obtido.
 
         Returns:
-            Optional[Product]: Produto encontrado ou None se o produto não foi encontrado.
+            dict[str, Any]: Produto encontrado como dicionário.
         """
         try:
             with get_connection(self._database_name) as cursor:
@@ -178,12 +178,12 @@ class ProductRepository (Entity):
 
                 if product is None:
                     raise ProductNotFoundError(f"Produto com ID {id} não encontrado.")
-                else:
-                    return product_to_model(product)
+
+                return row_to_dict(cursor, product)
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao obter produto por ID: {e}") from e # Erro personalizado para erro de banco de dados
 
-    def get_by_cod_sku(self, cod_sku: int) -> Optional[Product]:
+    def get_by_cod_sku(self, cod_sku: int) -> dict[str, Any]:
         """
         Obtém um produto pelo código SKU.
 
@@ -191,7 +191,7 @@ class ProductRepository (Entity):
             cod_sku: Código SKU do produto a ser obtido.
 
         Returns:
-            Optional[Product]: Produto encontrado ou None se o produto não foi encontrado.
+            dict[str, Any]: Produto encontrado como dicionário.
         """
 
         try:
@@ -200,16 +200,16 @@ class ProductRepository (Entity):
                 values = (cod_sku,)
 
                 cursor.execute(query, values)
-                product =cursor.fetchone()
+                product = cursor.fetchone()
 
-            if product is None:
-                raise ProductNotFoundError(f"Produto com código SKU {cod_sku} não encontrado.")
-            else:
-                return product_to_model(product)
+                if product is None:
+                    raise ProductNotFoundError(f"Produto com código SKU {cod_sku} não encontrado.")
+
+                return row_to_dict(cursor, product)
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao obter produto por código SKU: {e}") from e # Erro personalizado para erro de banco de dados
 
-    def get_by_nome_produto(self, nome_produto: str) -> Optional[Product]:
+    def get_by_nome_produto(self, nome_produto: str) -> dict[str, Any]:
         """
         Obtém um produto pelo nome do produto.
 
@@ -217,7 +217,7 @@ class ProductRepository (Entity):
             nome_produto: Nome do produto a ser obtido.
 
         Returns:
-            Optional[Product]: Produto encontrado ou None se o produto não foi encontrado.
+            dict[str, Any]: Produto encontrado como dicionário.
         """
         try:
             with get_connection(self._database_name) as cursor:
@@ -228,7 +228,53 @@ class ProductRepository (Entity):
 
                 if product is None:
                     raise ProductNotFoundError(f"Produto com nome {nome_produto} não encontrado.")
-                else:
-                    return product_to_model(product)
+
+                return row_to_dict(cursor, product)
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao obter produto por nome: {e}") from e # Erro personalizado para erro de banco de dados
+
+
+    def sku_exists(self, cod_sku: int) -> bool:
+        """
+        Verifica se o código SKU existe no banco de dados.
+
+        Args:
+            cod_sku: Código SKU a ser verificado.
+
+        Returns:
+            bool: True se o código SKU existe, False caso contrário.
+        """
+        try:
+            self.get_by_cod_sku(cod_sku=cod_sku)   
+            return True
+        except ProductNotFoundError:
+            return False
+
+    def get_id_by_cod_sku(self, cod_sku: int) -> int:
+        """
+        Obtém o ID do produto pelo código SKU.
+
+        Args:
+            cod_sku: Código SKU a ser obtido.
+
+        Returns:
+            int: ID do produto.
+        """
+        try:
+            with get_connection(self._database_name) as cursor:
+                query = "SELECT id_produto FROM produtos WHERE cod_sku = ?"
+                values = (cod_sku,)
+
+                cursor.execute(query, values)
+
+                row = cursor.fetchone()
+
+                if row is None:
+                    raise ProductNotFoundError(f"Produto com código SKU {cod_sku} não encontrado.")
+
+                return row_to_dict(cursor, row)["id_produto"]
+
+        except DatabaseError as e:
+            raise DatabaseOperationError(f"Erro ao obter ID do produto por código SKU: {e}") from e # Erro personalizado para erro de banco de dados
+
+        

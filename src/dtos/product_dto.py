@@ -8,6 +8,7 @@ class ProductDTO:
     minimun_balance: str
     product_firm: str
     product_code_chb: str
+    consumption_monthly: float
 
     id: Optional[int] = None
     created_at: Optional[datetime] = None

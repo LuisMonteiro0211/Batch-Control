@@ -60,3 +60,24 @@ class DatabaseOperationError(RepositoryError):
     """Falha inesperada ao executar uma operação no banco."""
 
     pass
+
+
+class InvalidDateError(ValidationError):
+    """Data inválida."""
+
+    pass
+
+class InvalidStringError(ValidationError):
+    """String inválida."""
+
+    pass
+
+class InvalidNumberError(ValidationError):
+    """Número inválido."""
+
+    pass
+
+class ProductHasBalanceError(BatchControlError):
+    """Produto com saldo não pode ser deletado."""
+
+    pass

@@ -1,15 +1,168 @@
+from src.exceptions.exceptions import InvalidDateError, ValidationError
 from src.model.product import Product
 from src.dtos.product_dto import ProductDTO
-from typing import Any, List
+from typing import Any
+from datetime import datetime
 
-def product_to_model(product: List[Any]) -> Product:
+def row_to_dict(cursor: Any, row: tuple[Any, ...]) -> dict[str, Any]:
+    """
+    Converte uma linha retornada pelo SQLite (tuple) em dicionário.
+
+    Args:
+        cursor: Cursor usado na consulta (fornece os nomes das colunas).
+        row: Tupla retornada por fetchone ou item de fetchall.
+
+    Returns:
+        dict[str, Any]: Linha convertida com chaves nomeadas pelas colunas.
+    """
+    columns = [column[0] for column in cursor.description]
+    return dict(zip(columns, row))
+
+def product_to_model(product: dict[str, Any]) -> Product:
+    """
+    Converte um dicionário de produto para um objeto Product.
+
+    Args:
+        product: Dicionário com os dados do produto.
+
+    Returns:
+        Product: Objeto Product com os valores do dicionário.
+    """
     return Product(
-        nome_produto=product[1],
-        empresa=product[2],
-        saldo_min=product[3],
-        cod_sku=product[4],
-        consumo_mensal=product[5],
-        ativo=product[6],
-        data_cadastro=product[7],
-        data_atualizacao=product[8],
+        id=product.get("id_produto"),
+        nome_produto=product["nome_produto"],
+        empresa=product.get("empresa", ""),
+        saldo_min=product.get("saldo_min", 0),
+        cod_sku=product["cod_sku"],
+        consumo_mensal=product.get("consumo_mensal", 0.0),
+        ativo=bool(product.get("ativo", 1)),
+        data_cadastro=product.get("data_cadastro"),
+        data_atualizacao=product.get("data_atualizacao"),
     )
+
+def is_number(value: str) -> bool:
+    """
+    Verifica se um valor é um número.
+
+    Args:
+        value: Valor a ser verificado.
+
+    Returns:
+        bool: True se o valor é um número, False caso contrário.
+    """
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
+def is_space(value: str) -> bool:
+    """
+    Verifica se um valor é um espaço.
+
+    Args:
+        value: Valor a ser verificado.
+
+    Returns:
+        bool: True se o valor é um espaço, False caso contrário.
+    """
+    return value.isspace()
+
+def is_empty(value: str) -> bool:
+    """
+    Verifica se um valor é vazio.
+
+    Args:
+        value: Valor a ser verificado.
+
+    Returns:
+        bool: True se o valor é vazio, False caso contrário.
+    """
+    return value == ""
+
+def is_valid_string(value: str) -> bool:
+    """
+    Verifica se um valor é um nome válido.
+
+    Args:
+        value: Valor a ser verificado.
+
+    Returns:
+        bool: True se o valor é um nome válido, False caso contrário.
+    """
+    return not is_empty(value) and not is_space(value)
+
+def sanitize_string(value: str) -> str:
+    """
+    Sanitiza um valor de string.
+
+    Args:
+        value: Valor a ser sanitizado.
+
+    Returns:
+        str: Valor sanitizado.
+    """
+    return value.strip().title()
+
+def sanitize_date(value: str) -> str:
+    """
+    Sanitiza uma data.
+
+    Args:
+        value: Valor a ser sanitizado.
+
+    Returns:
+        str: Valor sanitizado.
+    """
+    try:
+        date = datetime.strptime(value, "%d/%m/%Y")
+        if date > datetime.now():
+            raise InvalidDateError(f"A data {value} é maior que a data atual {datetime.now().strftime('%d/%m/%Y')}" )
+        return date.strftime("%Y-%m-%d")
+    except ValueError as e:
+        raise InvalidDateError(f"A data {value} é inválida: {e}") from e
+
+def sanitize_field_string(value: str) -> str:
+    """
+    Sanitiza um campo de string.
+    """
+    if is_empty(value):
+        raise ValidationError(f"Campo de string não pode ser vazio!")
+    if not is_valid_string(value):
+        raise ValidationError(f"Campo de string inválido: {value}")
+    
+    return sanitize_string(value)
+
+def sanitize_product_dto(product_dto: ProductDTO) -> ProductDTO:
+    """
+    Sanitiza um objeto ProductDTO. Faz as validações de campos de string e numéricos.
+
+    Converte os campos: 
+    - Saldo mínimo -> int
+    - Código CHB -> int
+    - Consumo mensal -> float
+
+    Args:
+        product_dto: Objeto ProductDTO a ser sanitizado.
+
+    Returns:
+        ProductDTO: Nova instância de ProductDTO com os campos sanitizados.
+    """
+
+    #Validações de campos numéricos
+    if not is_number(product_dto.minimun_balance):
+        raise ValidationError(f"Saldo mínimo deve ser um número!")
+    if not is_number(product_dto.product_code_chb):
+        raise ValidationError(f"Código CHB deve ser um número!")
+    if not is_number(product_dto.consumption_monthly):
+        raise ValidationError(f"Consumo mensal deve ser um número!")
+
+    #Conversões de campos
+    sanitize_dto = ProductDTO(
+        name=sanitize_field_string(product_dto.name),
+        minimun_balance=int(product_dto.minimun_balance),
+        product_firm=sanitize_field_string(product_dto.product_firm),
+        product_code_chb=int(product_dto.product_code_chb),
+        consumption_monthly=float(product_dto.consumption_monthly),
+    )
+    return sanitize_dto
