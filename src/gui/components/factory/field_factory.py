@@ -21,13 +21,14 @@ Uso recomendado:
 
 from customtkinter import CTkEntry, CTkTextbox, StringVar
 from src.gui.theme import COLORS, FONTS
+from .form_field import FormField
 
 class FieldFactory:
     """
     Classe para criar campos de entrada de texto.
     """
     @staticmethod
-    def create_entry(master, placeholder, width=159, height=27) -> CTkEntry:
+    def create_entry(master, placeholder, width=159, height=27, name_field: str = None) -> FormField:
         """
         Método para criar um campo de entrada de texto.
 
@@ -36,9 +37,10 @@ class FieldFactory:
             placeholder: Texto de placeholder do campo de entrada.
             width: Largura do campo de entrada.
             height: Altura do campo de entrada.
+            name_field: Nome do campo de entrada.
 
         Returns:
-            CTkEntry: Campo de entrada de texto.
+            FormField: Campo de entrada de texto encapsulado.
         """
         entry = CTkEntry(master=master, placeholder_text=placeholder)
         entry.configure(
@@ -51,9 +53,10 @@ class FieldFactory:
             text_color=COLORS.desabilitado,
             font=FONTS.subtitulo_menor,
         )
-        return entry
+        return FormField(name_field=name_field, field=entry)
+        
     @staticmethod
-    def create_data_entry(master, placeholder, width=159, height=27) -> CTkEntry:
+    def create_data_entry(master, placeholder, width=159, height=27, name_field: str = None) -> FormField:
         """
         Método para criar um campo de entrada de data já com formatação.
         Args:
@@ -61,8 +64,9 @@ class FieldFactory:
             placeholder: Texto de placeholder do campo de entrada.
             width: Largura do campo de entrada.
             height: Altura do campo de entrada.
+            name_field: Nome do campo de entrada.
         Returns:
-            CTkEntry: Campo de entrada de data.
+            FormField: Campo de entrada de data encapsulado.
         """
         date_entry = CTkEntry(master=master, placeholder_text=placeholder)
         date_entry.configure(
@@ -117,8 +121,8 @@ class FieldFactory:
         # Vincula a função ao evento de tecla solta
         date_entry.bind("<KeyRelease>", _format_data)
 
-        return date_entry
+        return FormField(name_field=name_field, field=date_entry)
 
     @staticmethod
-    def create_locked_entry(self, master, label, value)-> CTkEntry:
+    def create_locked_entry(master, label, value)-> CTkEntry:
         pass
