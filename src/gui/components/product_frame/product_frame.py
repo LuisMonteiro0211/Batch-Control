@@ -53,6 +53,7 @@ class ProductFrame(CTkFrame):
         self._search_entry = FieldFactory.create_entry(
             self._product_search_frame,
             placeholder="Buscar produto...",
+            name_field="search_product_name"
         )
         self._product_table = ProductTable(self)
         self._product_table.initialization()
@@ -72,7 +73,7 @@ class ProductFrame(CTkFrame):
         self._product_search_label.place(x=0, y=0, anchor="nw")
         self._subtitle_search.place(x=0, y=22, anchor="nw")
 
-        self._search_entry.place(x=0, y=48, anchor="nw")
+        self._search_entry.field.place(x=0, y=48, anchor="nw")
 
         self._product_table.place(x=16, y=365, anchor="nw")
         self._product_table.pack_propagate(False)

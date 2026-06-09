@@ -1,7 +1,9 @@
-from customtkinter import CTkButton, CTkFrame, CTkLabel
+from customtkinter import CTkButton, CTkFrame, CTkLabel, CTkEntry
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
 from src.dtos.product_dto import ProductDTO
+from src.gui.components.factory import FormField
+from typing import List
 class NewProductFrame(CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -14,7 +16,7 @@ class NewProductFrame(CTkFrame):
 
     def _configure_layout(self):
         self.configure(
-            width=357,
+            width=389,
             height=207,
             fg_color=COLORS.fundo_secundario,
             corner_radius=10,
@@ -56,10 +58,18 @@ class NewProductFrame(CTkFrame):
             font=FONTS.texto_tabela
         )
 
-        self._name_product = FieldFactory.create_entry(master=self, placeholder="Nome do produto", width=159, height=27)
-        self._minimun_balance = FieldFactory.create_entry(master=self, placeholder="Saldo mínimo", width=159, height=27)
-        self._product_firm = FieldFactory.create_entry(master=self, placeholder="Fabricante", width=159, height=27)
-        self._product_code_chb = FieldFactory.create_entry(master=self, placeholder="Código CHB", width=159, height=27)
+        self._consumption_monthly_label = CTkLabel(
+            self,
+            text="Consumo mensal",
+            text_color=COLORS.desabilitado,
+            font=FONTS.texto_tabela
+        )
+
+        self._name_product = FieldFactory.create_entry(master=self, placeholder="Nome do produto", width=159, height=27, name_field = "nome_produto")
+        self._minimun_balance = FieldFactory.create_entry(master=self, placeholder="Saldo mínimo", width=159, height=27, name_field= "saldo_min")
+        self._product_firm = FieldFactory.create_entry(master=self, placeholder="Fabricante", width=159, height=27, name_field= "empresa")
+        self._product_code_chb = FieldFactory.create_entry(master=self, placeholder="Código CHB", width=159, height=27, name_field= "cod_sku")
+        self._consumption_monthly = FieldFactory.create_entry(master=self, placeholder="Consumo mensal", width=159, height=27, name_field= "consumo_mensal")
 
         self._save_product_button = CTkButton(
             self,
@@ -94,31 +104,29 @@ class NewProductFrame(CTkFrame):
     def _layout_widgets(self):
         self._title_new_product.place(x=10, y=4, anchor="nw")
         self._title_new_product.pack_propagate(False)
-
         self._name_product_label.place(x=10, y=30, anchor="nw")
         self._name_product_label.pack_propagate(False)
-        self._name_product.place(x=10, y=55, anchor="nw")
-        self._name_product.pack_propagate(False)
+        self._name_product.field.place(x=10, y=55, anchor="nw")
 
         self._product_firm_label.place(x=10, y=92, anchor="nw")
         self._product_firm_label.pack_propagate(False)
-        self._product_firm.place(x=10, y=117, anchor="nw")
-        self._product_firm.pack_propagate(False)
+        self._product_firm.field.place(x=10, y=117, anchor="nw")
 
-        self._minimun_balance_label.place(x=183, y=30, anchor="nw")
+        self._minimun_balance_label.place(x=218, y=30, anchor="nw")
         self._minimun_balance_label.pack_propagate(False)
-        self._minimun_balance.place(x=183, y=55, anchor="nw")
-        self._minimun_balance.pack_propagate(False)
+        self._minimun_balance.field.place(x=218, y=55, anchor="nw")
 
-        self._product_code_chb_label.place(x=183, y=92, anchor="nw")
+        self._product_code_chb_label.place(x=218, y=92, anchor="nw")
         self._product_code_chb_label.pack_propagate(False)
-        self._product_code_chb.place(x=186, y=117, anchor="nw")
-        self._product_code_chb.pack_propagate(False)
+        self._product_code_chb.field.place(x=218, y=117, anchor="nw")
 
-        self._save_product_button.place(x=232, y=167, anchor="nw")
+        self._consumption_monthly_label.place(x=10, y=145, anchor="nw")
+        self._consumption_monthly_label.pack_propagate(False)
+        self._consumption_monthly.field.place(x=10, y=170, anchor="nw")
+
+        self._save_product_button.place(x=267, y=167, anchor="nw")
         self._save_product_button.pack_propagate(False)
-
-        self._cancel_product_button.place(x=148, y=167, anchor="nw")
+        self._cancel_product_button.place(x=183, y=167, anchor="nw")
         self._cancel_product_button.pack_propagate(False)
 
     def get_values_from_frame(self):
@@ -130,10 +138,11 @@ class NewProductFrame(CTkFrame):
             ProductDTO: Objeto DTO com os valores do frame de novo produto.
         """
         return ProductDTO(
-            name=self._name_product.get(),
-            minimun_balance=self._minimun_balance.get(),
-            product_firm=self._product_firm.get(),
-            product_code_chb=self._product_code_chb.get(),
+            name=self._name_product.field.get(),
+            minimun_balance=self._minimun_balance.field.get(),
+            product_firm=self._product_firm.field.get(),
+            product_code_chb=self._product_code_chb.field.get(),
+            consumption_monthly=self._consumption_monthly.field.get(),
         )
 
     def clear_fields(self):
@@ -144,11 +153,14 @@ class NewProductFrame(CTkFrame):
         Returns:
             None
         """
-        list_fields = [self._name_product, 
-        self._minimun_balance, 
-        self._product_firm, 
-        self._product_code_chb]
+        list_fields: List[CTkEntry] = [
+            self._name_product.field,
+            self._minimun_balance.field,
+            self._product_firm.field,
+            self._product_code_chb.field,
+            self._consumption_monthly.field,
+        ]
 
         for field in list_fields:
             field.delete(0, "end")
-            field.configure(placeholder_text=field.cget("placeholder_text"))
+            field.configure(placeholder_text=field[1].cget("placeholder_text"))

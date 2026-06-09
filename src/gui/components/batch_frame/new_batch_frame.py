@@ -2,6 +2,8 @@ from customtkinter import CTkFrame, CTkLabel, CTkButton
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
 from src.dtos.batch_dto import BatchDTO
+from typing import List
+from customtkinter import CTkEntry
 class NewBatchFrame(CTkFrame):
     def __init__(self, master):
         super().__init__(master)
@@ -41,6 +43,7 @@ class NewBatchFrame(CTkFrame):
             placeholder="Lote...",
             width=131,
             height=27,
+            name_field="batch_name"
         )
 
         self._code_chb_label = CTkLabel(
@@ -54,6 +57,7 @@ class NewBatchFrame(CTkFrame):
             placeholder="Código CHB...",
             width=131,
             height=27,
+            name_field="code_chb"
         )
         self._manufacturer_date_label = CTkLabel(
             self,
@@ -66,6 +70,7 @@ class NewBatchFrame(CTkFrame):
             placeholder="Data de fabricação...",
             width=131,
             height=27,
+            name_field="manufacturer_date"
         )
         self._expiration_date_label = CTkLabel(
             self,
@@ -78,6 +83,7 @@ class NewBatchFrame(CTkFrame):
             placeholder="Data de validade...",
             width=131,
             height=27,
+            name_field="expiration_date"
         )
         self._product_firm_label = CTkLabel(
             self,
@@ -90,6 +96,7 @@ class NewBatchFrame(CTkFrame):
             placeholder="Fabricante...",
             width=131,
             height=27,
+            name_field="product_firm"
         )
         self._product_label = CTkLabel(
             self,
@@ -102,6 +109,7 @@ class NewBatchFrame(CTkFrame):
             placeholder="Produto...",
             width=131,
             height=27,
+            name_field="product"
         )
         self._quantity_label = CTkLabel(
             self,
@@ -115,6 +123,7 @@ class NewBatchFrame(CTkFrame):
             placeholder="Quantidade...",
             width=131,
             height=27,
+            name_field="quantity"
         )
         self._nf_label = CTkLabel(
             self,
@@ -127,6 +136,7 @@ class NewBatchFrame(CTkFrame):
             placeholder="Nota Fiscal...",
             width=131,
             height=27,
+            name_field="nf"
         )
 
         self._save_batch_button = CTkButton(
@@ -164,43 +174,35 @@ class NewBatchFrame(CTkFrame):
 
         self._batch_label.place(x=10, y=30, anchor="nw")
         self._batch_label.pack_propagate(False)
-        self._field_batch.place(x=10, y=55, anchor="nw")
-        self._field_batch.pack_propagate(False)
+        self._field_batch.field.place(x=10, y=55, anchor="nw")
 
         self._code_chb_label.place(x=159, y=30, anchor="nw")
         self._code_chb_label.pack_propagate(False)
-        self._field_code_chb.place(x=159, y=55, anchor="nw")
-        self._field_code_chb.pack_propagate(False)
+        self._field_code_chb.field.place(x=159, y=55, anchor="nw")
 
         self._manufacturer_date_label.place(x=307, y=30, anchor="nw")
         self._manufacturer_date_label.pack_propagate(False)
-        self._field_manufacturer_date.place(x=307, y=55, anchor="nw")
-        self._field_manufacturer_date.pack_propagate(False)
+        self._field_manufacturer_date.field.place(x=307, y=55, anchor="nw")
 
         self._expiration_date_label.place(x=455, y=30, anchor="nw")
         self._expiration_date_label.pack_propagate(False)
-        self._field_expiration_date.place(x=455, y=55, anchor="nw")
-        self._field_expiration_date.pack_propagate(False)
+        self._field_expiration_date.field.place(x=455, y=55, anchor="nw")
 
         self._product_firm_label.place(x=10, y=92, anchor="nw")
         self._product_firm_label.pack_propagate(False)
-        self._field_product_firm.place(x=10, y=117, anchor="nw")
-        self._field_product_firm.pack_propagate(False)
+        self._field_product_firm.field.place(x=10, y=117, anchor="nw")
 
         self._product_label.place(x=159, y=92, anchor="nw")
         self._product_label.pack_propagate(False)
-        self._field_product.place(x=159, y=117, anchor="nw")
-        self._field_product.pack_propagate(False)
+        self._field_product.field.place(x=159, y=117, anchor="nw")
 
         self._quantity_label.place(x=307, y=92, anchor="nw")
         self._quantity_label.pack_propagate(False)
-        self._field_quantity.place(x=307, y=117, anchor="nw")
-        self._field_quantity.pack_propagate(False)
+        self._field_quantity.field.place(x=307, y=117, anchor="nw")
 
         self._nf_label.place(x=455, y=92, anchor="nw")
         self._nf_label.pack_propagate(False)
-        self._field_nf.place(x=455, y=117, anchor="nw")
-        self._field_nf.pack_propagate(False)
+        self._field_nf.field.place(x=455, y=117, anchor="nw")
 
         self._save_batch_button.place(x=483, y=167, anchor="nw")
         self._save_batch_button.pack_propagate(False)
