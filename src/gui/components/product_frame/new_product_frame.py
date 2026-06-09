@@ -163,4 +163,4 @@ class NewProductFrame(CTkFrame):
 
         for field in list_fields:
             field.delete(0, "end")
-            field.configure(placeholder_text=field[1].cget("placeholder_text"))
+            field.configure(placeholder_text=field.cget("placeholder_text"))
