@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 from customtkinter import CTk, CTkImage, CTkLabel, CTkProgressBar
 from PIL import Image
 from src.gui.theme import COLORS, FONTS
@@ -15,7 +16,7 @@ class SplashScreen(CTk):
         )
         self._setup_ui()
         self._loader = Loader(on_progress=self._on_progress)
-        self.context = None
+        self.context: Optional[AppContext] = None
         self.after(100, self.start)
 
     def _setup_ui(self):
@@ -65,6 +66,11 @@ class SplashScreen(CTk):
         self._loader.run()
         self.context = self._loader.context
         self.destroy()
+
+    def get_context(self) -> AppContext:
+        if self.context is None:
+            raise RuntimeError("Contexto da aplicação não foi inicializado.")
+        return self.context
 
 if __name__ == "__main__":
     app = SplashScreen()

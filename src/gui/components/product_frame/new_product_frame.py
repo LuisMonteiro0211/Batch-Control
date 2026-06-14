@@ -1,9 +1,8 @@
-from customtkinter import CTkButton, CTkFrame, CTkLabel, CTkEntry
+from customtkinter import CTkButton, CTkFrame, CTkLabel
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
 from src.dtos.product_dto import ProductDTO
-from src.gui.components.factory import FormField
-from typing import List
+
 class NewProductFrame(CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -66,10 +65,10 @@ class NewProductFrame(CTkFrame):
         )
 
         self._name_product = FieldFactory.create_entry(master=self, placeholder="Nome do produto", width=159, height=27, name_field = "nome_produto")
-        self._minimun_balance = FieldFactory.create_entry(master=self, placeholder="Saldo mínimo", width=159, height=27, name_field= "saldo_min")
+        self._minimun_balance = FieldFactory.create_number_entry(master=self, placeholder="Saldo mínimo", width=159, height=27, name_field= "saldo_min")
         self._product_firm = FieldFactory.create_entry(master=self, placeholder="Fabricante", width=159, height=27, name_field= "empresa")
-        self._product_code_chb = FieldFactory.create_entry(master=self, placeholder="Código CHB", width=159, height=27, name_field= "cod_sku")
-        self._consumption_monthly = FieldFactory.create_entry(master=self, placeholder="Consumo mensal", width=159, height=27, name_field= "consumo_mensal")
+        self._product_code_chb = FieldFactory.create_number_entry(master=self, placeholder="Código CHB", width=159, height=27, name_field= "cod_sku", max_digits=6)
+        self._consumption_monthly = FieldFactory.create_number_entry(master=self, placeholder="Consumo mensal", width=159, height=27, name_field= "consumo_mensal", max_digits=6)
 
         self._save_product_button = CTkButton(
             self,
@@ -137,12 +136,13 @@ class NewProductFrame(CTkFrame):
         Returns:
             ProductDTO: Objeto DTO com os valores do frame de novo produto.
         """
+        consumption = self._consumption_monthly.get()
         return ProductDTO(
-            name=self._name_product.field.get(),
-            minimun_balance=self._minimun_balance.field.get(),
-            product_firm=self._product_firm.field.get(),
-            product_code_chb=self._product_code_chb.field.get(),
-            consumption_monthly=self._consumption_monthly.field.get(),
+            name=self._name_product.get(),
+            minimun_balance=self._minimun_balance.get(),
+            product_firm=self._product_firm.get(),
+            product_code_chb=self._product_code_chb.get(),
+            consumption_monthly=float(consumption) if consumption else 0.0,
         )
 
     def clear_fields(self):
@@ -153,14 +153,11 @@ class NewProductFrame(CTkFrame):
         Returns:
             None
         """
-        list_fields: List[CTkEntry] = [
-            self._name_product.field,
-            self._minimun_balance.field,
-            self._product_firm.field,
-            self._product_code_chb.field,
-            self._consumption_monthly.field,
-        ]
-
-        for field in list_fields:
-            field.delete(0, "end")
-            field.configure(placeholder_text=field.cget("placeholder_text"))
+        for form_field in (
+            self._name_product,
+            self._minimun_balance,
+            self._product_firm,
+            self._product_code_chb,
+            self._consumption_monthly,
+        ):
+            form_field.clear()

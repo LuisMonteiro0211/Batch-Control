@@ -2,8 +2,6 @@ from customtkinter import CTkFrame, CTkLabel, CTkButton
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
 from src.dtos.batch_dto import BatchDTO
-from typing import List
-from customtkinter import CTkEntry
 class NewBatchFrame(CTkFrame):
     def __init__(self, master):
         super().__init__(master)
@@ -52,7 +50,7 @@ class NewBatchFrame(CTkFrame):
             text_color=COLORS.desabilitado,
             font=FONTS.texto_tabela
         )
-        self._field_code_chb = FieldFactory.create_entry(
+        self._field_code_chb = FieldFactory.create_number_entry(
             self,
             placeholder="Código CHB...",
             width=131,
@@ -91,12 +89,11 @@ class NewBatchFrame(CTkFrame):
             text_color=COLORS.desabilitado,
             font=FONTS.texto_tabela
         )
-        self._field_product_firm = FieldFactory.create_entry(
+        self._field_product_firm = FieldFactory.create_locked_entry(
             self,
-            placeholder="Fabricante...",
             width=131,
             height=27,
-            name_field="product_firm"
+            value="Fabricante..."
         )
         self._product_label = CTkLabel(
             self,
@@ -104,12 +101,11 @@ class NewBatchFrame(CTkFrame):
             text_color=COLORS.desabilitado,
             font=FONTS.texto_tabela
         )
-        self._field_product = FieldFactory.create_entry(
+        self._field_product = FieldFactory.create_locked_entry(
             self,
-            placeholder="Produto...",
             width=131,
             height=27,
-            name_field="product"
+            value="Produto..."
         )
         self._quantity_label = CTkLabel(
             self,
@@ -118,7 +114,7 @@ class NewBatchFrame(CTkFrame):
             font=FONTS.texto_tabela
         )
 
-        self._field_quantity = FieldFactory.create_entry(
+        self._field_quantity = FieldFactory.create_number_entry(
             self,
             placeholder="Quantidade...",
             width=131,
@@ -131,7 +127,7 @@ class NewBatchFrame(CTkFrame):
             text_color=COLORS.desabilitado,
             font=FONTS.texto_tabela
         )
-        self._field_nf = FieldFactory.create_entry(
+        self._field_nf = FieldFactory.create_number_entry(
             self,
             placeholder="Nota Fiscal...",
             width=131,
@@ -190,11 +186,11 @@ class NewBatchFrame(CTkFrame):
 
         self._product_firm_label.place(x=10, y=92, anchor="nw")
         self._product_firm_label.pack_propagate(False)
-        self._field_product_firm.field.place(x=10, y=117, anchor="nw")
+        self._field_product_firm.place(x=10, y=117, anchor="nw")
 
         self._product_label.place(x=159, y=92, anchor="nw")
         self._product_label.pack_propagate(False)
-        self._field_product.field.place(x=159, y=117, anchor="nw")
+        self._field_product.place(x=159, y=117, anchor="nw")
 
         self._quantity_label.place(x=307, y=92, anchor="nw")
         self._quantity_label.pack_propagate(False)
@@ -237,6 +233,15 @@ class NewBatchFrame(CTkFrame):
         Returns:
             None
         """
-        list_fields = [self._field_batch, self._field_code_chb, self._field_manufacturer_date, self._field_expiration_date, self._field_product_firm, self._field_product, self._field_quantity, self._field_nf]
-        for field in list_fields:
-            field.delete(0, "end")
+        for form_field in (
+            self._field_batch,
+            self._field_code_chb,
+            self._field_manufacturer_date,
+            self._field_expiration_date,
+            self._field_quantity,
+            self._field_nf,
+        ):
+            form_field.clear()
+
+        FieldFactory.set_value_locked_entry(self._field_product_firm, "Fabricante...")
+        FieldFactory.set_value_locked_entry(self._field_product, "Produto...")

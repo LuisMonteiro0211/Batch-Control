@@ -1,13 +1,20 @@
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Optional, Tuple
 from customtkinter import CTkEntry
 
 @dataclass
 class FormField:
-    name_field: str
+    name_field: Optional[str]
     field: CTkEntry
 
-    def wrap_field(self) -> Tuple(str, str):
+    def get(self) -> str:
+        return self.field.get()
+
+    def clear(self) -> None:
+        self.field.delete(0, "end")
+        self.field.configure(placeholder_text=self.field.cget("placeholder_text"))
+
+    def wrap_field(self) -> Tuple[Optional[str], str]:
         """
         Método para encapsular o nome do campo e o valor do campo.
         Args:

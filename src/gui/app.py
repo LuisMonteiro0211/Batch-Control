@@ -40,7 +40,3 @@ class BatchControlApp(CTk):
 
     def run(self):
         self.mainloop()
-
-if __name__ == "__main__":
-    app = BatchControlApp()
-    app.run()

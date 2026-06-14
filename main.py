@@ -15,7 +15,7 @@ def main() -> None:
     splash = SplashScreen()
     splash.mainloop()
 
-    app = BatchControlApp(context=splash.context)
+    app = BatchControlApp(context=splash.get_context())
     app.run()
 
 

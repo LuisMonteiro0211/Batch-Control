@@ -50,8 +50,8 @@ class ProductFrame(CTkFrame):
         text_color=COLORS.desabilitado,
         font=FONTS.subtitulo_tela)
 
-        self._search_entry = FieldFactory.create_entry(
-            self._product_search_frame,
+        self._search_entry = FieldFactory.create_search_entry(
+            master=self._product_search_frame,
             placeholder="Buscar produto...",
             name_field="search_product_name"
         )
