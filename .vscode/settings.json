@@ -1,6 +1,11 @@
 {
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.languageServer": "None",
+  "python.terminal.activateEnvironment": true,
   "python.terminal.executeInFileDir": false,
   "python.analysis.extraPaths": ["${workspaceFolder}"],
+  "cursorpyright.analysis.typeCheckingMode": "basic",
+  "cursorpyright.analysis.extraPaths": ["${workspaceFolder}"],
   "terminal.integrated.env.linux": {
     "PYTHONPATH": "${workspaceFolder}"
   },

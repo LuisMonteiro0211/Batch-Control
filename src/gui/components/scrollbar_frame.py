@@ -13,7 +13,7 @@ Observações:
     - O frame a ser inserido sempre vem no topo do frame canvas.
 """
 
-from customtkinter import CTkFrame, CTkCanvas, CTkLabel
+from customtkinter import CTkFrame, CTkCanvas, CTkLabel, CTkImage
 from src.gui.theme import COLORS
 from src.gui.theme.theme import FONTS
 
@@ -42,8 +42,8 @@ class ScrollbarFrame(CTkFrame):
             border_color=COLORS.bordas,
         )
 
-    def _create_canvas(self):
-        self._canvas = CTkCanvas(
+    def _create_canvas(self) -> CTkCanvas:
+        return CTkCanvas(
             self,
             width=681,
             height=168,
@@ -99,13 +99,13 @@ class ScrollbarFrame(CTkFrame):
         frame_item.pack(side="top", fill="x")
         frame_item.pack_propagate(False)
 
-    def initialization_message(self, message: str, icon_path: str):
+    def initialization_message(self, message: str, icon: CTkImage):
         """
         Método para criar um label com uma mensagem de informação no meio do frame.
         """
         self._message_label = CTkLabel(
             self,
-            image=icon_path,
+            image=icon,
             compound="left",
             text=message,
             text_color=COLORS.texto_principal,
@@ -114,7 +114,7 @@ class ScrollbarFrame(CTkFrame):
         )
         self._message_label.place(x=266, y=92)    
         
-    def _create_canvas(self):
+    def create_canvas(self):
         """
         Método para criar o canvas do frame com scrollbar.
         """

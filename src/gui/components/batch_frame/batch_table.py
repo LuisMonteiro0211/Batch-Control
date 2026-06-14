@@ -1,4 +1,4 @@
-from customtkinter import CTkFrame
+from customtkinter import CTkFrame, CTkImage
 from src.gui.components.scrollbar_frame import ScrollbarFrame
 from src.gui.components.factory import LabelValueTable
 from src.gui.theme import COLORS
@@ -12,7 +12,7 @@ class BatchTable(ScrollbarFrame):
     def _setup_ui(self):
         self._create_header_frame()
         self._layout_table_header()
-        self._icon_check = icon_button("check.png", size=(16, 16))
+        self._icon_check: CTkImage = icon_button("check.png", size=(16, 16))
 
     def _create_header_frame(self):
         self._header_frame = CTkFrame(
@@ -60,4 +60,7 @@ class BatchTable(ScrollbarFrame):
         self._label_status.pack_propagate(False)
 
     def initialization(self):
-        self.initialization_message("Nenhum alerta disponível", self._icon_check)
+        self.initialization_message(
+            message="Nenhum alerta disponível",
+            icon=self._icon_check
+        )
