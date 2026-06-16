@@ -3,12 +3,14 @@ from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
 from .new_product_frame import NewProductFrame
 from .product_table import ProductTable
+from typing import Callable
 class ProductFrame(CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, on_click_save_product: Callable):
         super().__init__(master)
         self._configure_layout()
         self._build_widgets()
         self._layout_widgets()
+        self._on_click_save_product = on_click_save_product
 
     def _configure_layout(self):
         self.configure(
@@ -33,7 +35,7 @@ class ProductFrame(CTkFrame):
             font=FONTS.subtitulo_tela
         )
 
-        self._new_product_frame = NewProductFrame(self)
+        self._new_product_frame = NewProductFrame(self, on_click_save_product=self._on_click_save_product)
 
         self._product_search_frame = CTkFrame(self,
         width=685,
