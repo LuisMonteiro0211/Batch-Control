@@ -94,7 +94,7 @@ def is_valid_string(value: str) -> bool:
 
 def sanitize_string(value: str) -> str:
     """
-    Sanitiza um valor de string.
+    Sanitiza um valor de string. Remove espaços e converte para title case.
 
     Args:
         value: Valor a ser sanitizado.
@@ -106,7 +106,7 @@ def sanitize_string(value: str) -> str:
 
 def sanitize_date(value: str) -> str:
     """
-    Sanitiza uma data.
+    Sanitiza uma data. Converte para o formato YYYY-MM-DD.
 
     Args:
         value: Valor a ser sanitizado.
@@ -121,48 +121,3 @@ def sanitize_date(value: str) -> str:
         return date.strftime("%Y-%m-%d")
     except ValueError as e:
         raise InvalidDateError(f"A data {value} é inválida: {e}") from e
-
-def sanitize_field_string(value: str) -> str:
-    """
-    Sanitiza um campo de string.
-    """
-    if is_empty(value):
-        raise ValidationError(f"Campo de string não pode ser vazio!")
-    if not is_valid_string(value):
-        raise ValidationError(f"Campo de string inválido: {value}")
-    
-    return sanitize_string(value)
-
-def sanitize_product_dto(product_dto: ProductDTO) -> ProductDTO:
-    """
-    Sanitiza um objeto ProductDTO. Faz as validações de campos de string e numéricos.
-
-    Converte os campos: 
-    - Saldo mínimo -> int
-    - Código CHB -> int
-    - Consumo mensal -> float
-
-    Args:
-        product_dto: Objeto ProductDTO a ser sanitizado.
-
-    Returns:
-        ProductDTO: Nova instância de ProductDTO com os campos sanitizados.
-    """
-
-    #Validações de campos numéricos
-    if not is_number(product_dto.minimun_balance):
-        raise ValidationError(f"Saldo mínimo deve ser um número!")
-    if not is_number(product_dto.product_code_chb):
-        raise ValidationError(f"Código CHB deve ser um número!")
-    if not is_number(product_dto.consumption_monthly):
-        raise ValidationError(f"Consumo mensal deve ser um número!")
-
-    #Conversões de campos
-    sanitize_dto = ProductDTO(
-        name=sanitize_field_string(product_dto.name),
-        minimun_balance=int(product_dto.minimun_balance),
-        product_firm=sanitize_field_string(product_dto.product_firm),
-        product_code_chb=int(product_dto.product_code_chb),
-        consumption_monthly=float(product_dto.consumption_monthly),
-    )
-    return sanitize_dto
