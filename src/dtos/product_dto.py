@@ -5,9 +5,9 @@ from typing import Optional
 @dataclass(frozen=True)
 class ProductDTO:
     name: str
-    minimun_balance: str
+    minimun_balance: int
     product_firm: str
-    product_code_chb: str
+    product_code_chb: int
     consumption_monthly: float
 
     id: Optional[int] = None
