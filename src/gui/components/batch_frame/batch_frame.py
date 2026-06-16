@@ -60,7 +60,7 @@ class BatchFrame(CTkFrame):
             font=FONTS.subtitulo_tela
         )
 
-        self._search_entry = FieldFactory.create_entry(
+        self._search_entry = FieldFactory.create_search_entry(
             self._batch_search_frame,
             placeholder="Buscar lote...",
             name_field="search_batch_name"
