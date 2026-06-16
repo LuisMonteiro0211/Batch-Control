@@ -277,4 +277,26 @@ class ProductRepository (Entity):
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao obter ID do produto por código SKU: {e}") from e # Erro personalizado para erro de banco de dados
 
-        
+    def search_by_name(self, name: str) -> Optional[List[dict[str, Any]]]:
+        """
+        Busca produtos pelo nome.
+
+        Args:
+            name: Nome do produto a ser buscado.
+
+        Returns:
+            List[dict[str, Any]]: Lista de produtos encontrados como dicionários.
+        """
+        try:
+            with get_connection(self._database_name) as cursor:
+                query = "SELECT * FROM produtos WHERE nome_produto LIKE ?"
+                values = (f"%{name}%",)
+                cursor.execute(query, values)
+                products = cursor.fetchall()
+
+                if not products:
+                    raise ProductNotFoundError(f"Produto com nome {name} não encontrado.")
+
+                return [row_to_dict(cursor, product) for product in products]
+        except DatabaseError as e:
+            raise DatabaseOperationError(f"Erro ao buscar produtos por nome: {e}") from e # Erro personalizado para erro de banco de dados
