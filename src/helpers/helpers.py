@@ -50,6 +50,7 @@ def is_number(value: str) -> bool:
     Returns:
         bool: True se o valor é um número, False caso contrário.
     """
+    
     try:
         float(value)
         return True
@@ -78,7 +79,7 @@ def is_empty(value: str) -> bool:
     Returns:
         bool: True se o valor é vazio, False caso contrário.
     """
-    return value == ""
+    return bool(value.isspace())
 
 def is_valid_string(value: str) -> bool:
     """
@@ -90,7 +91,10 @@ def is_valid_string(value: str) -> bool:
     Returns:
         bool: True se o valor é um nome válido, False caso contrário.
     """
-    return not is_empty(value) and not is_space(value)
+    if isinstance(value, int):
+        return False
+
+    return bool(value.strip())
 
 def sanitize_string(value: str) -> str:
     """
@@ -102,7 +106,7 @@ def sanitize_string(value: str) -> str:
     Returns:
         str: Valor sanitizado.
     """
-    return value.strip().title()
+    return value.strip().capitalize()
 
 def sanitize_date(value: str) -> str:
     """
