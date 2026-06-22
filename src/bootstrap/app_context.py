@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
-
-from src.dtos.product_dto import ProductDTO
-from src.dtos.batch_dto import BatchDTO
+from src.bootstrap.app_service import AppServices
+from src.bootstrap.dashboard_data import DashboardData
+from typing import Optional
 
 @dataclass
 class AppContext:
-    products: list[ProductDTO] = field(default_factory=list)
-    batches: list[BatchDTO] = field(default_factory=list)
+    services: Optional[AppServices] = None
+    dashboard_data: DashboardData = field(default_factory=DashboardData)
