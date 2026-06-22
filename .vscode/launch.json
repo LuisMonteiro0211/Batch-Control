@@ -24,6 +24,60 @@
         "PYTHONPATH": "${workspaceFolder}",
         "PYTHONDONTWRITEBYTECODE": "1"
       }
+    },
+    {
+      "name": "Pytest: todos os testes",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-s",
+        "-v",
+        "test"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "Pytest: arquivo atual",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-s",
+        "-v",
+        "${file}"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "Pytest: teste atual (cursor na função)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-s",
+        "-v",
+        "${file}::${selectedText}"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "justMyCode": false
     }
   ]
 }
