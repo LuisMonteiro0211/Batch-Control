@@ -16,8 +16,7 @@ class BatchControlApp(CTk):
         self.configure(fg_color=COLORS.fundo_primario)
         self.resizable(False, False)
         self._create_homepage()
-        self.context = context
-        self._controller = AppController(self, self._homepage)
+        self._controller = AppController(self, self._homepage, context=context)
         self._build_widgets()
         self._layout_widgets()
 

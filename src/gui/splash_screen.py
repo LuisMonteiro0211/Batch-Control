@@ -15,7 +15,7 @@ class SplashScreen(CTk):
             size=(120, 53)
         )
         self._setup_ui()
-        self._loader = Loader(on_progress=self._on_progress)
+        self._loader: Loader = Loader(on_progress=self._on_progress)
         self.context: Optional[AppContext] = None
         self.after(100, self.start)
 

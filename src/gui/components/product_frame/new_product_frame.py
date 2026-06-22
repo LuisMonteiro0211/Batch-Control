@@ -4,7 +4,7 @@ from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
 from src.dtos.product_dto import ProductDTO
 from src.helpers import is_number, is_valid_string, sanitize_string
-from typing import Callable, List, Tuple, Any
+from typing import Callable, Dict, List, Tuple, Any
 
 class NewProductFrame(CTkFrame):
     def __init__(self, parent, on_click_save_product: Callable):
@@ -132,42 +132,14 @@ class NewProductFrame(CTkFrame):
         self._cancel_product_button.place(x=183, y=167, anchor="nw")
         self._cancel_product_button.pack_propagate(False)
 
-    def get_values_from_frame(self) -> ProductDTO:
-        """Método para obter os valores do frame de novo produto.
-        
-        Args:
-            None
-        Returns:
-            ProductDTO: Objeto DTO com os valores do frame de novo produto.
-        """
-        list_number_fields = ["minimun_balance", "product_code_chb", "consumption_monthly"]
-
-        list_values: List[Tuple[str, Any]] = [
-            ("name", self._name_product.get()),
-            ("minimun_balance", self._minimun_balance.get()),
-            ("product_firm", self._product_firm.get()),
-            ("product_code_chb", self._product_code_chb.get()),
-            ("consumption_monthly", self._consumption_monthly.get()),
-        ]
-
-        for name_field, value in list_values:
-            if not is_valid_string(value=value):
-                raise ValidationError(f"O campo {name_field} deve ser uma string válida!")
-            if name_field in list_number_fields:
-                if not is_number(value=value):
-                    raise ValidationError(f"O campo {name_field} deve ser um número!")
-
-        return ProductDTO(
-            name=sanitize_string(value=list_values[0][1]),
-            minimun_balance=int(list_values[1][1]),
-            product_firm=sanitize_string(value=list_values[2][1]),
-            product_code_chb=int(list_values[3][1]),
-            consumption_monthly=float(list_values[4][1]),
-
-            id=None,
-            created_at=None,
-            updated_at=None,
-        )
+    def get_raw_values(self) -> Dict[str, Any]:
+        return {
+            "name": self._name_product.get(),
+            "minimun_balance": self._minimun_balance.get(),
+            "product_firm": self._product_firm.get(),
+            "product_code_chb": self._product_code_chb.get(),
+            "consumption_monthly": self._consumption_monthly.get(),
+        }
 
     def clear_fields(self):
         """Método para limpar os campos do frame de novo produto.
