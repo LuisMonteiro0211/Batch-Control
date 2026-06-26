@@ -300,3 +300,33 @@ class ProductRepository (Entity):
                 return [row_to_dict(cursor, product) for product in products]
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao buscar produtos por nome: {e}") from e # Erro personalizado para erro de banco de dados
+
+    def get_product_lower_minimum_balance(self) -> List[dict[str, Any]]:
+        """
+        Obtém todos os produtos com saldo inferior ao saldo mínimo.
+
+        Args:
+            None
+
+        Returns:
+            List[dict[str, Any]]: Lista de produtos com saldo inferior ao saldo mínimo como dicionários.
+        """
+
+        try:
+            with get_connection(self._database_name) as cursor:
+                query = "SELECT p.*, estoque.estoque_atual FROM produtos p JOIN (SELECT cod_produto, SUM(saldo_atual) AS estoque_atual FROM lotes GROUP BY cod_produto) AS estoque ON estoque.cod_produto = p.cod_sku WHERE p.ativo = 1 AND estoque.estoque_atual < p.saldo_min ORDER BY estoque.estoque_atual ASC"
+                cursor.execute(query)
+
+                products = cursor.fetchall()
+
+            if not products:
+                return []
+
+            return [row_to_dict(cursor, product) for product in products]
+        except DatabaseError as e:
+            raise DatabaseOperationError(f"Erro ao obter produto com saldo inferior ao saldo mínimo: {e}") from e # Erro personalizado para erro de banco de dados
+
+if __name__ == "__main__":
+    product_repository = ProductRepository("test_batch_control.db")
+    products = product_repository.get_product_lower_minimum_balance()
+    print(products)

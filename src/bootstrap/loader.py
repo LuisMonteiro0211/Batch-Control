@@ -1,8 +1,10 @@
-from typing import Callable
+from typing import Callable, List
 from src.bootstrap.app_context import AppContext
 from src.bootstrap.app_service import AppServices
+from src.exceptions import DatabaseOperationError, ProductNotFoundError
 from src.service.product_service import ProductService
 from src.repository.product_repository import ProductRepository
+from src.dtos.product_dto import ProductCardDTO
 
 DATABASE_NAME = "test_batch_control.db"
 class Loader:
@@ -46,8 +48,15 @@ class Loader:
         self.context.services = AppServices(product=product_service) #Preparando o contexto para a aplicação
 
     def _step_load_products(self):
-        self.context.dashboard_data.low_stock_products = []
+        if not self.context.services:
+            raise RuntimeError("Serviços não foram carregados.")
 
+        if not self.context.services.product:
+            raise RuntimeError("Serviço de produtos não foi carregado.")
+
+        products_lower_minimum_balance: List[ProductCardDTO] = self.context.services.product.get_product_lower_minimum_balance()
+        self.context.dashboard_data.low_stock_products = products_lower_minimum_balance
+        
     def _step_load_batches(self):
         self.context.dashboard_data.expiring_batches = []
 

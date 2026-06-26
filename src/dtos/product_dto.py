@@ -13,3 +13,14 @@ class ProductDTO:
     id: Optional[int] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+
+
+@dataclass(frozen=True)
+class ProductCardDTO:
+    product_id: int
+    product_code_chb: int
+    product_name: str
+    product_firm: str
+    minimun_balance: int
+    current_balance: int
+    status: int

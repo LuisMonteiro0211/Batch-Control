@@ -1,3 +1,4 @@
+from src.dtos import ProductCardDTO
 from src.exceptions.exceptions import InvalidDateError, ValidationError
 from src.model.product import Product
 from src.dtos.product_dto import ProductDTO
@@ -39,7 +40,25 @@ def product_to_model(product: dict[str, Any]) -> Product:
         data_cadastro=product.get("data_cadastro"),
         data_atualizacao=product.get("data_atualizacao"),
     )
+def dict_to_product_card_dto(product: dict[str, Any]) -> ProductCardDTO:
+    """
+    Converte um dicionário de produto para um objeto ProductCardDTO.
 
+    Args:
+        product: Dicionário com os dados do produto.
+
+    Returns:
+        ProductCardDTO: Objeto ProductCardDTO com os valores do dicionário.
+    """
+    return ProductCardDTO(
+        product_id=int(product["id_produto"]),
+        product_code_chb=int(product["cod_sku"]),
+        product_name=str(product["nome_produto"]),
+        product_firm=str(product["empresa"]),
+        minimun_balance=int(product["saldo_min"]),
+        current_balance=int(product["estoque_atual"]),
+        status=int(product["ativo"]),
+    )
 def is_number(value: str) -> bool:
     """
     Verifica se um valor é um número.

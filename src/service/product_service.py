@@ -1,6 +1,7 @@
 from typing import Any, List, Tuple
-from src.dtos.product_dto import ProductDTO
+from src.dtos.product_dto import ProductDTO, ProductCardDTO
 from src.exceptions import DuplicateSkuError, ProductHasBalanceError
+from src.helpers.helpers import dict_to_product_card_dto
 from src.model.product import Product
 from src.repository.product_repository import ProductRepository
 
@@ -43,3 +44,18 @@ class ProductService:
         product_old = self._product_repository.get_by_id(id=id_produto)
         
         pass
+
+
+    def get_product_lower_minimum_balance(self) -> List[ProductCardDTO]:
+        """
+        Obtém todos os produtos com saldo inferior ao saldo mínimo.
+
+        Args:
+            None
+
+        Returns:
+            List[dict[str, Any]]: Lista de produtos com saldo inferior ao saldo mínimo como dicionários.
+        """
+        
+        products_lower_minimum_balance = self._product_repository.get_product_lower_minimum_balance()
+        return [dict_to_product_card_dto(product=product) for product in products_lower_minimum_balance]
