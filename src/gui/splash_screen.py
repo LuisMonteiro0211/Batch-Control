@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Optional
 from customtkinter import CTk, CTkImage, CTkLabel, CTkProgressBar
 from PIL import Image
+from src.exceptions import BatchControlError
 from src.gui.theme import COLORS, FONTS
 from src.bootstrap.loader import Loader
 from src.bootstrap import AppContext
@@ -18,6 +19,7 @@ class SplashScreen(CTk):
         self._loader: Loader = Loader(on_progress=self._on_progress)
         self.context: Optional[AppContext] = None
         self.after(100, self.start)
+        self._error: Optional[BatchControlError] = None
 
     def _setup_ui(self):
         self._configure_layout()
@@ -61,16 +63,47 @@ class SplashScreen(CTk):
         self._status_label.configure(text=message)
         self._progress_bar.set(progress)
         self.update()
+        
+    #================================================================
+    def start(self) -> None:
+        """
+        Inicia o loader da aplicação.
+        Se ocorrer um erro, ele é armazenado em self._error.
+        A janela é destruída e a aplicação é encerrada.
 
-    def start(self):
-        self._loader.run()
-        self.context = self._loader.context
-        self.destroy()
+        Returns:
+            None
+        """
+        try:
+            self._loader.run()
+            self.context = self._loader.context
+
+        except BatchControlError as e:
+            self._error = e
+
+        finally:
+            self.destroy()
 
     def get_context(self) -> AppContext:
+        """
+        Retorna o contexto da aplicação.
+
+        Returns:
+            AppContext: Contexto da aplicação.
+        """
+        
         if self.context is None:
             raise RuntimeError("Contexto da aplicação não foi inicializado.")
         return self.context
+
+    def get_error(self):
+        """
+        Retorna o erro da aplicação.
+
+        Returns:
+            BatchControlError: Erro da aplicação.
+        """
+        return self._error
 
 if __name__ == "__main__":
     app = SplashScreen()

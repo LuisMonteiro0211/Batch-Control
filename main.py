@@ -19,9 +19,15 @@ def main() -> None:
     splash = SplashScreen()
     splash.mainloop()
 
-    app = BatchControlApp(context=splash.get_context())
-    app.run()
+    splash_error = splash.get_error()
 
+    if splash_error:
+        pass
+    # Se não ocorreu erro, inicia a aplicação
+    else:
+        app_context = splash.get_context()
+        app = BatchControlApp(context=app_context)
+        app.run()
 
 if __name__ == "__main__":
     main()
