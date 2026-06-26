@@ -13,6 +13,7 @@ sys.dont_write_bytecode = True
 
 from src.gui.app import BatchControlApp
 from src.gui.splash_screen import SplashScreen
+from src.gui.error_window import ErrorWindow
 
 
 def main() -> None:
@@ -21,9 +22,10 @@ def main() -> None:
 
     splash_error = splash.get_error()
 
-    if splash_error:
-        pass
-    # Se não ocorreu erro, inicia a aplicação
+    if splash_error  is not None:
+        error_window = ErrorWindow(message=str(splash_error))
+        error_window.run()
+
     else:
         app_context = splash.get_context()
         app = BatchControlApp(context=app_context)
