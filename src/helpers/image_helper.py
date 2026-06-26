@@ -2,7 +2,7 @@ from PIL import Image
 from customtkinter import CTkImage 
 from pathlib import Path
 
-def image_processing(file_name: str, gap: int, size: tuple[int, int]) -> Image:
+def image_processing(file_name: Path, gap: int, size: tuple[int, int]) -> Image.Image:
     """
     Processa uma imagem para adicionar um gap entre a imagem e a borda.
 
@@ -13,12 +13,12 @@ def image_processing(file_name: str, gap: int, size: tuple[int, int]) -> Image:
     Returns:
         Image: Imagem processada com o gap.
     """
-    image = Image.open(file_name).convert("RGBA")
-    image = image.resize(size, Image.LANCZOS)
+    image: Image.Image = Image.open(file_name).convert("RGBA")
+    image = image.resize(size, Image.Resampling.LANCZOS)
     width, height = image.size
     new_width = width + gap
 
-    new_image = Image.new("RGBA", (new_width, height), (0,0,0,0))
+    new_image: Image.Image = Image.new("RGBA", (new_width, height), (0,0,0,0))
 
     new_image.paste(image,(0,0))
 
