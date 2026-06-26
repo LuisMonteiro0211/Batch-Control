@@ -1,7 +1,7 @@
 from typing import Callable, List
 from src.bootstrap.app_context import AppContext
 from src.bootstrap.app_service import AppServices
-from src.exceptions import DatabaseOperationError, ProductNotFoundError
+from src.exceptions import BootloaderError
 from src.service.product_service import ProductService
 from src.repository.product_repository import ProductRepository
 from src.dtos.product_dto import ProductCardDTO
@@ -49,10 +49,10 @@ class Loader:
 
     def _step_load_products(self):
         if not self.context.services:
-            raise RuntimeError("Serviços não foram carregados.")
+            raise BootloaderError("Serviços não foram carregados.")
 
         if not self.context.services.product:
-            raise RuntimeError("Serviço de produtos não foi carregado.")
+            raise BootloaderError("Serviço de produtos não foi carregado.")
 
         products_lower_minimum_balance: List[ProductCardDTO] = self.context.services.product.get_product_lower_minimum_balance()
         self.context.dashboard_data.low_stock_products = products_lower_minimum_balance
@@ -63,7 +63,7 @@ class Loader:
     def _step_prepare_interface(self):
         
         if self.context.services is None:
-            raise RuntimeError("Serviços não foram carregados.")
+            raise BootloaderError("Serviços não foram carregados.")
 
         if self.context.services.product is None:
-            raise RuntimeError("Serviço de produtos não foi carregado.")
+            raise BootloaderError("Serviço de produtos não foi carregado.")

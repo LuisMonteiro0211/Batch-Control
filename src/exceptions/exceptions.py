@@ -81,3 +81,8 @@ class ProductHasBalanceError(BatchControlError):
     """Produto com saldo não pode ser deletado."""
 
     pass
+
+class BootloaderError(BatchControlError):
+    """Erro ao carregar a aplicação."""
+
+    pass

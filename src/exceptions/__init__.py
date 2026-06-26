@@ -5,6 +5,7 @@ from src.exceptions.exceptions import (
     DuplicateSkuError,
     DatabaseOperationError,
     ProductHasBalanceError,
+    BootloaderError,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "DuplicateSkuError",
     "DatabaseOperationError",
     "ProductHasBalanceError",
+    "BootloaderError",
 ]
