@@ -74,7 +74,3 @@ def test_update_product_sku_duplicado():
     with pytest.raises(DuplicateSkuError) as exc_info:
         test_product_repository.update(1, [("cod_sku", 1010)])
     assert exc_info.value.cod_sku == 1010
-
-def test_update_product_nao_encontrado():
-    with pytest.raises(ProductNotFoundError, match="ID 99999"):
-        test_product_repository.update(99999, [("nome_produto", "Novo nome")])

@@ -7,10 +7,10 @@ from typing import Callable
 class ProductFrame(CTkFrame):
     def __init__(self, master, on_click_save_product: Callable):
         super().__init__(master)
+        self._on_click_save_product = on_click_save_product
         self._configure_layout()
         self._build_widgets()
         self._layout_widgets()
-        self._on_click_save_product = on_click_save_product
 
     def _configure_layout(self):
         self.configure(

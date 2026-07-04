@@ -9,8 +9,8 @@ from typing import Callable, Dict, List, Tuple, Any
 class NewProductFrame(CTkFrame):
     def __init__(self, parent, on_click_save_product: Callable):
         super().__init__(parent)
-        self._setup_ui()
         self._on_click_save_product = on_click_save_product
+        self._setup_ui()
 
     def _setup_ui(self):
         self._configure_layout()
