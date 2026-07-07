@@ -58,6 +58,7 @@ def dict_to_product_card_dto(product: dict[str, Any]) -> ProductCardDTO:
         minimun_balance=int(product["saldo_min"]),
         current_balance=int(product["estoque_atual"]),
         status=int(product["ativo"]),
+        stock_level=None,
     )
 def is_number(value: str) -> bool:
     """

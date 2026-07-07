@@ -3,6 +3,7 @@ from src.dtos.product_dto import ProductDTO, ProductCardDTO
 from src.exceptions import DuplicateSkuError, ProductHasBalanceError
 from src.helpers.helpers import dict_to_product_card_dto
 from src.model.product import Product
+from src.model.stock_level import sort_level
 from src.repository.product_repository import ProductRepository
 
 class ProductService:
@@ -54,8 +55,14 @@ class ProductService:
             None
 
         Returns:
-            List[dict[str, Any]]: Lista de produtos com saldo inferior ao saldo mínimo como dicionários.
+            List[ProductCardDTO]: Lista de produtos com saldo inferior ao saldo mínimo.
         """
         
         products_lower_minimum_balance = self._product_repository.get_product_lower_minimum_balance()
-        return [dict_to_product_card_dto(product=product) for product in products_lower_minimum_balance]
+        list_product_card_dtos = [dict_to_product_card_dto(product=product) for product in products_lower_minimum_balance]
+
+        for product in list_product_card_dtos:
+            product.stock_level = sort_level(current_stock=product.current_balance,
+            min_stock=product.minimun_balance)
+
+        return list_product_card_dtos

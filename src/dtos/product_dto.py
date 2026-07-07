@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
+from src.model.stock_level import StockLevel
 
 @dataclass(frozen=True)
 class ProductDTO:
@@ -15,7 +16,7 @@ class ProductDTO:
     updated_at: Optional[datetime] = None
 
 
-@dataclass(frozen=True)
+@dataclass()
 class ProductCardDTO:
     product_id: int
     product_code_chb: int
@@ -24,3 +25,4 @@ class ProductCardDTO:
     minimun_balance: int
     current_balance: int
     status: int
+    stock_level: Optional[StockLevel] = None
