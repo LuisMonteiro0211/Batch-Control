@@ -34,25 +34,3 @@ def sort_level(current_stock: int, min_stock: int) -> StockLevel:
 
 
     return StockLevel.NORMAL
-
-TRANSACOES_PERMITIDAS = {
-    StockLevel.NORMAL: {StockLevel.ALERTA, StockLevel.CRITICO, StockLevel.SEM_ESTOQUE},
-    StockLevel.ALERTA: {StockLevel.CRITICO, StockLevel.NORMAL, StockLevel.SEM_ESTOQUE},
-    StockLevel.CRITICO: {StockLevel.SEM_ESTOQUE, StockLevel.NORMAL, StockLevel.ALERTA},
-    StockLevel.SEM_ESTOQUE: {StockLevel.NORMAL, StockLevel.ALERTA, StockLevel.CRITICO}
-}
-
-def can_perform_transaction(of_level: StockLevel, for_level: StockLevel) -> bool:
-    """
-    Função de verificação de permissão de transação.
-    - Permite: Quando o nível de estoque atual é maior ou igual ao nível de estoque para o qual a transação está sendo realizada.
-    - Não permite: Quando o nível de estoque atual é menor que o nível de estoque para o qual a transação está sendo realizada.
-
-    Args:
-        of_level: StockLevel
-        for_level: StockLevel
-
-    Returns:
-        bool: True se a transação é permitida, False caso contrário.
-    """
-    return for_level in TRANSACOES_PERMITIDAS.get(of_level, set()) # Caso o método get não localize nada, o retorno padrão será o set vazio.
