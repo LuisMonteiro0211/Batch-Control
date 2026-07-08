@@ -4,7 +4,10 @@ from src.gui.components.scrollbar_frame import ScrollbarFrame
 from src.gui.components.factory import LabelValueTable
 from src.gui.theme import COLORS, FONTS
 from src.helpers.image_helper import icon_button
+from src.paths import icon_path
 from typing import List
+
+from src.model.stock_level import StockLevel
 
 class ProductTable(ScrollbarFrame):
     def __init__(self, master, products_to_view: List[ProductCardDTO]):
@@ -60,6 +63,9 @@ class ProductTable(ScrollbarFrame):
          Returns:
             None
          """
+
+        path_icon_yellow_alert = icon_path("circle-alert_yellow.png")
+
         products = self._products_to_view
 
         for product in products:
