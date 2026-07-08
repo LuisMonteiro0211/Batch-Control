@@ -46,7 +46,7 @@ def icon_button(file_name: str, size: tuple[int, int], gap: int = 6) -> CTkImage
     return CTkImage(light_image=pil_icon, dark_image=pil_icon, size=display_size)
 
 
-def resize_image(file_name: Path, size: tuple[int, int]) -> Image.Image:
+def resize_image(file_name: Path, size: tuple[int, int]) -> CTkImage:
     """
     Redimensiona uma imagem para o tamanho informado.
 
@@ -55,8 +55,8 @@ def resize_image(file_name: Path, size: tuple[int, int]) -> Image.Image:
         size: Tamanho da imagem em pixels (largura, altura).
 
     Returns:
-        Image.Image: Imagem redimensionada.
+        CTkImage: Imagem redimensionada.
     """
     image: Image.Image = Image.open(file_name).convert("RGBA")
     image = image.resize(size, Image.Resampling.LANCZOS)
-    return image
+    return CTkImage(light_image=image, dark_image=image, size=size)
