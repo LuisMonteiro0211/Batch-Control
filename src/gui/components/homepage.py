@@ -1,7 +1,7 @@
 from customtkinter import CTkImage, CTkFrame, CTkLabel
-import os
 from PIL import Image
 from src.gui.theme import COLORS
+from src.paths import icon_path
 
 class Homepage(CTkFrame):
     def __init__(self, master):
@@ -18,8 +18,7 @@ class Homepage(CTkFrame):
         )
 
     def _get_image(self):
-        path_image = os.path.join(os.path.dirname(__file__), "..", "..", "icons", "brach_ctrl_logo_transparent.png")
-        image = Image.open(path_image)
+        image = Image.open(icon_path("brach_ctrl_logo_transparent.png"))
         return image
     
     def _build_widgets(self):

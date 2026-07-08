@@ -1,0 +1,1 @@
+from .paths import icon_path, data_path

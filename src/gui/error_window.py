@@ -1,9 +1,8 @@
-from pathlib import Path
-
 from customtkinter import CTk, CTkButton, CTkFrame, CTkImage, CTkLabel
 from PIL import Image
 
 from src.gui.theme import COLORS, FONTS
+from src.paths import icon_path
 
 DEFAULT_MESSAGE = "Erro na aplicação."
 
@@ -37,8 +36,7 @@ class ErrorWindow(CTk):
         )
 
     def _build_widgets(self) -> None:
-        icon_path = Path(__file__).parent.parent / "icons" / "circle-x.png"
-        icon_image = Image.open(icon_path).convert("RGBA")
+        icon_image = Image.open(icon_path("circle-x.png")).convert("RGBA")
 
         self._icon_ctk = CTkImage(light_image=icon_image, size=(36, 36))
         self._icon_label = CTkLabel(self, text="", image=self._icon_ctk)

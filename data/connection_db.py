@@ -17,8 +17,9 @@ Observações:
 """
 
 from sqlite3 import connect, DatabaseError
-from pathlib import Path
 from contextlib import contextmanager
+
+from src.paths import data_path
 
 @contextmanager
 def get_connection(database_name: str):
@@ -41,7 +42,7 @@ def get_connection(database_name: str):
     ...
     >>> print(users)
     """
-    path_db = Path(__file__).parent / database_name
+    path_db = data_path(database_name)
     cursor = None
     connection = None
 

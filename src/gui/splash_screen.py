@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Optional
 from customtkinter import CTk, CTkImage, CTkLabel, CTkProgressBar
 from PIL import Image
@@ -6,13 +5,15 @@ from src.exceptions import BatchControlError
 from src.gui.theme import COLORS, FONTS
 from src.bootstrap.loader import Loader
 from src.bootstrap import AppContext
+from src.paths import icon_path
 
 class SplashScreen(CTk):
     def __init__(self):
         super().__init__()
         self._icon_image = CTkImage(
-            light_image=Image.open(Path(__file__).parent.parent / "icons" /
-            "brach_ctrl_logo_transparent.png").convert("RGBA"),
+            light_image=Image.open(
+                icon_path("brach_ctrl_logo_transparent.png")
+            ).convert("RGBA"),
             size=(120, 53)
         )
         self._setup_ui()
