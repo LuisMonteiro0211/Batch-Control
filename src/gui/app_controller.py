@@ -21,7 +21,7 @@ class AppController():
         self._master = master
         self._context = context
         self._frames: AppFrames = {
-            "product": ProductFrame(self._master, on_click_save_product=self.on_click_save_product),
+            "product": ProductFrame(self._master, on_click_save_product=self.on_click_save_product, products_to_view=self._context.dashboard_data.low_stock_products),
             "batch": BatchFrame(self._master),
         }
         self._frame_to_show: VisibleFrames = homepage

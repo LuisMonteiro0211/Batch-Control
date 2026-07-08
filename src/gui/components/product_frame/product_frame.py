@@ -3,10 +3,12 @@ from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
 from .new_product_frame import NewProductFrame
 from .product_table import ProductTable
-from typing import Callable
+from typing import Callable, List
+from src.dtos.product_dto import ProductCardDTO
 class ProductFrame(CTkFrame):
-    def __init__(self, master, on_click_save_product: Callable):
+    def __init__(self, master, on_click_save_product: Callable, products_to_view: List[ProductCardDTO]):
         super().__init__(master)
+        self._products_to_view = products_to_view
         self._on_click_save_product = on_click_save_product
         self._configure_layout()
         self._build_widgets()
@@ -57,7 +59,7 @@ class ProductFrame(CTkFrame):
             placeholder="Buscar produto...",
             name_field="search_product_name"
         )
-        self._product_table = ProductTable(self)
+        self._product_table = ProductTable(self, products_to_view=self._products_to_view)
         self._product_table.initialization()
 
     def _layout_widgets(self):

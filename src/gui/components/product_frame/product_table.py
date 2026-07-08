@@ -1,14 +1,15 @@
-from customtkinter import CTkButton, CTkFrame
+from customtkinter import CTkButton, CTkFrame, CTkLabel
 from src.dtos import ProductCardDTO
 from src.gui.components.scrollbar_frame import ScrollbarFrame
 from src.gui.components.factory import LabelValueTable
 from src.gui.theme import COLORS, FONTS
-from src.helpers.image_helper import icon_button
+from src.helpers.image_helper import icon_button, resize_image
+from src.model import stock_level
 from src.paths import icon_path
 from typing import List
 
 from src.model.stock_level import StockLevel
-
+from src.exceptions.exceptions import BatchControlError
 class ProductTable(ScrollbarFrame):
     def __init__(self, master, products_to_view: List[ProductCardDTO]):
         super().__init__(master)
@@ -61,12 +62,22 @@ class ProductTable(ScrollbarFrame):
          Args:
             None
          Returns:
-            None
+            List[CTkFrame]: Lista de cards items criados para cada produto.
          """
 
         path_icon_yellow_alert = icon_path("circle-alert_yellow.png")
+        path_icon_red_alert = icon_path("circle-alert_red.png")
+        path_icon_green_alert = icon_path("circle-alert_green.png")
+        path_icon_grey_alert = icon_path("circle-alert.png")
+
+        TABLE_ICONS = {
+            StockLevel.ALERTA: resize_image(path_icon_yellow_alert, (17, 17)),
+            StockLevel.CRITICO: resize_image(path_icon_red_alert, (17, 17)),
+            StockLevel.NORMAL: resize_image(path_icon_green_alert, (17, 17)),
+        }
 
         products = self._products_to_view
+        product_cards:List[CTkFrame] = []
 
         for product in products:
             card_item: CTkFrame = CTkFrame(
@@ -86,7 +97,12 @@ class ProductTable(ScrollbarFrame):
             label_product_firm = LabelValueTable.create_label_value_table(card_item, product.product_firm)
             label_minimum_balance = LabelValueTable.create_label_value_table(card_item, product.minimun_balance)
             label_current_balance = LabelValueTable.create_label_value_table(card_item, product.current_balance)
-            label_status = LabelValueTable.create_label_value_table(card_item, product.status)
+            
+            if not product.stock_level:
+                raise BatchControlError("Stock level is required")
+            
+            status_icon = TABLE_ICONS.get(product.stock_level)
+            label_status = CTkLabel(card_item, text="", image=status_icon, compound="left")
             button_action = CTkButton(
                 card_item,
                 text="Editar",
@@ -102,18 +118,28 @@ class ProductTable(ScrollbarFrame):
 
             # Layout card item
 
-            label_sku.place(x=9, y=11, anchor="nw")
-            label_name_product.place(x=119, y=11, anchor="nw")
-            label_product_firm.place(x=222, y=11, anchor="nw")
-            label_minimum_balance.place(x=334, y=11, anchor="nw")
-            label_current_balance.place(x=455, y=11, anchor="nw")
-            button_action.place(x=603, y=11, anchor="nw")
+            label_sku.place(x=9, y=2, anchor="nw")
+            label_name_product.place(x=119, y=2, anchor="nw")
+            label_product_firm.place(x=222, y=2, anchor="nw")
+            label_minimum_balance.place(x=334, y=2, anchor="nw")
+            label_current_balance.place(x=455, y=2, anchor="nw")
+            label_status.place(x=551, y=2, anchor="nw")
+            button_action.place(x=603, y=2, anchor="nw")
 
+            product_cards.append(card_item) # Adiciona o card item na lista de cards items
 
+        return product_cards
 
     def initialization(self):
 
-        self.initialization_message("Nenhum alerta disponível", self._icon_check)
+        if self._products_to_view is not None:
+            product_cards = self._create_cards_items()
+
+            for product_card in product_cards:
+                self.insert_frame_item(product_card)
+        else:
+            self.initialization_message("Nenhum alerta disponível", self._icon_check)
+
 
 
 
