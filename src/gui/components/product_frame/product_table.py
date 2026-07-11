@@ -6,13 +6,14 @@ from src.gui.theme import COLORS, FONTS
 from src.helpers.image_helper import icon_button, resize_image
 from src.model import stock_level
 from src.paths import icon_path
-from typing import List
+from typing import Callable, List
 
 from src.model.stock_level import StockLevel
 from src.exceptions.exceptions import BatchControlError
 class ProductTable(ScrollbarFrame):
-    def __init__(self, master, products_to_view: List[ProductCardDTO]):
+    def __init__(self, master, products_to_view: List[ProductCardDTO], on_edit_product: Callable[[int], None]):
         super().__init__(master)
+        self._on_edit_product = on_edit_product
         self._configure_layout()
         self._create_header_frame()
         self._layout_table_header()
@@ -113,7 +114,7 @@ class ProductTable(ScrollbarFrame):
                 hover_color="#3A3A3A",
                 text_color=COLORS.texto_secundario,
                 font=FONTS.texto_tabela,
-                command=lambda: print("Editar produto")
+                command=lambda product_id=product.product_id: self._on_edit_product(product_id)
             )
 
             # Layout card item

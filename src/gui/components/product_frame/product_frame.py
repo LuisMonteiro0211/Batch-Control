@@ -2,14 +2,26 @@ from customtkinter import CTkFrame, CTkLabel
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
 from .new_product_frame import NewProductFrame
+from .edit_product_frame import EditProductFrame
 from .product_table import ProductTable
-from typing import Callable, List
-from src.dtos.product_dto import ProductCardDTO
+from typing import Callable, List, Optional
+from src.dtos.product_dto import ProductCardDTO, ProductDTO
+
 class ProductFrame(CTkFrame):
-    def __init__(self, master, on_click_save_product: Callable, products_to_view: List[ProductCardDTO]):
+    def __init__(
+        self,
+        master,
+        on_click_save_product: Callable,
+        on_click_save_edit_product: Callable,
+        on_click_edit_product: Callable,
+        products_to_view: List[ProductCardDTO],
+    ):
         super().__init__(master)
         self._products_to_view = products_to_view
         self._on_click_save_product = on_click_save_product
+        self._on_click_save_edit_product = on_click_save_edit_product
+        self._on_click_edit_product = on_click_edit_product
+        self._edit_product_frame: Optional[EditProductFrame] = None
         self._configure_layout()
         self._build_widgets()
         self._layout_widgets()
@@ -59,7 +71,11 @@ class ProductFrame(CTkFrame):
             placeholder="Buscar produto...",
             name_field="search_product_name"
         )
-        self._product_table = ProductTable(self, products_to_view=self._products_to_view)
+        self._product_table = ProductTable(
+            self,
+            products_to_view=self._products_to_view,
+            on_edit_product=self._on_click_edit_product,
+        )
         self._product_table.initialization()
 
     def _layout_widgets(self):
@@ -81,3 +97,26 @@ class ProductFrame(CTkFrame):
 
         self._product_table.place(x=16, y=365, anchor="nw")
         self._product_table.pack_propagate(False)
+
+    def show_edit_product(self, product_dto: ProductDTO) -> None:
+        if self._edit_product_frame is not None:
+            self._edit_product_frame.destroy()
+
+        self._edit_product_frame = EditProductFrame(
+            self,
+            product_dto=product_dto,
+            save_callback=self._on_click_save_edit_product,
+            cancel_callback=self.show_new_product,
+        )
+        self._new_product_frame.place_forget()
+        self._edit_product_frame.place(x=12, y=70, anchor="nw")
+        self._edit_product_frame.pack_propagate(False)
+
+    def show_new_product(self) -> None:
+        if self._edit_product_frame is not None:
+            self._edit_product_frame.place_forget()
+        self._new_product_frame.place(x=12, y=70, anchor="nw")
+
+    @property
+    def edit_product_frame(self) -> Optional[EditProductFrame]:
+        return self._edit_product_frame

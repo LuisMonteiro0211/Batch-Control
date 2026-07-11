@@ -1,3 +1,4 @@
+from dataclasses import replace
 from src.bootstrap.app_context import AppContext
 from src.dtos.product_dto import ProductDTO
 from src.exceptions import DatabaseOperationError, DuplicateSkuError
@@ -21,7 +22,13 @@ class AppController():
         self._master = master
         self._context = context
         self._frames: AppFrames = {
-            "product": ProductFrame(self._master, on_click_save_product=self.on_click_save_product, products_to_view=self._context.dashboard_data.low_stock_products),
+            "product": ProductFrame(
+                self._master,
+                on_click_save_product=self.on_click_save_product,
+                on_click_save_edit_product=self.on_click_save_edit_product,
+                on_click_edit_product=self.on_click_edit_product,
+                products_to_view=self._context.dashboard_data.low_stock_products,
+            ),
             "batch": BatchFrame(self._master),
         }
         self._frame_to_show: VisibleFrames = homepage
@@ -77,5 +84,44 @@ class AppController():
         except DatabaseOperationError as e:
             #Exibir mensagem de erro na tela
             pass
-        
+
+    def on_click_edit_product(self, product_id: int):
+        if self._context.services is None or self._context.services.product is None:
+            raise RuntimeError("Serviços não foram carregados.")
+
+        product_dto = self._context.services.product.get_product_by_id(id_produto=product_id)
+        self._frames["product"].show_edit_product(product_dto=product_dto)
+
+    def on_click_save_edit_product(self):
+        product_frame = self._frames["product"]
+        edit_product_frame = product_frame.edit_product_frame
+
+        if edit_product_frame is None:
+            return
+
+        if self._context.services is None or self._context.services.product is None:
+            raise RuntimeError("Serviços não foram carregados.")
+
+        try:
+            raw_data = edit_product_frame.get_raw_values()
+            product_dto = replace(
+                build_product_dto(raw_date=raw_data),
+                id=raw_data["id"],
+            )
+
+            self._context.services.product.update_product(
+                id_produto=product_dto.id,
+                list_to_update=[
+                    ("nome_produto", product_dto.name),
+                    ("empresa", product_dto.product_firm),
+                    ("saldo_min", product_dto.minimun_balance),
+                    ("consumo_mensal", product_dto.consumption_monthly),
+                ],
+            )
+            product_frame.show_new_product()
+
+        except ValidationError:
+            pass
+        except DatabaseOperationError:
+            pass
 
