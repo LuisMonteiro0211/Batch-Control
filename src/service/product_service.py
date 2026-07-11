@@ -1,7 +1,7 @@
 from typing import Any, List, Tuple
 from src.dtos.product_dto import ProductDTO, ProductCardDTO
 from src.exceptions import DuplicateSkuError, ProductHasBalanceError
-from src.helpers.helpers import dict_to_product_card_dto
+from src.helpers.helpers import dict_to_product_card_dto, dict_to_product_dto
 from src.model.product import Product
 from src.model.stock_level import sort_level
 from src.repository.product_repository import ProductRepository
@@ -66,3 +66,7 @@ class ProductService:
             min_stock=product.minimun_balance)
 
         return list_product_card_dtos
+
+    def get_product_by_id(self, id_produto: int) -> ProductDTO:
+        product = self._product_repository.get_by_id(id=id_produto)
+        return dict_to_product_dto(product=product)
