@@ -1,6 +1,6 @@
 from customtkinter import CTkFrame, CTkLabel, CTkButton
 from src.gui.theme import COLORS, FONTS
-from src.gui.components.factory import FieldFactory
+from src.gui.components.factory import FieldFactory, LabelNameField
 from src.dtos.batch_dto import BatchDTO
 class NewBatchFrame(CTkFrame):
     def __init__(self, master):
@@ -30,12 +30,7 @@ class NewBatchFrame(CTkFrame):
             font=FONTS.texto_tabela
         )
 
-        self._batch_label = CTkLabel(
-            self,
-            text="Lote",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
+        self._batch_label = LabelNameField.create_label_name_field(self, "Lote")
         self._field_batch = FieldFactory.create_entry(
             self,
             placeholder="Lote...",
@@ -44,12 +39,7 @@ class NewBatchFrame(CTkFrame):
             name_field="batch_name"
         )
 
-        self._code_chb_label = CTkLabel(
-            self,
-            text="Código CHB",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
+        self._code_chb_label = LabelNameField.create_label_name_field(self, "Código CHB")
         self._field_code_chb = FieldFactory.create_number_entry(
             self,
             placeholder="Código CHB...",
@@ -57,12 +47,7 @@ class NewBatchFrame(CTkFrame):
             height=27,
             name_field="code_chb"
         )
-        self._manufacturer_date_label = CTkLabel(
-            self,
-            text="Data de fabricação",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
+        self._manufacturer_date_label = LabelNameField.create_label_name_field(self, "Data de fabricação")
         self._field_manufacturer_date = FieldFactory.create_data_entry(
             self,
             placeholder="Data de fabricação...",
@@ -70,12 +55,7 @@ class NewBatchFrame(CTkFrame):
             height=27,
             name_field="manufacturer_date"
         )
-        self._expiration_date_label = CTkLabel(
-            self,
-            text="Data de validade",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
+        self._expiration_date_label = LabelNameField.create_label_name_field(self, "Data de validade")
         self._field_expiration_date = FieldFactory.create_data_entry(
             self,
             placeholder="Data de validade...",
@@ -83,36 +63,21 @@ class NewBatchFrame(CTkFrame):
             height=27,
             name_field="expiration_date"
         )
-        self._product_firm_label = CTkLabel(
-            self,
-            text="Fabricante",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
+        self._product_firm_label = LabelNameField.create_label_name_field(self, "Fabricante")
         self._field_product_firm = FieldFactory.create_locked_entry(
             self,
             width=131,
             height=27,
             value="Fabricante..."
         )
-        self._product_label = CTkLabel(
-            self,
-            text="Produto",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
+        self._product_label = LabelNameField.create_label_name_field(self, "Produto")
         self._field_product = FieldFactory.create_locked_entry(
             self,
             width=131,
             height=27,
             value="Produto..."
         )
-        self._quantity_label = CTkLabel(
-            self,
-            text="Quantidade",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
+        self._quantity_label = LabelNameField.create_label_name_field(self, "Quantidade")
 
         self._field_quantity = FieldFactory.create_number_entry(
             self,
@@ -121,12 +86,7 @@ class NewBatchFrame(CTkFrame):
             height=27,
             name_field="quantity"
         )
-        self._nf_label = CTkLabel(
-            self,
-            text="Nota Fiscal",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
+        self._nf_label = LabelNameField.create_label_name_field(self, "Nota Fiscal")
         self._field_nf = FieldFactory.create_number_entry(
             self,
             placeholder="Nota Fiscal...",

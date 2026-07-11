@@ -1,7 +1,7 @@
 from customtkinter import CTkButton, CTkFrame, CTkLabel
 from src.exceptions.exceptions import ValidationError
 from src.gui.theme import COLORS, FONTS
-from src.gui.components.factory import FieldFactory
+from src.gui.components.factory import FieldFactory, LabelNameField
 from src.dtos.product_dto import ProductDTO
 from src.helpers import is_number, is_valid_string, sanitize_string
 from typing import Callable, Dict, List, Tuple, Any
@@ -35,38 +35,11 @@ class NewProductFrame(CTkFrame):
             font=FONTS.texto_tabela
         )
 
-        self._name_product_label = CTkLabel(
-            self,
-            text="Produto",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
-
-        self._minimun_balance_label = CTkLabel(
-            self,
-            text="Saldo mínimo",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
-        self._product_firm_label = CTkLabel(
-            self,
-            text="Fabricante",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
-        self._product_code_chb_label = CTkLabel(
-            self,
-            text="Código CHB",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
-
-        self._consumption_monthly_label = CTkLabel(
-            self,
-            text="Consumo mensal",
-            text_color=COLORS.desabilitado,
-            font=FONTS.texto_tabela
-        )
+        self._name_product_label = LabelNameField.create_label_name_field(self, "Produto")
+        self._minimun_balance_label = LabelNameField.create_label_name_field(self, "Saldo mínimo")
+        self._product_firm_label = LabelNameField.create_label_name_field(self, "Fabricante")
+        self._product_code_chb_label = LabelNameField.create_label_name_field(self, "Código CHB")
+        self._consumption_monthly_label = LabelNameField.create_label_name_field(self, "Consumo mensal")
 
         self._name_product = FieldFactory.create_entry(master=self, placeholder="Nome do produto", width=159, height=27, name_field = "nome_produto")
         self._minimun_balance = FieldFactory.create_number_entry(master=self, placeholder="Saldo mínimo", width=159, height=27, name_field= "saldo_min")
