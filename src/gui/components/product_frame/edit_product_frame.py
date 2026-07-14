@@ -2,7 +2,7 @@ from customtkinter import CTkButton, CTkFrame, CTkLabel
 from src.dtos import ProductDTO
 from src.gui.theme.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory, LabelNameField, FormField
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, List, Tuple
 
 
 class EditProductFrame(CTkFrame):
@@ -22,8 +22,6 @@ class EditProductFrame(CTkFrame):
     def _setup_ui(self):
         self._configure_layout()
         self._build_widgets()
-        self._layout_widgets()
-        self._populate_fields()
 
     def _configure_layout(self):
         self.configure(
@@ -43,128 +41,52 @@ class EditProductFrame(CTkFrame):
             font=FONTS.texto_tabela,
         )
 
+        #Criação de labels
         self._name_product_label = LabelNameField.create_label_name_field(self, "Produto")
-        self._minimun_balance_label = LabelNameField.create_label_name_field(self, "Saldo mínimo")
-        self._product_code_chb_label = LabelNameField.create_label_name_field(self, "Código CHB")
-        self._product_firm_label = LabelNameField.create_label_name_field(self, "Fabricante")
-        self._consumption_monthly_label = LabelNameField.create_label_name_field(self, "Consumo mensal")
+        self._firm_label = LabelNameField.create_label_name_field(master=self, label="Empresa")
+        self._consumption_monthly_label = LabelNameField.create_label_name_field(master=self, label="Consumo Médio")
+        self._minimun_balance_label = LabelNameField.create_label_name_field(master=self, label="Saldo Mínimo")
+        self._sku_code_label = LabelNameField.create_label_name_field(master=self, label="Código CHB")
+        self._status_label = LabelNameField.create_label_name_field(master=self,label="Status do Produto")
+        self._date_creation_label = LabelNameField.create_label_name_field(master=self, label="Data de Cadastro")
+        self.date_update_label = LabelNameField.create_label_name_field(master=self, label="Atualizado em")
 
-        self._name_product = FieldFactory.create_entry(
-            master=self,
-            placeholder="Nome do produto",
-            width=159,
-            height=27,
-            name_field="nome_produto",
-        )
-        self._minimun_balance = FieldFactory.create_number_entry(
-            master=self,
-            placeholder="Saldo mínimo",
-            width=159,
-            height=27,
-            name_field="saldo_min",
-        )
-        self._product_code_chb = FieldFactory.create_locked_entry(
-            master=self,
-            width=159,
-            height=27,
-            value=str(self._product_dto.product_code_chb),
-        )
-        self._product_firm = FieldFactory.create_entry(
-            master=self,
-            placeholder="Fabricante",
-            width=159,
-            height=27,
-            name_field="empresa",
-        )
-        self._consumption_monthly = FieldFactory.create_number_entry(
-            master=self,
-            placeholder="Consumo mensal",
-            width=159,
-            height=27,
-            name_field="consumo_mensal",
-            max_digits=6,
-        )
+        #Criaçõ dos campos
+        self._name_product_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27, name_field="nome_produto")
+        self._firm_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27, name_field="empresa")
+        self._consumption_monthly_field = FieldFactory.create_locked_entry(master=self, value=None, width=159, height=27)
+        self._minimun_balance_field = FieldFactory.create_number_entry(master=self, placeholder="", width=159, height=27, name_field="consumo_mensal")
+        self._sku_code_field = FieldFactory.create_locked_entry(master=self, value=None, width=159,
+        height=27)
+        self._date_creation_field = FieldFactory.create_locked_entry(master=self, width=159, height=27, value=None)
+        self.date_update_field = FieldFactory.create_locked_entry(master=self, width=159, height=27, value=None)
+        self._status_segmented_button = FieldFactory.create_segmented_button(master=self, list_buttons=["Ativo", "Inativo"], width=159, height=27, name_field="ativo")
 
-        self._save_product_button = CTkButton(
-            self,
-            text="Salvar Alterações",
-            fg_color=COLORS.botao_principal,
-            text_color=COLORS.texto_botao_principal,
-            font=FONTS.botao_primario,
-            command=self._save_callback,
-        )
-        self._save_product_button.configure(
-            width=120,
-            height=27,
-            corner_radius=5,
-        )
+        #Criação dos botões
+        self._save_button = CTkButton(master=self, text="Salvar Alterações", command=self._save_callback, width=126, height=27, fg_color=COLORS.botao_principal, hover_color=COLORS.botao_selecionado, text_color=COLORS.botao_principal, font=FONTS.botao_principal, corner_radius=5, border_width=5)
 
-        self._cancel_product_button = CTkButton(
-            self,
-            text="Cancelar",
-            fg_color=COLORS.elevado,
-            text_color=COLORS.texto_botao_principal,
-            font=FONTS.botao_primario,
-            command=self._on_cancel,
-        )
-        self._cancel_product_button.configure(
-            width=69,
-            height=27,
-            corner_radius=5,
-            border_width=1,
-            border_color=COLORS.bordas,
-        )
+        self._cancel_button = CTkButton(master=self, text="Cancelar", command=self._cancel_callback, width=126, height=27, fg_color=COLORS.elevado, hover_color=COLORS.botao_selecionado, text_color=COLORS.botao_principal, font=FONTS.texto_tabela, corner_radius=5, border_width=5, border_color=COLORS.bordas)
 
-    def _layout_widgets(self):
-        self._title_edit_product.place(x=10, y=4, anchor="nw")
-        self._title_edit_product.pack_propagate(False)
+    def _get_editable_fields(self)-> List[FormField]:
+        return [
+            self._name_product_field,
+            self._firm_field,
+            self._minimun_balance_field,
+            self._status_segmented_button
+        ]
 
-        self._name_product_label.place(x=10, y=30, anchor="nw")
-        self._name_product_label.pack_propagate(False)
-        self._name_product.field.place(x=10, y=55, anchor="nw")
-
-        self._minimun_balance_label.place(x=218, y=30, anchor="nw")
-        self._minimun_balance_label.pack_propagate(False)
-        self._minimun_balance.field.place(x=218, y=55, anchor="nw")
-
-        self._product_code_chb_label.place(x=426, y=30, anchor="nw")
-        self._product_code_chb_label.pack_propagate(False)
-        self._product_code_chb.place(x=426, y=55, anchor="nw")
-
-        self._product_firm_label.place(x=10, y=92, anchor="nw")
-        self._product_firm_label.pack_propagate(False)
-        self._product_firm.field.place(x=10, y=117, anchor="nw")
-
-        self._consumption_monthly_label.place(x=218, y=92, anchor="nw")
-        self._consumption_monthly_label.pack_propagate(False)
-        self._consumption_monthly.field.place(x=218, y=117, anchor="nw")
-
-        self._save_product_button.place(x=497, y=184, anchor="nw")
-        self._save_product_button.pack_propagate(False)
-        self._cancel_product_button.place(x=413, y=184, anchor="nw")
-        self._cancel_product_button.pack_propagate(False)
-
-    def _populate_fields(self):
-        self._set_field_value(self._name_product, self._product_dto.name)
-        self._set_field_value(self._minimun_balance, self._product_dto.minimun_balance)
-        self._set_field_value(self._product_firm, self._product_dto.product_firm)
-        self._set_field_value(self._consumption_monthly, self._product_dto.consumption_monthly)
-
-    @staticmethod
-    def _set_field_value(form_field: FormField, value: Any) -> None:
-        form_field.field.delete(0, "end")
-        form_field.field.insert(0, str(value))
-
-    def _on_cancel(self):
-        self._populate_fields()
-        self._cancel_callback()
-
-    def get_raw_values(self) -> Dict[str, Any]:
+    def get_raw_values(self)-> Dict[str, str]:
+        """
+        Método para obter os valores dos campos editáveis.
+        Args:
+            None
+        Returns:
+            Dict[str, str]: Dicionário com os valores dos campos editáveis.
+        """
         return {
-            "id": self._product_dto.id,
-            "name": self._name_product.get(),
-            "minimun_balance": self._minimun_balance.get(),
-            "product_firm": self._product_firm.get(),
-            "product_code_chb": self._product_dto.product_code_chb,
-            "consumption_monthly": self._consumption_monthly.get(),
+            field.name_field: field.get() for field in self._get_editable_fields()
         }
+
+
+    def set_date_product_dto(self, product_dto: ProductDTO):
+        pass

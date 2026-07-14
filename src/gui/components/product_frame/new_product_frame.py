@@ -1,9 +1,7 @@
 from customtkinter import CTkButton, CTkFrame, CTkLabel
 from src.exceptions.exceptions import ValidationError
 from src.gui.theme import COLORS, FONTS
-from src.gui.components.factory import FieldFactory, LabelNameField
-from src.dtos.product_dto import ProductDTO
-from src.helpers import is_number, is_valid_string, sanitize_string
+from src.gui.components.factory import FieldFactory, LabelNameField, FormField
 from typing import Callable, Dict, List, Tuple, Any
 
 class NewProductFrame(CTkFrame):
@@ -105,13 +103,18 @@ class NewProductFrame(CTkFrame):
         self._cancel_product_button.place(x=183, y=167, anchor="nw")
         self._cancel_product_button.pack_propagate(False)
 
-    def get_raw_values(self) -> Dict[str, Any]:
+    def _get_name_fields(self)-> List[FormField]:
+        return [
+            self._name_product,
+            self._minimun_balance,
+            self._product_firm,
+            self._product_code_chb,
+            self._consumption_monthly,
+        ]
+
+    def get_raw_values(self)-> Dict[str, str]:
         return {
-            "name": self._name_product.get(),
-            "minimun_balance": self._minimun_balance.get(),
-            "product_firm": self._product_firm.get(),
-            "product_code_chb": self._product_code_chb.get(),
-            "consumption_monthly": self._consumption_monthly.get(),
+            field.name_field: field.get() for field in self._get_name_fields()
         }
 
     def clear_fields(self):
