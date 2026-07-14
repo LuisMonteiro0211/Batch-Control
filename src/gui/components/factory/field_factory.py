@@ -15,8 +15,8 @@ Uso recomendado:
     >>> data_entry.pack(pady=20)
 """
 
-from typing import Optional
-from customtkinter import CTkEntry
+from typing import List, Optional
+from customtkinter import CTkEntry, CTkSegmentedButton
 from src.gui.theme import COLORS, FONTS
 from .form_field import FormField
 
@@ -26,7 +26,7 @@ class FieldFactory:
     Classe para criar campos de entrada de texto.
     """
     @staticmethod
-    def create_entry(master, placeholder, width=159, height=27, name_field: Optional[str] = None) -> FormField:
+    def create_entry(master, placeholder,name_field: str, width=159, height=27, )-> FormField:
         """
         Método para criar um campo de entrada de texto.
 
@@ -57,9 +57,9 @@ class FieldFactory:
     def create_number_entry(
         master,
         placeholder,
+        name_field: str,
         width=159,
         height=27,
-        name_field: Optional[str] = None,
         max_digits: Optional[int] = None,
     ) -> FormField:
         """
@@ -103,7 +103,7 @@ class FieldFactory:
         return FormField(name_field=name_field, field=number_entry)
         
     @staticmethod
-    def create_data_entry(master, placeholder, width=159, height=27, name_field: Optional[str] = None) -> FormField:
+    def create_data_entry(master, placeholder, name_field: str, width=159, height=27, ) -> FormField:
         """
         Método para criar um campo de entrada de data já com formatação.
         Args:
@@ -116,7 +116,7 @@ class FieldFactory:
             FormField: Campo de entrada de data encapsulado.
         """
         form_field = FieldFactory.create_number_entry(
-            master, placeholder, width, height, name_field, max_digits=8
+            master, placeholder, name_field, width, height, max_digits=8
         )
         date_entry = form_field.field
 
@@ -126,15 +126,16 @@ class FieldFactory:
 
             date_number = "".join(filter(str.isdigit, date_entry.get()))
 
-            new_date = date_number
-            if len(date_number) > 4:
-                new_date = date_number[:2] + "/" + date_number[2:4] + "/" + date_number[4:]
-            elif len(date_number) > 2:
-                new_date = date_number[:2] + "/" + date_number[2:]
+            if isinstance(date_entry, CTkEntry):
+                new_date = date_number
+                if len(date_number) > 4:
+                    new_date = date_number[:2] + "/" + date_number[2:4] + "/" + date_number[4:]
+                elif len(date_number) > 2:
+                    new_date = date_number[:2] + "/" + date_number[2:]
 
-            if date_entry.get() != new_date:
-                date_entry.delete(0, "end")
-                date_entry.insert(0, new_date)
+                if date_entry.get() != new_date:
+                    date_entry.delete(0, "end")
+                    date_entry.insert(0, new_date)
 
         date_entry.bind("<KeyRelease>", _format_data)
 
@@ -198,7 +199,7 @@ class FieldFactory:
         #search_fn: Callable[[str], list[str]],
         width=159,
         height=27,
-        name_field: Optional[str] = None,
+        name_field: str = "",
     ) -> FormField:
 
         search_entry = CTkEntry(master=master, placeholder_text=placeholder)
@@ -247,3 +248,19 @@ class FieldFactory:
         search_entry.bind("<KeyRelease>", get_search_value)
 
         return FormField(name_field=name_field, field=search_entry)
+
+
+    @staticmethod
+    def create_segmented_button(master, list_buttons: List[str], name_field: str, width: int, height: int) -> FormField:
+        segmented_button = CTkSegmentedButton(
+            master=master,
+            values=list_buttons,
+            width=width,
+            height=height,
+            corner_radius=5,
+            fg_color=COLORS.elevado,
+            text_color=COLORS.desabilitado,
+            font=FONTS.subtitulo_menor,
+
+        )
+        return FormField(name_field=name_field, field=segmented_button)
