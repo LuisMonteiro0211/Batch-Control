@@ -18,9 +18,11 @@ class ProductFrame(CTkFrame):
     ):
         super().__init__(master)
         self._products_to_view = products_to_view
+        #Callbacks
         self._on_click_save_product = on_click_save_product
         self._on_click_save_edit_product = on_click_save_edit_product
         self._on_click_edit_product = on_click_edit_product
+        #Frames
         self._edit_product_frame: Optional[EditProductFrame] = None
         self._configure_layout()
         self._build_widgets()
@@ -108,15 +110,15 @@ class ProductFrame(CTkFrame):
             save_callback=self._on_click_save_edit_product,
             cancel_callback=self.show_new_product,
         )
+        self._edit_product_frame.set_date_product_dto()
         self._new_product_frame.place_forget()
         self._edit_product_frame.place(x=12, y=70, anchor="nw")
         self._edit_product_frame.pack_propagate(False)
+
+    def _cancel_edit_product_frame(self) -> None:
+        pass
 
     def show_new_product(self) -> None:
         if self._edit_product_frame is not None:
             self._edit_product_frame.place_forget()
         self._new_product_frame.place(x=12, y=70, anchor="nw")
-
-    @property
-    def edit_product_frame(self) -> Optional[EditProductFrame]:
-        return self._edit_product_frame

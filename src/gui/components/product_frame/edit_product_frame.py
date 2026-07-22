@@ -1,4 +1,4 @@
-from customtkinter import CTkButton, CTkFrame, CTkLabel
+from customtkinter import CTkButton, CTkEntry, CTkFrame, CTkLabel
 from src.dtos import ProductDTO
 from src.gui.theme.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory, LabelNameField, FormField
@@ -54,16 +54,18 @@ class EditProductFrame(CTkFrame):
         #Criaçõ dos campos
         self._name_product_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27, name_field="nome_produto")
         self._firm_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27, name_field="empresa")
-        self._consumption_monthly_field = FieldFactory.create_locked_entry(master=self, value=None, width=159, height=27)
         self._minimun_balance_field = FieldFactory.create_number_entry(master=self, placeholder="", width=159, height=27, name_field="consumo_mensal")
+        self._status_segmented_button = FieldFactory.create_segmented_button(master=self, list_buttons=["Ativo", "Inativo"], width=159, height=27, name_field="ativo")
+
+        #Campos bloqueados
+        self._consumption_monthly_field = FieldFactory.create_locked_entry(master=self, value=None, width=159, height=27)
         self._sku_code_field = FieldFactory.create_locked_entry(master=self, value=None, width=159,
         height=27)
         self._date_creation_field = FieldFactory.create_locked_entry(master=self, width=159, height=27, value=None)
         self.date_update_field = FieldFactory.create_locked_entry(master=self, width=159, height=27, value=None)
-        self._status_segmented_button = FieldFactory.create_segmented_button(master=self, list_buttons=["Ativo", "Inativo"], width=159, height=27, name_field="ativo")
 
         #Criação dos botões
-        self._save_button = CTkButton(master=self, text="Salvar Alterações", command=self._save_callback, width=126, height=27, fg_color=COLORS.botao_principal, hover_color=COLORS.botao_selecionado, text_color=COLORS.botao_principal, font=FONTS.botao_principal, corner_radius=5, border_width=5)
+        self._save_button = CTkButton(master=self, text="Salvar Alterações", command=self._save_callback, width=126, height=27, fg_color=COLORS.botao_principal, hover_color=COLORS.botao_selecionado, text_color=COLORS.botao_principal, font=FONTS.botao_primario, corner_radius=5, border_width=5)
 
         self._cancel_button = CTkButton(master=self, text="Cancelar", command=self._cancel_callback, width=126, height=27, fg_color=COLORS.elevado, hover_color=COLORS.botao_selecionado, text_color=COLORS.botao_principal, font=FONTS.texto_tabela, corner_radius=5, border_width=5, border_color=COLORS.bordas)
 
@@ -88,5 +90,49 @@ class EditProductFrame(CTkFrame):
         }
 
 
-    def set_date_product_dto(self, product_dto: ProductDTO):
-        pass
+    def set_date_product_dto(self):
+        """
+        Função para setar os valores do frame de edição com os valores do produto.
+        """
+
+        #Setando os valores dos campos editáveis
+        list_editable_fields = [
+            self._name_product_field,
+            self._firm_field,
+            self._minimun_balance_field,
+            #self._status_segmented_button,
+        ]
+        #Listando os valores dos campos editáveis
+        list_values = [
+            self._product_dto.name,
+            self._product_dto.product_firm,
+            self._product_dto.minimun_balance,
+            #self._product_dto.status,
+        ]
+
+        for index, editable_field in enumerate(list_editable_fields):
+            if type(editable_field.field) == CTkEntry:
+                FieldFactory.set_value_entry(
+                    entry=editable_field.field,
+                    value=str(list_values[index]))
+
+        #Setando os valores dos campos bloqueados
+        FieldFactory.set_value_locked_entry(
+            entry=self._consumption_monthly_field, 
+            value=str(self._product_dto.consumption_monthly)
+        )
+
+        FieldFactory.set_value_locked_entry(
+            entry=self._sku_code_field,
+            value=str(self._product_dto.product_code_chb)
+        )
+
+        FieldFactory.set_value_locked_entry(
+            entry=self._date_creation_field,
+            value=str(self._product_dto.created_at)
+        )
+
+        FieldFactory.set_value_locked_entry(
+            entry=self.date_update_field,
+            value=str(self._product_dto.updated_at)
+        )
