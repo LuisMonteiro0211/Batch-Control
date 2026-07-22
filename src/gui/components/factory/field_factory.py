@@ -52,6 +52,19 @@ class FieldFactory:
             font=FONTS.subtitulo_menor,
         )
         return FormField(name_field=name_field, field=entry)
+
+    @staticmethod
+    def set_value_entry(entry: CTkEntry, value: str):
+        """
+        Método para definir o valor de um campo de entrada de texto.
+        Args:
+            entry: Campo de entrada de texto.
+            value: Valor do campo de entrada.
+        Returns:
+            None
+        """
+        entry.delete(0, "end")
+        entry.insert(0, value)
     
     @staticmethod
     def create_number_entry(
