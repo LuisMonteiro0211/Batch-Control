@@ -68,5 +68,15 @@ class ProductService:
         return list_product_card_dtos
 
     def get_product_by_id(self, id_produto: int) -> ProductDTO:
+        """
+        Função para obter um produto pelo ID.
+        
+        Args:
+            id_produto: ID do produto a ser obtido.
+
+        Returns:
+            ProductDTO: Produto encontrado como dicionário.
+        """
+        
         product = self._product_repository.get_by_id(id=id_produto)
         return dict_to_product_dto(product=product)
