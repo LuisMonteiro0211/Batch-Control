@@ -18,12 +18,14 @@ class ProductFrame(CTkFrame):
     ):
         super().__init__(master)
         self._products_to_view = products_to_view
+        self._current_frame = None
         #Callbacks
         self._on_click_save_product = on_click_save_product
         self._on_click_save_edit_product = on_click_save_edit_product
         self._on_click_edit_product = on_click_edit_product
         #Frames
         self._edit_product_frame: Optional[EditProductFrame] = None
+        self._state_product_frame = None
         self._configure_layout()
         self._build_widgets()
         self._layout_widgets()
@@ -52,6 +54,7 @@ class ProductFrame(CTkFrame):
         )
 
         self._new_product_frame = NewProductFrame(self, on_click_save_product=self._on_click_save_product)
+        self._state_product_frame = "new_product"
 
         self._product_search_frame = CTkFrame(self,
         width=685,
@@ -81,9 +84,9 @@ class ProductFrame(CTkFrame):
         self._product_table.initialization()
 
     def _layout_widgets(self):
-        self._title_product.place(x=12, y=18, anchor="nw")
+        self._title_product.place(x=12, y=8, anchor="nw")
         self._title_product.pack_propagate(False)
-        self._subtitle_product.place(x=12, y=40, anchor="nw")
+        self._subtitle_product.place(x=12, y=30, anchor="nw")
         self._subtitle_product.pack_propagate(False)
 
         self._new_product_frame.place(x=12, y=70, anchor="nw")
@@ -101,24 +104,46 @@ class ProductFrame(CTkFrame):
         self._product_table.pack_propagate(False)
 
     def show_edit_product(self, product_dto: ProductDTO) -> None:
-        if self._edit_product_frame is not None:
-            self._edit_product_frame.destroy()
-
         self._edit_product_frame = EditProductFrame(
             self,
             product_dto=product_dto,
             save_callback=self._on_click_save_edit_product,
-            cancel_callback=self.show_new_product,
+            cancel_callback=self._cancel_edit_product_frame,
         )
         self._edit_product_frame.set_date_product_dto()
-        self._new_product_frame.place_forget()
-        self._edit_product_frame.place(x=12, y=70, anchor="nw")
+        self._edit_product_frame.place(x=12, y=54, anchor="nw")
         self._edit_product_frame.pack_propagate(False)
+        self._state_product_frame = "edit_product"
+        self.hide_new_product_frame()
 
     def _cancel_edit_product_frame(self) -> None:
-        pass
+        if self._edit_product_frame is not None:
+            self.hide_edit_product_frame()
+            self._state_product_frame = "new_product"
+            self.show_new_product()
 
     def show_new_product(self) -> None:
+        """
+        Mostra o frame de novo produto.
+        """
         if self._edit_product_frame is not None:
-            self._edit_product_frame.place_forget()
+            self.hide_edit_product_frame()
         self._new_product_frame.place(x=12, y=70, anchor="nw")
+
+    def hide_new_product_frame(self) -> None:
+        """
+        Oculta o frame de novo produto.
+        """
+        if self._new_product_frame is not None:
+            self._new_product_frame.place_forget()
+
+    def hide_edit_product_frame(self) -> None:
+        """
+        Oculta o frame de edição de produto.
+        """
+        if self._edit_product_frame is not None:
+            self._edit_product_frame.destroy()
+
+    def get_state_product_frame(self) -> Optional[str]:
+        if self._state_product_frame is not None:
+            return self._state_product_frame

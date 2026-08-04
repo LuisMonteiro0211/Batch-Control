@@ -4,6 +4,11 @@ from src.gui.theme.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory, LabelNameField, FormField
 from typing import Any, Callable, Dict, List, Tuple
 
+PRIMEIRA_MARGEM_LABEL, SEGUNDA_MARGEM_LABEL, TERCEIRA_MARGEM_LABEL = 24, 230, 436
+PRIMEIRA_LINHA_LABEL, SEGUNDA_LINHA_LABEL, TERCEIRA_LINHA_LABEL = 24, 87, 150
+
+PRIMEIRA_MARGEM_CAMPO, SEGUNDA_MARGEM_CAMPO, TERCEIRA_MARGEM_CAMPO = 24, 230, 436
+PRIMEIRA_LINHA_CAMPO, SEGUNDA_LINHA_CAMPO, TERCEIRA_LINHA_CAMPO = 48, 111, 174
 
 class EditProductFrame(CTkFrame):
     def __init__(
@@ -22,6 +27,7 @@ class EditProductFrame(CTkFrame):
     def _setup_ui(self):
         self._configure_layout()
         self._build_widgets()
+        self._layout_widgets()
 
     def _configure_layout(self):
         self.configure(
@@ -49,7 +55,7 @@ class EditProductFrame(CTkFrame):
         self._sku_code_label = LabelNameField.create_label_name_field(master=self, label="Código CHB")
         self._status_label = LabelNameField.create_label_name_field(master=self,label="Status do Produto")
         self._date_creation_label = LabelNameField.create_label_name_field(master=self, label="Data de Cadastro")
-        self.date_update_label = LabelNameField.create_label_name_field(master=self, label="Atualizado em")
+        self._date_update_label = LabelNameField.create_label_name_field(master=self, label="Atualizado em")
 
         #Criaçõ dos campos
         self._name_product_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27, name_field="nome_produto")
@@ -62,12 +68,38 @@ class EditProductFrame(CTkFrame):
         self._sku_code_field = FieldFactory.create_locked_entry(master=self, value=None, width=159,
         height=27)
         self._date_creation_field = FieldFactory.create_locked_entry(master=self, width=159, height=27, value=None)
-        self.date_update_field = FieldFactory.create_locked_entry(master=self, width=159, height=27, value=None)
+        self._date_update_field = FieldFactory.create_locked_entry(master=self, width=159, height=27, value=None)
 
         #Criação dos botões
-        self._save_button = CTkButton(master=self, text="Salvar Alterações", command=self._save_callback, width=126, height=27, fg_color=COLORS.botao_principal, hover_color=COLORS.botao_selecionado, text_color=COLORS.botao_principal, font=FONTS.botao_primario, corner_radius=5, border_width=5)
+        self._save_button = CTkButton(master=self, text="Salvar Alterações", command=self._save_callback, width=126, height=27, fg_color=COLORS.botao_principal, text_color=COLORS.texto_botao_principal, font=FONTS.botao_primario, corner_radius=5, border_width=1)
 
-        self._cancel_button = CTkButton(master=self, text="Cancelar", command=self._cancel_callback, width=126, height=27, fg_color=COLORS.elevado, hover_color=COLORS.botao_selecionado, text_color=COLORS.botao_principal, font=FONTS.texto_tabela, corner_radius=5, border_width=5, border_color=COLORS.bordas)
+        self._cancel_button = CTkButton(master=self, text="Cancelar", command=self._cancel_callback, width=69, height=27, fg_color=COLORS.elevado, hover_color=COLORS.botao_selecionado, text_color=COLORS.texto_botao_principal, font=FONTS.texto_tabela, corner_radius=5, border_width=1, border_color=COLORS.bordas)
+
+    def _layout_widgets(self):
+        #Layout dos labels
+        self._name_product_label.place(x=PRIMEIRA_MARGEM_LABEL, y=PRIMEIRA_LINHA_LABEL)
+        self._firm_label.place(x=PRIMEIRA_MARGEM_LABEL, y=SEGUNDA_LINHA_LABEL)
+        self._consumption_monthly_label.place(x=PRIMEIRA_MARGEM_LABEL, y=TERCEIRA_LINHA_LABEL)
+        self._minimun_balance_label.place(x=SEGUNDA_MARGEM_LABEL, y=PRIMEIRA_LINHA_LABEL)
+        self._sku_code_label.place(x=SEGUNDA_MARGEM_LABEL, y=SEGUNDA_LINHA_LABEL)
+        self._status_label.place(x=SEGUNDA_MARGEM_LABEL, y=TERCEIRA_LINHA_LABEL)
+        self._date_creation_label.place(x=TERCEIRA_MARGEM_LABEL, y=PRIMEIRA_LINHA_LABEL)
+        self._date_update_label.place(x=TERCEIRA_MARGEM_LABEL, y=SEGUNDA_LINHA_LABEL)
+
+        #Layout dos campos
+        self._name_product_field.field.place(x=PRIMEIRA_MARGEM_CAMPO, y=PRIMEIRA_LINHA_CAMPO)
+        self._firm_field.field.place(x=PRIMEIRA_MARGEM_CAMPO, y=SEGUNDA_LINHA_CAMPO)
+        self._consumption_monthly_field.place(x=PRIMEIRA_MARGEM_CAMPO, y=TERCEIRA_LINHA_CAMPO)
+        self._minimun_balance_field.field.place(x=SEGUNDA_MARGEM_CAMPO, y=PRIMEIRA_LINHA_CAMPO)
+        self._sku_code_field.place(x=SEGUNDA_MARGEM_CAMPO, y=SEGUNDA_LINHA_CAMPO)
+        self._status_segmented_button.field.place(x=SEGUNDA_MARGEM_CAMPO, y=TERCEIRA_LINHA_CAMPO)
+        self._date_creation_field.place(x=TERCEIRA_MARGEM_CAMPO, y=PRIMEIRA_LINHA_CAMPO)
+        self._date_update_field.place(x=TERCEIRA_MARGEM_CAMPO, y=SEGUNDA_LINHA_CAMPO)
+
+        #Layout dos botões
+        self._save_button.place(x=481, y=180, anchor="nw")
+        self._cancel_button.place(x=405, y=180, anchor="nw")
+
 
     def _get_editable_fields(self)-> List[FormField]:
         return [
@@ -133,6 +165,6 @@ class EditProductFrame(CTkFrame):
         )
 
         FieldFactory.set_value_locked_entry(
-            entry=self.date_update_field,
+            entry=self._date_update_field,
             value=str(self._product_dto.updated_at)
         )

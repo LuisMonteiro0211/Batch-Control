@@ -114,7 +114,7 @@ class ProductTable(ScrollbarFrame):
                 hover_color="#3A3A3A",
                 text_color=COLORS.texto_secundario,
                 font=FONTS.texto_tabela,
-                command=lambda product_id=product.product_id: self._on_edit_product(product_id)
+                    command=lambda product_id=product.product_id: self._on_edit_product(product_id)
             )
 
             # Layout card item
