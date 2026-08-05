@@ -1,3 +1,15 @@
+"""
+Módulo da tela de splash (carregamento inicial).
+
+Exibe logo, barra de progresso e mensagens enquanto o Loader
+inicializa serviços, banco de dados e contexto da aplicação.
+
+Métodos públicos:
+    - start(): Executa o carregamento e fecha a splash.
+    - get_context(): Retorna o AppContext carregado.
+    - get_error(): Retorna erro capturado durante o carregamento.
+"""
+
 from typing import Optional
 from customtkinter import CTk, CTkImage, CTkLabel, CTkProgressBar
 from PIL import Image
@@ -8,6 +20,13 @@ from src.bootstrap import AppContext
 from src.paths import icon_path
 
 class SplashScreen(CTk):
+    """
+    Janela de carregamento exibida antes da aplicação principal.
+
+    Executa o Loader em background e disponibiliza o contexto
+    ou erro capturado após o fechamento da janela.
+    """
+
     def __init__(self):
         super().__init__()
         self._icon_image = CTkImage(
@@ -68,12 +87,10 @@ class SplashScreen(CTk):
     #================================================================
     def start(self) -> None:
         """
-        Inicia o loader da aplicação.
-        Se ocorrer um erro, ele é armazenado em self._error.
-        A janela é destruída e a aplicação é encerrada.
+        Executa o Loader e fecha a splash ao concluir.
 
-        Returns:
-            None
+        Erros de BatchControlError são capturados em ``self._error``
+        sem interromper o fechamento da janela.
         """
         try:
             self._loader.run()
@@ -87,22 +104,25 @@ class SplashScreen(CTk):
 
     def get_context(self) -> AppContext:
         """
-        Retorna o contexto da aplicação.
+        Retorna o contexto da aplicação carregado pelo Loader.
 
         Returns:
-            AppContext: Contexto da aplicação.
+            AppContext com serviços e dados do dashboard.
+
+        Raises:
+            RuntimeError: Se o contexto não foi inicializado.
         """
         
         if self.context is None:
             raise RuntimeError("Contexto da aplicação não foi inicializado.")
         return self.context
 
-    def get_error(self):
+    def get_error(self) -> Optional[BatchControlError]:
         """
-        Retorna o erro da aplicação.
+        Retorna o erro capturado durante o carregamento, se houver.
 
         Returns:
-            BatchControlError: Erro da aplicação.
+            BatchControlError ou None se o carregamento foi bem-sucedido.
         """
         return self._error
 

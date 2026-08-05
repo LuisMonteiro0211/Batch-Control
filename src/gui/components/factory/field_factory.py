@@ -214,7 +214,21 @@ class FieldFactory:
         height=27,
         name_field: str = "",
     ) -> FormField:
+        """
+        Cria um campo de busca com debounce de 300 ms ao digitar.
 
+        A busca só é disparada quando o texto tem 2 ou mais caracteres.
+
+        Args:
+            master: Widget pai do campo.
+            placeholder: Texto de placeholder.
+            width: Largura do campo.
+            height: Altura do campo.
+            name_field: Identificador do campo para coleta de valores.
+
+        Returns:
+            FormField: Campo de busca encapsulado.
+        """
         search_entry = CTkEntry(master=master, placeholder_text=placeholder)
         search_entry.configure(
             width=width,
@@ -265,6 +279,19 @@ class FieldFactory:
 
     @staticmethod
     def create_segmented_button(master, list_buttons: List[str], name_field: str, width: int, height: int) -> FormField:
+        """
+        Cria um botão segmentado para seleção entre opções (ex: Ativo/Inativo).
+
+        Args:
+            master: Widget pai.
+            list_buttons: Lista de opções exibidas no segmento.
+            name_field: Identificador do campo para coleta de valores.
+            width: Largura do widget.
+            height: Altura do widget.
+
+        Returns:
+            FormField: Botão segmentado encapsulado.
+        """
         segmented_button = CTkSegmentedButton(
             master=master,
             values=list_buttons,

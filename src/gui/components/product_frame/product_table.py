@@ -1,16 +1,36 @@
+"""
+Módulo da tabela de produtos com alertas de estoque.
+
+Exibe uma lista rolável de produtos abaixo do saldo mínimo,
+com ícones de status e botão de edição por linha.
+
+Métodos públicos:
+    - initialization(): Popula a tabela com os produtos ou mensagem vazia.
+"""
+
 from customtkinter import CTkButton, CTkFrame, CTkLabel
 from src.dtos import ProductCardDTO
 from src.gui.components.scrollbar_frame import ScrollbarFrame
 from src.gui.components.factory import LabelValueTable
 from src.gui.theme import COLORS, FONTS
 from src.helpers.image_helper import icon_button, resize_image
-from src.model import stock_level
 from src.paths import icon_path
 from typing import Callable, List
 
 from src.model.stock_level import StockLevel
 from src.exceptions.exceptions import BatchControlError
+
+
 class ProductTable(ScrollbarFrame):
+    """
+    Tabela rolável de produtos com alertas de estoque.
+
+    Args:
+        master: Widget pai.
+        products_to_view: Lista de produtos a exibir na tabela.
+        on_edit_product: Callback recebendo o product_id ao clicar em "Editar".
+    """
+
     def __init__(self, master, products_to_view: List[ProductCardDTO], on_edit_product: Callable[[int], None]):
         super().__init__(master)
         self._on_edit_product = on_edit_product
@@ -20,7 +40,8 @@ class ProductTable(ScrollbarFrame):
         self._icon_check = icon_button("check.png", size=(16, 16))
         self._products_to_view = products_to_view
 
-    def _create_header_frame(self):
+    def _create_header_frame(self) -> None:
+        """Cria a linha de cabeçalho com os títulos das colunas."""
         self._header_frame = CTkFrame(
             self,
             width=681,
@@ -39,7 +60,8 @@ class ProductTable(ScrollbarFrame):
         self._label_status = LabelValueTable.create_label_value_table(self._header_frame, "Status")
         self._label_actions = LabelValueTable.create_label_value_table(self._header_frame, "Ações")
 
-    def _layout_table_header(self):
+    def _layout_table_header(self) -> None:
+        """Posiciona os labels do cabeçalho."""
         self._header_frame.pack(side="top", fill="x")
         self._header_frame.pack_propagate(False)
         self._label_code.place(x=7, y=2, anchor="nw")
@@ -57,15 +79,13 @@ class ProductTable(ScrollbarFrame):
         self._label_actions.place(x=609, y=2, anchor="nw")
         self._label_actions.pack_propagate(False)
 
-    def _create_cards_items(self):
+    def _create_cards_items(self) -> List[CTkFrame]:
         """
-         Para cada produto na lista da lista de produtos vai criar um card item para ser exibido na tabela.
-         Args:
-            None
-         Returns:
-            List[CTkFrame]: Lista de cards items criados para cada produto.
-         """
+        Cria uma linha (card) na tabela para cada produto da lista.
 
+        Returns:
+            Lista de CTkFrame, um por produto, prontos para inserção na tabela.
+        """
         path_icon_yellow_alert = icon_path("circle-alert_yellow.png")
         path_icon_red_alert = icon_path("circle-alert_red.png")
         path_icon_green_alert = icon_path("circle-alert_green.png")
@@ -78,7 +98,7 @@ class ProductTable(ScrollbarFrame):
         }
 
         products = self._products_to_view
-        product_cards:List[CTkFrame] = []
+        product_cards: List[CTkFrame] = []
 
         for product in products:
             card_item: CTkFrame = CTkFrame(
@@ -91,17 +111,15 @@ class ProductTable(ScrollbarFrame):
                 fg_color=COLORS.fundo_primario,
             )
 
-            # Build label value table for each product
-
             label_sku = LabelValueTable.create_label_value_table(card_item, product.product_code_chb)
             label_name_product = LabelValueTable.create_label_value_table(card_item, product.product_name)
             label_product_firm = LabelValueTable.create_label_value_table(card_item, product.product_firm)
             label_minimum_balance = LabelValueTable.create_label_value_table(card_item, product.minimun_balance)
             label_current_balance = LabelValueTable.create_label_value_table(card_item, product.current_balance)
-            
+
             if not product.stock_level:
                 raise BatchControlError("Stock level is required")
-            
+
             status_icon = TABLE_ICONS.get(product.stock_level)
             label_status = CTkLabel(card_item, text="", image=status_icon, compound="left")
             button_action = CTkButton(
@@ -117,8 +135,6 @@ class ProductTable(ScrollbarFrame):
                     command=lambda product_id=product.product_id: self._on_edit_product(product_id)
             )
 
-            # Layout card item
-
             label_sku.place(x=9, y=2, anchor="nw")
             label_name_product.place(x=119, y=2, anchor="nw")
             label_product_firm.place(x=222, y=2, anchor="nw")
@@ -127,12 +143,12 @@ class ProductTable(ScrollbarFrame):
             label_status.place(x=551, y=2, anchor="nw")
             button_action.place(x=603, y=2, anchor="nw")
 
-            product_cards.append(card_item) # Adiciona o card item na lista de cards items
+            product_cards.append(card_item)
 
         return product_cards
 
-    def initialization(self):
-
+    def initialization(self) -> None:
+        """Popula a tabela com os produtos ou exibe mensagem quando a lista está vazia."""
         if self._products_to_view is not None:
             product_cards = self._create_cards_items()
 
@@ -140,8 +156,3 @@ class ProductTable(ScrollbarFrame):
                 self.insert_frame_item(product_card)
         else:
             self.initialization_message("Nenhum alerta disponível", self._icon_check)
-
-
-
-
-    

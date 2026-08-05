@@ -1,3 +1,9 @@
+"""
+Módulo do frame principal de lotes.
+
+Compõe o formulário de cadastro, busca e tabela de lotes.
+"""
+
 from customtkinter import CTkFrame, CTkLabel
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
@@ -5,6 +11,13 @@ from .new_batch_frame import NewBatchFrame
 from .batch_table import BatchTable
 
 class BatchFrame(CTkFrame):
+    """
+    Frame principal da tela de lotes.
+
+    Args:
+        master: Widget pai.
+    """
+
     def __init__(self, master):
         super().__init__(master)
         self._setup_ui()

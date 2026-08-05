@@ -1,3 +1,9 @@
+"""
+Módulo da tabela de lotes.
+
+Exibe uma lista rolável de lotes com cabeçalho de colunas.
+"""
+
 from customtkinter import CTkFrame, CTkImage
 from src.gui.components.scrollbar_frame import ScrollbarFrame
 from src.gui.components.factory import LabelValueTable
@@ -5,6 +11,13 @@ from src.gui.theme import COLORS
 from src.helpers.image_helper import icon_button
 
 class BatchTable(ScrollbarFrame):
+    """
+    Tabela rolável de lotes.
+
+    Args:
+        master: Widget pai.
+    """
+
     def __init__(self, master):
         super().__init__(master)
         self._setup_ui()

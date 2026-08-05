@@ -1,8 +1,25 @@
+"""
+Módulo do formulário de cadastro de novo lote.
+
+Métodos públicos:
+    - get_values_from_frame(): Coleta os valores e retorna um BatchDTO.
+    - clear_fields(): Limpa todos os campos de entrada.
+"""
+
 from customtkinter import CTkFrame, CTkLabel, CTkButton
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory, LabelNameField
 from src.dtos.batch_dto import BatchDTO
+
+
 class NewBatchFrame(CTkFrame):
+    """
+    Formulário para cadastro de um novo lote.
+
+    Args:
+        master: Widget pai (BatchFrame).
+    """
+
     def __init__(self, master):
         super().__init__(master)
         self._setup_ui()
@@ -166,13 +183,12 @@ class NewBatchFrame(CTkFrame):
         self._cancel_batch_button.place(x=391, y=167, anchor="nw")
         self._cancel_batch_button.pack_propagate(False)
 
-    def get_values_from_frame(self):
-        """Método para obter os valores do frame de novo lote.
-        
-        Args:
-            None
+    def get_values_from_frame(self) -> BatchDTO:
+        """
+        Coleta os valores atuais de todos os campos e retorna um BatchDTO.
+
         Returns:
-            BatchDTO: Objeto DTO com os valores do frame de novo lote.
+            BatchDTO com os dados digitados no formulário.
         """
         return BatchDTO(
             batch=self._field_batch.get(),
@@ -185,14 +201,8 @@ class NewBatchFrame(CTkFrame):
             nf=self._field_nf.get(),
         )
 
-    def clear_fields(self):
-        """Método para limpar os campos do frame de novo lote.
-        
-        Args:
-            None
-        Returns:
-            None
-        """
+    def clear_fields(self) -> None:
+        """Limpa o conteúdo de todos os campos de entrada."""
         for form_field in (
             self._field_batch,
             self._field_code_chb,

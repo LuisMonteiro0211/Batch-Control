@@ -1,21 +1,39 @@
+"""
+Módulo do formulário de cadastro de novo produto.
+
+Métodos públicos:
+    - get_raw_values(): Coleta os valores dos campos do formulário.
+    - clear_fields(): Limpa todos os campos de entrada.
+"""
+
 from customtkinter import CTkButton, CTkFrame, CTkLabel
-from src.exceptions.exceptions import ValidationError
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory, LabelNameField, FormField
-from typing import Callable, Dict, List, Tuple, Any
+from typing import Callable, Dict, List
+
 
 class NewProductFrame(CTkFrame):
+    """
+    Formulário para cadastro de um novo produto.
+
+    Args:
+        parent: Widget pai (ProductFrame).
+        on_click_save_product: Callback executado ao clicar em "Salvar Produto".
+    """
+
     def __init__(self, parent, on_click_save_product: Callable):
         super().__init__(parent)
         self._on_click_save_product = on_click_save_product
         self._setup_ui()
 
-    def _setup_ui(self):
+    def _setup_ui(self) -> None:
+        """Configura layout, cria widgets e posiciona na tela."""
         self._configure_layout()
         self._build_widgets()
         self._layout_widgets()
 
-    def _configure_layout(self):
+    def _configure_layout(self) -> None:
+        """Define dimensões, cores e borda do frame."""
         self.configure(
             width=389,
             height=207,
@@ -25,7 +43,8 @@ class NewProductFrame(CTkFrame):
             border_color=COLORS.bordas,
         )
 
-    def _build_widgets(self):
+    def _build_widgets(self) -> None:
+        """Cria labels, campos de entrada e botões de ação."""
         self._title_new_product = CTkLabel(
             self,
             text="NOVO PRODUTO",
@@ -75,7 +94,8 @@ class NewProductFrame(CTkFrame):
             border_color=COLORS.bordas,
         )
 
-    def _layout_widgets(self):
+    def _layout_widgets(self) -> None:
+        """Posiciona os widgets na tela."""
         self._title_new_product.place(x=10, y=4, anchor="nw")
         self._title_new_product.pack_propagate(False)
         self._name_product_label.place(x=10, y=30, anchor="nw")
@@ -103,7 +123,8 @@ class NewProductFrame(CTkFrame):
         self._cancel_product_button.place(x=183, y=167, anchor="nw")
         self._cancel_product_button.pack_propagate(False)
 
-    def _get_name_fields(self)-> List[FormField]:
+    def _get_name_fields(self) -> List[FormField]:
+        """Retorna todos os campos do formulário."""
         return [
             self._name_product,
             self._minimun_balance,
@@ -112,19 +133,19 @@ class NewProductFrame(CTkFrame):
             self._consumption_monthly,
         ]
 
-    def get_raw_values(self)-> Dict[str, str]:
+    def get_raw_values(self) -> Dict[str, str]:
+        """
+        Coleta os valores atuais de todos os campos.
+
+        Returns:
+            Dicionário mapeando name_field → valor digitado.
+        """
         return {
             field.name_field: field.get() for field in self._get_name_fields()
         }
 
-    def clear_fields(self):
-        """Método para limpar os campos do frame de novo produto.
-        
-        Args:
-            None
-        Returns:
-            None
-        """
+    def clear_fields(self) -> None:
+        """Limpa o conteúdo de todos os campos de entrada."""
         for form_field in (
             self._name_product,
             self._minimun_balance,

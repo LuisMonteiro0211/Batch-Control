@@ -1,3 +1,14 @@
+"""
+Módulo do formulário de edição de produto.
+
+Exibe campos editáveis (nome, empresa, saldo mínimo, status) e campos
+somente leitura (consumo, SKU, datas) preenchidos a partir do ProductDTO.
+
+Métodos públicos:
+    - get_raw_values(): Coleta os valores dos campos editáveis.
+    - set_date_product_dto(): Preenche todos os campos com os dados do DTO.
+"""
+
 from customtkinter import CTkButton, CTkEntry, CTkFrame, CTkLabel, CTkSegmentedButton
 from src.dtos import ProductDTO
 from src.gui.theme.theme import COLORS, FONTS
@@ -10,7 +21,18 @@ PRIMEIRA_LINHA_LABEL, SEGUNDA_LINHA_LABEL, TERCEIRA_LINHA_LABEL = 24, 87, 150
 PRIMEIRA_MARGEM_CAMPO, SEGUNDA_MARGEM_CAMPO, TERCEIRA_MARGEM_CAMPO = 24, 230, 436
 PRIMEIRA_LINHA_CAMPO, SEGUNDA_LINHA_CAMPO, TERCEIRA_LINHA_CAMPO = 48, 111, 174
 
+
 class EditProductFrame(CTkFrame):
+    """
+    Formulário de edição de um produto existente.
+
+    Args:
+        parent: Widget pai (ProductFrame).
+        product_dto: Dados do produto a ser editado.
+        save_callback: Função chamada ao clicar em "Salvar Alterações".
+        cancel_callback: Função chamada ao clicar em "Cancelar".
+    """
+
     def __init__(
         self,
         parent,
@@ -24,12 +46,14 @@ class EditProductFrame(CTkFrame):
         self._cancel_callback = cancel_callback
         self._setup_ui()
 
-    def _setup_ui(self):
+    def _setup_ui(self) -> None:
+        """Configura layout, cria widgets e posiciona na tela."""
         self._configure_layout()
         self._build_widgets()
         self._layout_widgets()
 
-    def _configure_layout(self):
+    def _configure_layout(self) -> None:
+        """Define dimensões, cores e borda do frame."""
         self.configure(
             width=619,
             height=224,
@@ -39,7 +63,8 @@ class EditProductFrame(CTkFrame):
             border_color=COLORS.bordas,
         )
 
-    def _build_widgets(self):
+    def _build_widgets(self) -> None:
+        """Cria labels, campos editáveis, campos bloqueados e botões."""
         self._title_edit_product = CTkLabel(
             self,
             text="EDITAR PRODUTO",
@@ -47,7 +72,6 @@ class EditProductFrame(CTkFrame):
             font=FONTS.texto_tabela,
         )
 
-        #Criação de labels
         self._name_product_label = LabelNameField.create_label_name_field(self, "Produto")
         self._firm_label = LabelNameField.create_label_name_field(master=self, label="Empresa")
         self._consumption_monthly_label = LabelNameField.create_label_name_field(master=self, label="Consumo Médio")
@@ -57,26 +81,23 @@ class EditProductFrame(CTkFrame):
         self._date_creation_label = LabelNameField.create_label_name_field(master=self, label="Data de Cadastro")
         self._date_update_label = LabelNameField.create_label_name_field(master=self, label="Atualizado em")
 
-        #Criaçõ dos campos
         self._name_product_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27, name_field="nome_produto")
         self._firm_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27, name_field="empresa")
         self._minimun_balance_field = FieldFactory.create_number_entry(master=self, placeholder="", width=159, height=27, name_field="consumo_mensal")
         self._status_segmented_button = FieldFactory.create_segmented_button(master=self, list_buttons=["Ativo", "Inativo"], width=159, height=27, name_field="ativo")
 
-        #Campos bloqueados
         self._consumption_monthly_field = FieldFactory.create_locked_entry(master=self, value=None, width=159, height=27)
         self._sku_code_field = FieldFactory.create_locked_entry(master=self, value=None, width=159,
         height=27)
         self._date_creation_field = FieldFactory.create_locked_entry(master=self, width=159, height=27, value=None)
         self._date_update_field = FieldFactory.create_locked_entry(master=self, width=159, height=27, value=None)
 
-        #Criação dos botões
         self._save_button = CTkButton(master=self, text="Salvar Alterações", command=self._save_callback, width=126, height=27, fg_color=COLORS.botao_principal, text_color=COLORS.texto_botao_principal, font=FONTS.botao_primario, corner_radius=5, border_width=1)
 
         self._cancel_button = CTkButton(master=self, text="Cancelar", command=self._cancel_callback, width=69, height=27, fg_color=COLORS.elevado, hover_color=COLORS.botao_selecionado, text_color=COLORS.texto_botao_principal, font=FONTS.texto_tabela, corner_radius=5, border_width=1, border_color=COLORS.bordas)
 
-    def _layout_widgets(self):
-        #Layout dos labels
+    def _layout_widgets(self) -> None:
+        """Posiciona labels, campos e botões usando coordenadas fixas."""
         self._name_product_label.place(x=PRIMEIRA_MARGEM_LABEL, y=PRIMEIRA_LINHA_LABEL)
         self._firm_label.place(x=PRIMEIRA_MARGEM_LABEL, y=SEGUNDA_LINHA_LABEL)
         self._consumption_monthly_label.place(x=PRIMEIRA_MARGEM_LABEL, y=TERCEIRA_LINHA_LABEL)
@@ -86,7 +107,6 @@ class EditProductFrame(CTkFrame):
         self._date_creation_label.place(x=TERCEIRA_MARGEM_LABEL, y=PRIMEIRA_LINHA_LABEL)
         self._date_update_label.place(x=TERCEIRA_MARGEM_LABEL, y=SEGUNDA_LINHA_LABEL)
 
-        #Layout dos campos
         self._name_product_field.field.place(x=PRIMEIRA_MARGEM_CAMPO, y=PRIMEIRA_LINHA_CAMPO)
         self._firm_field.field.place(x=PRIMEIRA_MARGEM_CAMPO, y=SEGUNDA_LINHA_CAMPO)
         self._consumption_monthly_field.place(x=PRIMEIRA_MARGEM_CAMPO, y=TERCEIRA_LINHA_CAMPO)
@@ -96,12 +116,11 @@ class EditProductFrame(CTkFrame):
         self._date_creation_field.place(x=TERCEIRA_MARGEM_CAMPO, y=PRIMEIRA_LINHA_CAMPO)
         self._date_update_field.place(x=TERCEIRA_MARGEM_CAMPO, y=SEGUNDA_LINHA_CAMPO)
 
-        #Layout dos botões
         self._save_button.place(x=481, y=180, anchor="nw")
         self._cancel_button.place(x=405, y=180, anchor="nw")
 
-
-    def _get_editable_fields(self)-> List[FormField]:
+    def _get_editable_fields(self) -> List[FormField]:
+        """Retorna a lista de campos que o usuário pode alterar."""
         return [
             self._name_product_field,
             self._firm_field,
@@ -109,31 +128,29 @@ class EditProductFrame(CTkFrame):
             self._status_segmented_button
         ]
 
-    def get_raw_values(self)-> Dict[str, str]:
+    def get_raw_values(self) -> Dict[str, str]:
         """
-        Método para obter os valores dos campos editáveis.
-        Args:
-            None
+        Coleta os valores atuais dos campos editáveis.
+
         Returns:
-            Dict[str, str]: Dicionário com os valores dos campos editáveis.
+            Dicionário mapeando name_field → valor digitado.
         """
         return {
             field.name_field: field.get() for field in self._get_editable_fields()
         }
 
-
-    def set_date_product_dto(self):
+    def set_date_product_dto(self) -> None:
         """
-        Função para setar os valores do frame de edição com os valores do produto.
-        """
+        Preenche todos os campos do formulário com os dados do ProductDTO.
 
-        #Setando os valores dos campos editáveis
+        Campos editáveis recebem valor via set_value_entry; campos bloqueados
+        e o segmented button de status são preenchidos separadamente.
+        """
         list_editable_fields = [
             self._name_product_field,
             self._firm_field,
             self._minimun_balance_field,
         ]
-        #Listando os valores dos campos editáveis
         list_values = [
             self._product_dto.name,
             self._product_dto.product_firm,
@@ -146,9 +163,8 @@ class EditProductFrame(CTkFrame):
                     entry=editable_field.field,
                     value=str(list_values[index]))
 
-        #Setando os valores dos campos bloqueados
         FieldFactory.set_value_locked_entry(
-            entry=self._consumption_monthly_field, 
+            entry=self._consumption_monthly_field,
             value=str(self._product_dto.consumption_monthly)
         )
 
@@ -167,6 +183,6 @@ class EditProductFrame(CTkFrame):
             value=str(self._product_dto.updated_at)
         )
 
-        if type(self._status_segmented_button.field) == CTkSegmentedButton: #Validação para retirar erro de tipagem
+        if type(self._status_segmented_button.field) == CTkSegmentedButton:
             status = "Ativo" if self._product_dto.product_status == 1 else "Inativo"
             self._status_segmented_button.field.set(status)
