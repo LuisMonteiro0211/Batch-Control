@@ -1,8 +1,8 @@
-from customtkinter import CTkButton, CTkEntry, CTkFrame, CTkLabel
+from customtkinter import CTkButton, CTkEntry, CTkFrame, CTkLabel, CTkSegmentedButton
 from src.dtos import ProductDTO
 from src.gui.theme.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory, LabelNameField, FormField
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Callable, Dict, List
 
 PRIMEIRA_MARGEM_LABEL, SEGUNDA_MARGEM_LABEL, TERCEIRA_MARGEM_LABEL = 24, 230, 436
 PRIMEIRA_LINHA_LABEL, SEGUNDA_LINHA_LABEL, TERCEIRA_LINHA_LABEL = 24, 87, 150
@@ -132,14 +132,12 @@ class EditProductFrame(CTkFrame):
             self._name_product_field,
             self._firm_field,
             self._minimun_balance_field,
-            #self._status_segmented_button,
         ]
         #Listando os valores dos campos editáveis
         list_values = [
             self._product_dto.name,
             self._product_dto.product_firm,
             self._product_dto.minimun_balance,
-            #self._product_dto.status,
         ]
 
         for index, editable_field in enumerate(list_editable_fields):
@@ -168,3 +166,7 @@ class EditProductFrame(CTkFrame):
             entry=self._date_update_field,
             value=str(self._product_dto.updated_at)
         )
+
+        if type(self._status_segmented_button.field) == CTkSegmentedButton: #Validação para retirar erro de tipagem
+            status = "Ativo" if self._product_dto.product_status == 1 else "Inativo"
+            self._status_segmented_button.field.set(status)

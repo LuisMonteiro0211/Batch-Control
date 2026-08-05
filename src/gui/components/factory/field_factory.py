@@ -272,7 +272,7 @@ class FieldFactory:
             height=height,
             corner_radius=5,
             fg_color=COLORS.elevado,
-            text_color=COLORS.desabilitado,
+            text_color=COLORS.texto_botao_principal,
             font=FONTS.subtitulo_menor,
 
         )

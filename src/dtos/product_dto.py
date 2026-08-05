@@ -10,6 +10,7 @@ class ProductDTO:
     product_firm: str
     product_code_chb: int
     consumption_monthly: float
+    product_status: int
 
     id: Optional[int] = None
     created_at: Optional[datetime] = None

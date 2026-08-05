@@ -56,6 +56,7 @@ def dict_to_product_dto(product: dict[str, Any]) -> ProductDTO:
         product_firm=str(product.get("empresa", "")),
         product_code_chb=int(product["cod_sku"]),
         consumption_monthly=float(product.get("consumo_mensal", 0.0)),
+        product_status=int(product["ativo"]),
         id=int(product["id_produto"]),
         created_at=product.get("data_cadastro"),
         updated_at=product.get("data_atualizacao"),
