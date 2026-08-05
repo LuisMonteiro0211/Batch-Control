@@ -4,7 +4,7 @@ from src.gui.components.factory import FieldFactory
 from .new_product_frame import NewProductFrame
 from .edit_product_frame import EditProductFrame
 from .product_table import ProductTable
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 from src.dtos.product_dto import ProductCardDTO, ProductDTO
 
 class ProductFrame(CTkFrame):
@@ -147,3 +147,8 @@ class ProductFrame(CTkFrame):
     def get_state_product_frame(self) -> Optional[str]:
         if self._state_product_frame is not None:
             return self._state_product_frame
+
+    def get_raw_values(self) -> Dict[str, str]:
+        if self._edit_product_frame is not None:
+            return self._edit_product_frame.get_raw_values()
+        return {}

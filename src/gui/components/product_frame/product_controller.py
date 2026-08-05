@@ -39,7 +39,10 @@ class ProductController:
         pass
     
     def _on_click_save_edit_product(self):
-        pass
+        if self._product_frame is not None:
+            print("Resultado da coleta de dados:")
+            print("--------------------------------")
+            print(self._product_frame.get_raw_values())
 
     def get_product_id_to_edit(self, product_id: int) -> Optional[ProductDTO]:
         try:
