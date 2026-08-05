@@ -1,3 +1,7 @@
+"""
+Módulo de validação e construção de ProductDTO a partir de dados brutos do formulário.
+"""
+
 from src.dtos.product_dto import ProductDTO
 from typing import Any, Dict, List
 
@@ -7,7 +11,22 @@ from src.helpers.helpers import is_number, is_valid_string, sanitize_string
 
 NUMBER_FIELDS = ["minimun_balance", "product_code_chb", "consumption_monthly"]
 
+
 def build_product_dto(raw_date: Dict[str, Any]) -> ProductDTO:
+    """
+    Valida os campos do formulário e constrói um ProductDTO.
+
+    Args:
+        raw_date: Dicionário com os valores brutos coletados dos campos do formulário.
+            Chaves esperadas: name, minimun_balance, product_firm,
+            product_code_chb, consumption_monthly.
+
+    Returns:
+        ProductDTO validado e sanitizado, pronto para persistência.
+
+    Raises:
+        ValidationError: Se algum campo obrigatório estiver ausente ou inválido.
+    """
     required_fields: List[str] = [
         "name",
         "minimun_balance",
@@ -17,18 +36,15 @@ def build_product_dto(raw_date: Dict[str, Any]) -> ProductDTO:
     ]
 
     for name_field in required_fields:
-        #For para pegar o valor de cada campo
         value = raw_date.get(name_field, "")
 
         if name_field in NUMBER_FIELDS:
             if not is_number(value=value):
-            #Se o campo estiver na lista de campo numéricos e a função is_number retornar FALSE, lança um erro de validação
                 raise ValidationError(f"O campo {name_field} deve ser um número!")
 
         else:
             if not is_valid_string(value=value):
                 raise ValidationError(f"O campo {name_field} deve ser uma string válida!")
-
 
     return ProductDTO(
         name=sanitize_string(value=raw_date["name"]),
