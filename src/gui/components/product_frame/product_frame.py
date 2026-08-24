@@ -19,8 +19,9 @@ from src.gui.components.factory import FieldFactory
 from .new_product_frame import NewProductFrame
 from .edit_product_frame import EditProductFrame
 from .product_table import ProductTable
-from typing import Callable, Dict, List, Optional
+from typing import Callable, List, Optional
 from src.dtos.product_dto import ProductCardDTO, ProductDTO
+from src.forms.product_form_types import EditProductRawData
 
 
 class ProductFrame(CTkFrame):
@@ -45,7 +46,6 @@ class ProductFrame(CTkFrame):
     ):
         super().__init__(master)
         self._products_to_view = products_to_view
-        self._current_frame = None
         self._on_click_save_product = on_click_save_product
         self._on_click_save_edit_product = on_click_save_edit_product
         self._on_click_edit_product = on_click_edit_product
@@ -101,7 +101,6 @@ class ProductFrame(CTkFrame):
         self._search_entry = FieldFactory.create_search_entry(
             master=self._product_search_frame,
             placeholder="Buscar produto...",
-            name_field="search_product_name"
         )
         self._product_table = ProductTable(
             self,
@@ -144,7 +143,7 @@ class ProductFrame(CTkFrame):
             save_callback=self._on_click_save_edit_product,
             cancel_callback=self._cancel_edit_product_frame,
         )
-        self._edit_product_frame.set_date_product_dto()
+        self._edit_product_frame.set_data_product_dto()
         self._edit_product_frame.place(x=12, y=54, anchor="nw")
         self._edit_product_frame.pack_propagate(False)
         self._state_product_frame = "edit_product"
@@ -183,7 +182,7 @@ class ProductFrame(CTkFrame):
         if self._state_product_frame is not None:
             return self._state_product_frame
 
-    def get_raw_values(self) -> Dict[str, str]:
+    def get_raw_values(self) -> EditProductRawData:
         """
         Coleta os valores do formulário de edição ativo.
 
@@ -192,4 +191,9 @@ class ProductFrame(CTkFrame):
         """
         if self._edit_product_frame is not None:
             return self._edit_product_frame.get_raw_values()
-        return {}
+        return EditProductRawData(
+            nome_produto="",
+            empresa="",
+            saldo_min="",
+            ativo="",
+        )

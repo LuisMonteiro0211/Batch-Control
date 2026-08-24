@@ -26,7 +26,7 @@ class FieldFactory:
     Classe para criar campos de entrada de texto.
     """
     @staticmethod
-    def create_entry(master, placeholder,name_field: str, width=159, height=27, )-> FormField:
+    def create_entry(master, placeholder, width=159, height=27) -> FormField:
         """
         Método para criar um campo de entrada de texto.
 
@@ -35,7 +35,6 @@ class FieldFactory:
             placeholder: Texto de placeholder do campo de entrada.
             width: Largura do campo de entrada.
             height: Altura do campo de entrada.
-            name_field: Nome do campo de entrada.
 
         Returns:
             FormField: Campo de entrada de texto encapsulado.
@@ -51,7 +50,7 @@ class FieldFactory:
             text_color=COLORS.desabilitado,
             font=FONTS.subtitulo_menor,
         )
-        return FormField(name_field=name_field, field=entry)
+        return FormField(field=entry)
 
     @staticmethod
     def set_value_entry(entry: CTkEntry, value: str):
@@ -70,7 +69,6 @@ class FieldFactory:
     def create_number_entry(
         master,
         placeholder,
-        name_field: str,
         width=159,
         height=27,
         max_digits: Optional[int] = None,
@@ -82,7 +80,6 @@ class FieldFactory:
             placeholder: Texto de placeholder do campo de entrada.
             width: Largura do campo de entrada.
             height: Altura do campo de entrada.
-            name_field: Nome do campo de entrada.
             max_digits: Limite máximo de dígitos (opcional).
         Returns:
             FormField: Campo de entrada de número encapsulado.
@@ -113,10 +110,10 @@ class FieldFactory:
             validatecommand=(validar, "%P"),
         )
 
-        return FormField(name_field=name_field, field=number_entry)
-        
+        return FormField(field=number_entry)
+
     @staticmethod
-    def create_data_entry(master, placeholder, name_field: str, width=159, height=27, ) -> FormField:
+    def create_data_entry(master, placeholder, width=159, height=27) -> FormField:
         """
         Método para criar um campo de entrada de data já com formatação.
         Args:
@@ -124,12 +121,11 @@ class FieldFactory:
             placeholder: Texto de placeholder do campo de entrada.
             width: Largura do campo de entrada.
             height: Altura do campo de entrada.
-            name_field: Nome do campo de entrada.
         Returns:
             FormField: Campo de entrada de data encapsulado.
         """
         form_field = FieldFactory.create_number_entry(
-            master, placeholder, name_field, width, height, max_digits=8
+            master, placeholder, width, height, max_digits=8
         )
         date_entry = form_field.field
 
@@ -212,7 +208,6 @@ class FieldFactory:
         #search_fn: Callable[[str], list[str]],
         width=159,
         height=27,
-        name_field: str = "",
     ) -> FormField:
         """
         Cria um campo de busca com debounce de 300 ms ao digitar.
@@ -224,7 +219,6 @@ class FieldFactory:
             placeholder: Texto de placeholder.
             width: Largura do campo.
             height: Altura do campo.
-            name_field: Identificador do campo para coleta de valores.
 
         Returns:
             FormField: Campo de busca encapsulado.
@@ -274,18 +268,17 @@ class FieldFactory:
 
         search_entry.bind("<KeyRelease>", get_search_value)
 
-        return FormField(name_field=name_field, field=search_entry)
+        return FormField(field=search_entry)
 
 
     @staticmethod
-    def create_segmented_button(master, list_buttons: List[str], name_field: str, width: int, height: int) -> FormField:
+    def create_segmented_button(master, list_buttons: List[str], width: int, height: int) -> FormField:
         """
         Cria um botão segmentado para seleção entre opções (ex: Ativo/Inativo).
 
         Args:
             master: Widget pai.
             list_buttons: Lista de opções exibidas no segmento.
-            name_field: Identificador do campo para coleta de valores.
             width: Largura do widget.
             height: Altura do widget.
 
@@ -303,4 +296,4 @@ class FieldFactory:
             font=FONTS.subtitulo_menor,
 
         )
-        return FormField(name_field=name_field, field=segmented_button)
+        return FormField(field=segmented_button)

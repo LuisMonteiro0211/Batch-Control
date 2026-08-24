@@ -6,15 +6,15 @@ somente leitura (consumo, SKU, datas) preenchidos a partir do ProductDTO.
 
 Métodos públicos:
     - get_raw_values(): Coleta os valores dos campos editáveis.
-    - set_date_product_dto(): Preenche todos os campos com os dados do DTO.
+    - set_data_product_dto(): Preenche todos os campos com os dados do DTO.
 """
 
 from customtkinter import CTkButton, CTkEntry, CTkFrame, CTkLabel, CTkSegmentedButton
 from src.dtos import ProductDTO
-from src.gui.theme.theme import COLORS, FONTS
-from src.gui.components.factory import FieldFactory, LabelNameField, FormField
-from typing import Callable, Dict, List
-
+from src.gui.theme import COLORS, FONTS
+from src.gui.components.factory import FieldFactory, LabelNameField
+from typing import Callable
+from src.forms.product_form_types import EditProductRawData
 PRIMEIRA_MARGEM_LABEL, SEGUNDA_MARGEM_LABEL, TERCEIRA_MARGEM_LABEL = 24, 230, 436
 PRIMEIRA_LINHA_LABEL, SEGUNDA_LINHA_LABEL, TERCEIRA_LINHA_LABEL = 24, 87, 150
 
@@ -81,10 +81,10 @@ class EditProductFrame(CTkFrame):
         self._date_creation_label = LabelNameField.create_label_name_field(master=self, label="Data de Cadastro")
         self._date_update_label = LabelNameField.create_label_name_field(master=self, label="Atualizado em")
 
-        self._name_product_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27, name_field="nome_produto")
-        self._firm_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27, name_field="empresa")
-        self._minimun_balance_field = FieldFactory.create_number_entry(master=self, placeholder="", width=159, height=27, name_field="consumo_mensal")
-        self._status_segmented_button = FieldFactory.create_segmented_button(master=self, list_buttons=["Ativo", "Inativo"], width=159, height=27, name_field="ativo")
+        self._name_product_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27)
+        self._firm_field = FieldFactory.create_entry(master=self, placeholder="", width=159, height=27)
+        self._minimun_balance_field = FieldFactory.create_number_entry(master=self, placeholder="", width=159, height=27)
+        self._status_segmented_button = FieldFactory.create_segmented_button(master=self, list_buttons=["Ativo", "Inativo"], width=159, height=27)
 
         self._consumption_monthly_field = FieldFactory.create_locked_entry(master=self, value=None, width=159, height=27)
         self._sku_code_field = FieldFactory.create_locked_entry(master=self, value=None, width=159,
@@ -119,27 +119,21 @@ class EditProductFrame(CTkFrame):
         self._save_button.place(x=481, y=180, anchor="nw")
         self._cancel_button.place(x=405, y=180, anchor="nw")
 
-    def _get_editable_fields(self) -> List[FormField]:
-        """Retorna a lista de campos que o usuário pode alterar."""
-        return [
-            self._name_product_field,
-            self._firm_field,
-            self._minimun_balance_field,
-            self._status_segmented_button
-        ]
-
-    def get_raw_values(self) -> Dict[str, str]:
+    def get_raw_values(self) -> EditProductRawData:
         """
         Coleta os valores atuais dos campos editáveis.
 
         Returns:
-            Dicionário mapeando name_field → valor digitado.
+            EditProductRawData com os valores digitados.
         """
-        return {
-            field.name_field: field.get() for field in self._get_editable_fields()
-        }
+        return EditProductRawData(
+            nome_produto=self._name_product_field.get(),
+            empresa=self._firm_field.get(),
+            saldo_min=self._minimun_balance_field.get(),
+            ativo=self._status_segmented_button.get(),
+        )
 
-    def set_date_product_dto(self) -> None:
+    def set_data_product_dto(self) -> None:
         """
         Preenche todos os campos do formulário com os dados do ProductDTO.
 
