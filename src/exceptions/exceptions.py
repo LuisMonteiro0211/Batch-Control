@@ -67,15 +67,6 @@ class InvalidDateError(ValidationError):
 
     pass
 
-class InvalidStringError(ValidationError):
-    """String inválida."""
-
-    pass
-
-class InvalidNumberError(ValidationError):
-    """Número inválido."""
-
-    pass
 
 class ProductHasBalanceError(BatchControlError):
     """Produto com saldo não pode ser deletado."""

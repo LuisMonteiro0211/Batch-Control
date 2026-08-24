@@ -89,7 +89,6 @@ class ProductTable(ScrollbarFrame):
         path_icon_yellow_alert = icon_path("circle-alert_yellow.png")
         path_icon_red_alert = icon_path("circle-alert_red.png")
         path_icon_green_alert = icon_path("circle-alert_green.png")
-        path_icon_grey_alert = icon_path("circle-alert.png")
 
         TABLE_ICONS = {
             StockLevel.ALERTA: resize_image(path_icon_yellow_alert, (17, 17)),
