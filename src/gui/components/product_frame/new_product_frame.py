@@ -10,6 +10,7 @@ from customtkinter import CTkButton, CTkFrame, CTkLabel
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory, LabelNameField
 from typing import Callable, Dict
+from src.forms.product_form_types import NewProductRawData
 
 
 class NewProductFrame(CTkFrame):
@@ -123,21 +124,20 @@ class NewProductFrame(CTkFrame):
         self._cancel_product_button.place(x=183, y=167, anchor="nw")
         self._cancel_product_button.pack_propagate(False)
 
-    def get_raw_values(self) -> Dict[str, str]:
+    def get_raw_values(self) -> NewProductRawData:
         """
         Coleta os valores atuais de todos os campos.
 
         Returns:
-            Dicionário mapeando o nome do campo (chave esperada pelo
-            ``product_form.build_product_dto``) para o valor digitado.
+            NewProductRawData com os valores coletados dos campos do formulário.
         """
-        return {
-            "nome_produto": self._name_product.get(),
-            "saldo_min": self._minimun_balance.get(),
-            "empresa": self._product_firm.get(),
-            "cod_sku": self._product_code_chb.get(),
-            "consumo_mensal": self._consumption_monthly.get(),
-        }
+        return NewProductRawData(
+            nome_produto=self._name_product.get(),
+            empresa=self._product_firm.get(),
+            saldo_min=self._minimun_balance.get(),
+            cod_sku=self._product_code_chb.get(),
+            consumo_mensal=self._consumption_monthly.get()
+        )
 
     def clear_fields(self) -> None:
         """Limpa o conteúdo de todos os campos de entrada."""
