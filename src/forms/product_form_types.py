@@ -6,3 +6,11 @@ class EditProductRawData(TypedDict):
     empresa: str
     saldo_min: str
     ativo: str
+
+class NewProductRawData(TypedDict):
+    # Padronização do nome dos campos do formulário de cadastro de novos produtos
+    nome_produto: str
+    saldo_min: str
+    empresa: str
+    cod_sku: str
+    consumo_mensal: str
