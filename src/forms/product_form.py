@@ -29,11 +29,11 @@ def build_product_dto(raw_data: Dict[str, Any]) -> ProductDTO:
         ValidationError: Se algum campo obrigatório estiver ausente ou inválido.
     """
     required_fields: List[str] = [
-        "name",
-        "minimun_balance",
-        "product_firm",
-        "product_code_chb",
-        "consumption_monthly",
+        "nome_produto",
+        "saldo_min",
+        "empresa",
+        "cod_sku",
+        "consumo_mensal",
     ]
 
     for name_field in required_fields:
