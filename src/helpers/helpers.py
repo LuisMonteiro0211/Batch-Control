@@ -103,7 +103,7 @@ def sanitize_string(value: str) -> str:
     Returns:
         str: Valor sanitizado.
     """
-    return value.strip().capitalize()
+    return value.strip().title()
 
 def sanitize_date(value: str) -> str:
     """
