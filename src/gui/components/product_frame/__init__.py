@@ -3,10 +3,13 @@ from .new_product_frame import NewProductFrame
 from .edit_product_frame import EditProductFrame
 from .product_table import ProductTable
 from .product_controller import ProductController
+from .product_frame_state import ProductFrameState
 
 __all__ = [
     "ProductFrame",
     "NewProductFrame",
     "EditProductFrame",
     "ProductTable",
+    "ProductFrameState",
+    "ProductController",
 ]

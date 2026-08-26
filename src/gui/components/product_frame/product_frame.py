@@ -22,6 +22,7 @@ from .product_table import ProductTable
 from typing import Callable, List, Optional
 from src.dtos.product_dto import ProductCardDTO, ProductDTO
 from src.forms.product_form_types import EditProductRawData
+from .product_frame_state import ProductFrameState
 
 
 class ProductFrame(CTkFrame):
@@ -50,7 +51,7 @@ class ProductFrame(CTkFrame):
         self._on_click_save_edit_product = on_click_save_edit_product
         self._on_click_edit_product = on_click_edit_product
         self._edit_product_frame: Optional[EditProductFrame] = None
-        self._state_product_frame = None
+        self._state_product_frame: Optional[ProductFrameState] = None
         self._configure_layout()
         self._build_widgets()
         self._layout_widgets()
@@ -81,7 +82,7 @@ class ProductFrame(CTkFrame):
         )
 
         self._new_product_frame = NewProductFrame(self, on_click_save_product=self._on_click_save_product)
-        self._state_product_frame = "new_product"
+        self._state_product_frame = ProductFrameState.NEW_PRODUCT #Define o estado inicial do frame como novo produto
 
         self._product_search_frame = CTkFrame(self,
         width=685,
@@ -146,14 +147,16 @@ class ProductFrame(CTkFrame):
         self._edit_product_frame.set_data_product_dto()
         self._edit_product_frame.place(x=12, y=54, anchor="nw")
         self._edit_product_frame.pack_propagate(False)
-        self._state_product_frame = "edit_product"
+        self._state_product_frame = ProductFrameState.EDIT_PRODUCT
+        #Mudo o estado do frame para frame de edição
         self.hide_new_product_frame()
 
     def _cancel_edit_product_frame(self) -> None:
         """Cancela a edição e retorna ao formulário de novo produto."""
         if self._edit_product_frame is not None:
             self.hide_edit_product_frame()
-            self._state_product_frame = "new_product"
+            self._state_product_frame = ProductFrameState.NEW_PRODUCT
+            #Mudo o estado do frame para frame de novo produto
             self.show_new_product()
 
     def show_new_product(self) -> None:
@@ -171,16 +174,16 @@ class ProductFrame(CTkFrame):
         """Destroi o formulário de edição ativo."""
         if self._edit_product_frame is not None:
             self._edit_product_frame.destroy()
+            self._edit_product_frame = None
 
-    def get_state_product_frame(self) -> Optional[str]:
+    def get_state_product_frame(self) -> Optional[ProductFrameState]:
         """
         Retorna o estado atual do frame de formulário.
 
         Returns:
-            ``"new_product"``, ``"edit_product"`` ou None se ainda não inicializado.
+            ``ProductFrameState.NEW_PRODUCT``, ``ProductFrameState.EDIT_PRODUCT`` ou None se ainda não inicializado.
         """
-        if self._state_product_frame is not None:
-            return self._state_product_frame
+        return self._state_product_frame
 
     def get_raw_values(self) -> EditProductRawData:
         """

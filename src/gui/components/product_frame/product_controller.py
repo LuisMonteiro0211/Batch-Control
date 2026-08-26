@@ -21,6 +21,7 @@ from src.gui.error_window import ErrorWindow
 from src.gui.alert_window import AlertWindow
 from src.service.product_service import ProductService
 from src.forms.product_form import build_edit_product_dto
+from src.gui.components.product_frame.product_frame_state import ProductFrameState
 
 class ProductController:
     """
@@ -124,7 +125,7 @@ class ProductController:
             return
 
         current_state = self._product_frame.get_state_product_frame()
-        if current_state != "new_product":
+        if current_state != ProductFrameState.NEW_PRODUCT:
             return
 
         if product_dto is None:
