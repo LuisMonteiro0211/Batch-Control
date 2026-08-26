@@ -65,6 +65,10 @@ class ProductController:
         """Callback do botão salvar no formulário de edição. Coleta os valores do frame."""
         if self._product_frame is not None:
             raw_data_edit = self._product_frame.get_raw_values()#Coleta os valores do formulário de edição
+            
+            if raw_data_edit is None:
+                AlertWindow(message="Nenhum formulário de edição ativo.")
+                return
 
             if self._original_product_dto is not None:
                 editing_product_dto = build_edit_product_dto(#Converte os valores do formulário de edição para um DTO

@@ -185,18 +185,13 @@ class ProductFrame(CTkFrame):
         """
         return self._state_product_frame
 
-    def get_raw_values(self) -> EditProductRawData:
+    def get_raw_values(self) -> Optional[EditProductRawData]:
         """
         Coleta os valores do formulário de edição ativo.
 
         Returns:
-            Dicionário com chaves dos campos e valores digitados, ou vazio se não houver edição.
+            EditProductRawData com os valores digitados, ou None se não houver edição ativa.
         """
         if self._edit_product_frame is not None:
             return self._edit_product_frame.get_raw_values()
-        return EditProductRawData(
-            nome_produto="",
-            empresa="",
-            saldo_min="",
-            ativo="",
-        )
+        return None
