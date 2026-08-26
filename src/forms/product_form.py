@@ -71,6 +71,16 @@ def build_edit_product_dto(raw_data_edit: EditProductRawData, original_product_d
     Returns:
         ProductDTO com os campos editáveis atualizados; demais campos herdados do original.
     """
+    #Inicio das validações
+    if not is_valid_string(value=raw_data_edit["nome_produto"]):
+        raise ValidationError("O campo Nome do Produto deve ser uma string válida!")
+    
+    if not is_valid_string(value=raw_data_edit["empresa"]):
+        raise ValidationError("O campo Empresa deve ser uma string válida!")
+
+    if not is_number(raw_data_edit["saldo_min"]):
+        raise ValidationError("O campo Saldo Mínimo deve ser um número!")
+
     return replace(
         original_product_dto,
         name=sanitize_string(value=raw_data_edit["nome_produto"]),
