@@ -5,15 +5,15 @@ Módulo de validação e construção de ProductDTO a partir de dados brutos do 
 from dataclasses import replace
 from src.dtos.product_dto import ProductDTO
 from typing import Any, Dict, List
-from src.forms.product_form_types import EditProductRawData
+from src.forms.product_form_types import EditProductRawData, NewProductRawData
 from src.exceptions.exceptions import ValidationError
 from src.helpers.helpers import is_number, is_valid_string, sanitize_string
 
 
-NUMBER_FIELDS = ["minimun_balance", "product_code_chb", "consumption_monthly"]
+NUMBER_FIELDS = ["saldo_min", "cod_sku", "consumo_mensal"]
 
 
-def build_product_dto(raw_data: Dict[str, Any]) -> ProductDTO:
+def build_product_dto(raw_data: NewProductRawData) -> ProductDTO:
     """
     Valida os campos do formulário e constrói um ProductDTO.
 
@@ -48,16 +48,17 @@ def build_product_dto(raw_data: Dict[str, Any]) -> ProductDTO:
                 raise ValidationError(f"O campo {name_field} deve ser uma string válida!")
 
     return ProductDTO(
-        name=sanitize_string(value=raw_data["name"]),
-        minimun_balance=int(raw_data["minimun_balance"]),
-        product_firm=sanitize_string(value=raw_data["product_firm"]),
-        product_code_chb=int(raw_data["product_code_chb"]),
-        consumption_monthly=float(raw_data["consumption_monthly"]),
-        product_status=raw_data["product_status"],
-
+        name=sanitize_string(value=raw_data["nome_produto"]),
+        minimun_balance=int(raw_data["saldo_min"]),
+        product_firm=sanitize_string(value=raw_data["empresa"]),
+        product_code_chb=int(raw_data["cod_sku"]),
+        consumption_monthly=float(raw_data["consumo_mensal"]),
+        product_status=1,
+        
         id=None,
         created_at=None,
         updated_at=None,
+
     )
 
 def build_edit_product_dto(raw_data_edit: EditProductRawData, original_product_dto: ProductDTO) -> ProductDTO:
