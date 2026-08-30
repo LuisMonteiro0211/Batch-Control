@@ -8,7 +8,7 @@ ao ProductRepository e convertendo dados para DTOs.
 from dataclasses import replace
 from typing import List
 from src.dtos.product_dto import ProductDTO, ProductCardDTO
-from src.exceptions import DuplicateSkuError, ProductHasBalanceError, NoChangesError
+from src.exceptions import DuplicateSkuError, ProductHasBalanceError, NoChangesError, DatabaseOperationError
 from src.helpers.helpers import dict_to_product_card_dto, dict_to_product_dto, diff_product_dto
 from src.model.product import Product
 from src.model.stock_level import sort_level
@@ -50,7 +50,12 @@ class ProductService:
             consumo_mensal=product_dto.consumption_monthly,
         )
 
-        return self._product_repository.create(entity=product)
+        new_product_id = self._product_repository.create(entity=product)
+
+        if new_product_id is not None:
+            return new_product_id
+        else:
+            raise DatabaseOperationError("Erro ao criar produto.")
 
     def delete_product(self, id_produto: int) -> None:
         """

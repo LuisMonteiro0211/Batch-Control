@@ -15,7 +15,7 @@ from typing import List, Optional
 
 from customtkinter import CTk
 from src.dtos import ProductCardDTO, ProductDTO
-from src.exceptions import DatabaseOperationError, ProductNotFoundError
+from src.exceptions import DatabaseOperationError, ProductNotFoundError, DuplicateSkuError
 from src.gui.components.product_frame import ProductFrame
 from src.gui.error_window import ErrorWindow
 from src.gui.alert_window import AlertWindow
@@ -81,10 +81,19 @@ class ProductController:
                     AlertWindow(message="Não há alterações para salvar.")
                 else:
                     #Se os valores do formulário de edição são diferentes dos valores do produto original, atualiza o produto.
-                    self._product_service.update_product(
-                        original_product_dto=self._original_product_dto,
-                        edited_product_dto=editing_product_dto
-                    )
+                    try:
+                        self._product_service.update_product(
+                            original_product_dto=self._original_product_dto,
+                            edited_product_dto=editing_product_dto
+                        )
+                        self._product_frame.hide_edit_product_frame()
+                        self._product_frame.show_new_product()
+                    except DuplicateSkuError as e:
+                        ErrorWindow(message=str(e))
+                        return None
+                    except DatabaseOperationError as e:
+                        ErrorWindow(message=str(e))
+                        return None
 
 
             else:
