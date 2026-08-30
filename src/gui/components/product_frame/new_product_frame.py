@@ -8,8 +8,9 @@ Métodos públicos:
 
 from customtkinter import CTkButton, CTkFrame, CTkLabel
 from src.gui.theme import COLORS, FONTS
-from src.gui.components.factory import FieldFactory, LabelNameField, FormField
-from typing import Callable, Dict, List
+from src.gui.components.factory import FieldFactory, LabelNameField
+from typing import Callable, Dict
+from src.forms.product_form_types import NewProductRawData
 
 
 class NewProductFrame(CTkFrame):
@@ -58,11 +59,11 @@ class NewProductFrame(CTkFrame):
         self._product_code_chb_label = LabelNameField.create_label_name_field(self, "Código CHB")
         self._consumption_monthly_label = LabelNameField.create_label_name_field(self, "Consumo mensal")
 
-        self._name_product = FieldFactory.create_entry(master=self, placeholder="Nome do produto", width=159, height=27, name_field = "nome_produto")
-        self._minimun_balance = FieldFactory.create_number_entry(master=self, placeholder="Saldo mínimo", width=159, height=27, name_field= "saldo_min")
-        self._product_firm = FieldFactory.create_entry(master=self, placeholder="Fabricante", width=159, height=27, name_field= "empresa")
-        self._product_code_chb = FieldFactory.create_number_entry(master=self, placeholder="Código CHB", width=159, height=27, name_field= "cod_sku", max_digits=6)
-        self._consumption_monthly = FieldFactory.create_number_entry(master=self, placeholder="Consumo mensal", width=159, height=27, name_field= "consumo_mensal", max_digits=6)
+        self._name_product = FieldFactory.create_entry(master=self, placeholder="Nome do produto", width=159, height=27)
+        self._minimun_balance = FieldFactory.create_number_entry(master=self, placeholder="Saldo mínimo", width=159, height=27)
+        self._product_firm = FieldFactory.create_entry(master=self, placeholder="Fabricante", width=159, height=27)
+        self._product_code_chb = FieldFactory.create_number_entry(master=self, placeholder="Código CHB", width=159, height=27, max_digits=6)
+        self._consumption_monthly = FieldFactory.create_number_entry(master=self, placeholder="Consumo mensal", width=159, height=27, max_digits=6)
 
         self._save_product_button = CTkButton(
             self,
@@ -123,26 +124,20 @@ class NewProductFrame(CTkFrame):
         self._cancel_product_button.place(x=183, y=167, anchor="nw")
         self._cancel_product_button.pack_propagate(False)
 
-    def _get_name_fields(self) -> List[FormField]:
-        """Retorna todos os campos do formulário."""
-        return [
-            self._name_product,
-            self._minimun_balance,
-            self._product_firm,
-            self._product_code_chb,
-            self._consumption_monthly,
-        ]
-
-    def get_raw_values(self) -> Dict[str, str]:
+    def get_raw_values(self) -> NewProductRawData:
         """
         Coleta os valores atuais de todos os campos.
 
         Returns:
-            Dicionário mapeando name_field → valor digitado.
+            NewProductRawData com os valores coletados dos campos do formulário.
         """
-        return {
-            field.name_field: field.get() for field in self._get_name_fields()
-        }
+        return NewProductRawData(
+            nome_produto=self._name_product.get(),
+            empresa=self._product_firm.get(),
+            saldo_min=self._minimun_balance.get(),
+            cod_sku=self._product_code_chb.get(),
+            consumo_mensal=self._consumption_monthly.get()
+        )
 
     def clear_fields(self) -> None:
         """Limpa o conteúdo de todos os campos de entrada."""

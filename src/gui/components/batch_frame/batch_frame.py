@@ -76,7 +76,6 @@ class BatchFrame(CTkFrame):
         self._search_entry = FieldFactory.create_search_entry(
             self._batch_search_frame,
             placeholder="Buscar lote...",
-            name_field="search_batch_name"
         )
 
         self._batch_table = BatchTable(self)

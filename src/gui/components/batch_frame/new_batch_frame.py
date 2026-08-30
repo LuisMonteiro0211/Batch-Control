@@ -53,7 +53,6 @@ class NewBatchFrame(CTkFrame):
             placeholder="Lote...",
             width=131,
             height=27,
-            name_field="batch_name"
         )
 
         self._code_chb_label = LabelNameField.create_label_name_field(self, "Código CHB")
@@ -62,7 +61,6 @@ class NewBatchFrame(CTkFrame):
             placeholder="Código CHB...",
             width=131,
             height=27,
-            name_field="code_chb"
         )
         self._manufacturer_date_label = LabelNameField.create_label_name_field(self, "Data de fabricação")
         self._field_manufacturer_date = FieldFactory.create_data_entry(
@@ -70,7 +68,6 @@ class NewBatchFrame(CTkFrame):
             placeholder="Data de fabricação...",
             width=131,
             height=27,
-            name_field="manufacturer_date"
         )
         self._expiration_date_label = LabelNameField.create_label_name_field(self, "Data de validade")
         self._field_expiration_date = FieldFactory.create_data_entry(
@@ -78,7 +75,6 @@ class NewBatchFrame(CTkFrame):
             placeholder="Data de validade...",
             width=131,
             height=27,
-            name_field="expiration_date"
         )
         self._product_firm_label = LabelNameField.create_label_name_field(self, "Fabricante")
         self._field_product_firm = FieldFactory.create_locked_entry(
@@ -101,7 +97,6 @@ class NewBatchFrame(CTkFrame):
             placeholder="Quantidade...",
             width=131,
             height=27,
-            name_field="quantity"
         )
         self._nf_label = LabelNameField.create_label_name_field(self, "Nota Fiscal")
         self._field_nf = FieldFactory.create_number_entry(
@@ -109,7 +104,6 @@ class NewBatchFrame(CTkFrame):
             placeholder="Nota Fiscal...",
             width=131,
             height=27,
-            name_field="nf"
         )
 
         self._save_batch_button = CTkButton(

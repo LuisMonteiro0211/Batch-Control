@@ -29,6 +29,10 @@ class BatchControlError(Exception):
 
     pass
 
+class NoChangesError(BatchControlError):
+    """Não há alterações para salvar."""
+
+    pass
 
 class ValidationError(BatchControlError):
     """Dados inválidos antes de chegar ao banco (camada service/GUI)."""
@@ -67,15 +71,6 @@ class InvalidDateError(ValidationError):
 
     pass
 
-class InvalidStringError(ValidationError):
-    """String inválida."""
-
-    pass
-
-class InvalidNumberError(ValidationError):
-    """Número inválido."""
-
-    pass
 
 class ProductHasBalanceError(BatchControlError):
     """Produto com saldo não pode ser deletado."""
@@ -86,3 +81,4 @@ class BootloaderError(BatchControlError):
     """Erro ao carregar a aplicação."""
 
     pass
+

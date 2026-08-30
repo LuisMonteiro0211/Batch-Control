@@ -1,9 +1,9 @@
 from src.dtos import ProductCardDTO
-from src.exceptions.exceptions import InvalidDateError, ValidationError
-from src.model.product import Product
+from src.exceptions.exceptions import InvalidDateError
 from src.dtos.product_dto import ProductDTO
-from typing import Any
+from typing import Any, List, Tuple
 from datetime import datetime
+from dataclasses import fields
 
 def row_to_dict(cursor: Any, row: tuple[Any, ...]) -> dict[str, Any]:
     """
@@ -19,27 +19,6 @@ def row_to_dict(cursor: Any, row: tuple[Any, ...]) -> dict[str, Any]:
     columns = [column[0] for column in cursor.description]
     return dict(zip(columns, row))
 
-def product_to_model(product: dict[str, Any]) -> Product:
-    """
-    Converte um dicionário de produto para um objeto Product.
-
-    Args:
-        product: Dicionário com os dados do produto.
-
-    Returns:
-        Product: Objeto Product com os valores do dicionário.
-    """
-    return Product(
-        id=product.get("id_produto"),
-        nome_produto=product["nome_produto"],
-        empresa=product.get("empresa", ""),
-        saldo_min=product.get("saldo_min", 0),
-        cod_sku=product["cod_sku"],
-        consumo_mensal=product.get("consumo_mensal", 0.0),
-        ativo=bool(product.get("ativo", 1)),
-        data_cadastro=product.get("data_cadastro"),
-        data_atualizacao=product.get("data_atualizacao"),
-    )
 def dict_to_product_dto(product: dict[str, Any]) -> ProductDTO:
     """
     Converte um dicionário de produto para um objeto ProductDTO.
@@ -99,30 +78,6 @@ def is_number(value: str) -> bool:
     except ValueError:
         return False
 
-def is_space(value: str) -> bool:
-    """
-    Verifica se um valor é um espaço.
-
-    Args:
-        value: Valor a ser verificado.
-
-    Returns:
-        bool: True se o valor é um espaço, False caso contrário.
-    """
-    return value.isspace()
-
-def is_empty(value: str) -> bool:
-    """
-    Verifica se um valor é vazio.
-
-    Args:
-        value: Valor a ser verificado.
-
-    Returns:
-        bool: True se o valor é vazio, False caso contrário.
-    """
-    return bool(value.isspace())
-
 def is_valid_string(value: str) -> bool:
     """
     Verifica se um valor é um nome válido.
@@ -148,7 +103,7 @@ def sanitize_string(value: str) -> str:
     Returns:
         str: Valor sanitizado.
     """
-    return value.strip().capitalize()
+    return value.strip().title()
 
 def sanitize_date(value: str) -> str:
     """
@@ -167,3 +122,39 @@ def sanitize_date(value: str) -> str:
         return date.strftime("%Y-%m-%d")
     except ValueError as e:
         raise InvalidDateError(f"A data {value} é inválida: {e}") from e
+
+def diff_product_dto(product_old: ProductDTO, product_new: ProductDTO) -> List[Tuple[str, Any]]:
+
+    """
+    Compara dois objetos (Somente campos onde a edição é permitida) e retorna uma lista de tuplas com os campos que foram alterados.
+
+    """
+    EDITABLE_FIELDS = [
+        "name",
+        "minimun_balance",
+        "product_firm",
+        "product_status"
+    ]
+
+    DATABASE_COLUMNS = {
+        "name": "nome_produto",
+        "minimun_balance": "saldo_min",
+        "product_firm": "empresa",
+        "product_status": "ativo"
+    }
+
+    diff_list = []
+
+    for field in fields(product_old):
+        if field.name not in EDITABLE_FIELDS:
+            continue
+
+        else:
+            old_value = getattr(product_old, field.name) #getattr acessa o atributo do objeto com o nome do campo sendo string e não .name
+            new_value = getattr(product_new, field.name)
+
+            if old_value != new_value:
+                diff_list.append((DATABASE_COLUMNS[field.name], new_value))
+
+    return diff_list
+

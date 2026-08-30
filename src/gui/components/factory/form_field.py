@@ -1,8 +1,9 @@
 """
 Módulo do wrapper de campos de formulário.
 
-Encapsula um widget CTkEntry ou CTkSegmentedButton com um identificador
-(name_field) para coleta padronizada de valores.
+Encapsula um widget CTkEntry ou CTkSegmentedButton com uma interface
+uniforme (``get`` / ``clear``), simplificando a coleta e limpeza de
+valores no formulário.
 """
 
 from dataclasses import dataclass
@@ -14,14 +15,12 @@ from customtkinter import CTkSegmentedButton
 @dataclass
 class FormField:
     """
-    Par nome-valor que associa um identificador a um widget de entrada.
+    Wrapper de widget de entrada com interface uniforme.
 
     Args:
-        name_field: Chave usada ao coletar valores do formulário (ex: ``"nome_produto"``).
         field: Widget CTkEntry ou CTkSegmentedButton subjacente.
     """
 
-    name_field: str
     field: Union[CTkEntry, CTkSegmentedButton]
 
     def get(self) -> str:

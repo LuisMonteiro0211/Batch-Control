@@ -14,8 +14,7 @@ Observações:
 """
 
 from customtkinter import CTkFrame, CTkCanvas, CTkLabel, CTkImage
-from src.gui.theme import COLORS
-from src.gui.theme.theme import FONTS
+from src.gui.theme import COLORS, FONTS
 
 class ScrollbarFrame(CTkFrame):
     """

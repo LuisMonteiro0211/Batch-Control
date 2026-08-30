@@ -15,11 +15,13 @@ from typing import List, Optional
 
 from customtkinter import CTk
 from src.dtos import ProductCardDTO, ProductDTO
-from src.exceptions import DatabaseOperationError, ProductNotFoundError
+from src.exceptions import DatabaseOperationError, ProductNotFoundError, DuplicateSkuError
 from src.gui.components.product_frame import ProductFrame
 from src.gui.error_window import ErrorWindow
+from src.gui.alert_window import AlertWindow
 from src.service.product_service import ProductService
-
+from src.forms.product_form import build_edit_product_dto
+from src.gui.components.product_frame.product_frame_state import ProductFrameState
 
 class ProductController:
     """
@@ -41,8 +43,7 @@ class ProductController:
         self._products_to_view = init_products_to_view
         self._product_frame_parent = product_frame_parent
         self._product_frame = None
-        self._message_state = None
-        self._state_product_frame = None
+        self._original_product_dto = None
         self._init_product_frame()
 
     def _init_product_frame(self) -> None:
@@ -63,9 +64,41 @@ class ProductController:
     def _on_click_save_edit_product(self) -> None:
         """Callback do botão salvar no formulário de edição. Coleta os valores do frame."""
         if self._product_frame is not None:
-            print("Resultado da coleta de dados:")
-            print("--------------------------------")
-            print(self._product_frame.get_raw_values())
+            raw_data_edit = self._product_frame.get_raw_values()#Coleta os valores do formulário de edição
+            
+            if raw_data_edit is None:
+                AlertWindow(message="Nenhum formulário de edição ativo.")
+                return
+
+            if self._original_product_dto is not None:
+                editing_product_dto = build_edit_product_dto(#Converte os valores do formulário de edição para um DTO
+                    raw_data_edit=raw_data_edit,
+                    original_product_dto=self._original_product_dto
+                )
+
+                if editing_product_dto == self._original_product_dto:
+                    #Se os valores do formulário de edição são iguais aos valores do produto original, não há alterações para salvar.
+                    AlertWindow(message="Não há alterações para salvar.")
+                else:
+                    #Se os valores do formulário de edição são diferentes dos valores do produto original, atualiza o produto.
+                    try:
+                        self._product_service.update_product(
+                            original_product_dto=self._original_product_dto,
+                            edited_product_dto=editing_product_dto
+                        )
+                        self._product_frame.hide_edit_product_frame()
+                        self._product_frame.show_new_product()
+                    except DuplicateSkuError as e:
+                        ErrorWindow(message=str(e))
+                        return None
+                    except DatabaseOperationError as e:
+                        ErrorWindow(message=str(e))
+                        return None
+
+
+            else:
+                #Se o produto original não foi encontrado, exibe uma mensagem de erro.
+                AlertWindow(message="Produto não encontrado.")
 
     def get_product_id_to_edit(self, product_id: int) -> Optional[ProductDTO]:
         """
@@ -98,20 +131,22 @@ class ProductController:
             product_id: ID do produto selecionado na tabela.
         """
         product_dto = self.get_product_id_to_edit(product_id=product_id)
+        self._original_product_dto = product_dto #Salva o produto no estado antes da edição
 
-        if self._product_frame is not None:
-            self._state_product_frame = self._product_frame.get_state_product_frame()
+        if self._product_frame is None:
+            ErrorWindow(message="Frame de produtos não inicializado.")
+            return
 
-            if self._state_product_frame == "new_product":
-                if product_dto is not None:
-                    if self._product_frame is not None:
-                        self._product_frame.hide_new_product_frame()
-                        self._product_frame.show_edit_product(product_dto=product_dto)
-                        self._state_product_frame = "edit_product"
-                    else:
-                        ErrorWindow(message="Frame de produtos não inicializado.")
-                else:
-                    ErrorWindow(message="Produto não encontrado.")
+        current_state = self._product_frame.get_state_product_frame()
+        if current_state != ProductFrameState.NEW_PRODUCT:
+            return
+
+        if product_dto is None:
+            ErrorWindow(message="Produto não encontrado.")
+            return
+
+        self._product_frame.hide_new_product_frame()
+        self._product_frame.show_edit_product(product_dto=product_dto)
 
     def show_product_frame(self) -> None:
         """Posiciona o frame de produtos na janela principal."""

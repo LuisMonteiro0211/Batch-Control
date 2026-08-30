@@ -5,10 +5,11 @@ Encapsula a lógica de negócio de produtos, delegando persistência
 ao ProductRepository e convertendo dados para DTOs.
 """
 
-from typing import Any, List, Tuple
+from dataclasses import replace
+from typing import List
 from src.dtos.product_dto import ProductDTO, ProductCardDTO
-from src.exceptions import DuplicateSkuError, ProductHasBalanceError
-from src.helpers.helpers import dict_to_product_card_dto, dict_to_product_dto
+from src.exceptions import DuplicateSkuError, ProductHasBalanceError, NoChangesError, DatabaseOperationError
+from src.helpers.helpers import dict_to_product_card_dto, dict_to_product_dto, diff_product_dto
 from src.model.product import Product
 from src.model.stock_level import sort_level
 from src.repository.product_repository import ProductRepository
@@ -49,7 +50,12 @@ class ProductService:
             consumo_mensal=product_dto.consumption_monthly,
         )
 
-        return self._product_repository.create(entity=product)
+        new_product_id = self._product_repository.create(entity=product)
+
+        if new_product_id is not None:
+            return new_product_id
+        else:
+            raise DatabaseOperationError("Erro ao criar produto.")
 
     def delete_product(self, id_produto: int) -> None:
         """
@@ -70,17 +76,24 @@ class ProductService:
         else:
             self._product_repository.delete(id=id_produto)
 
-    def update_product(self, id_produto: int, list_to_update: List[Tuple[str, Any]]) -> None:
-        """
-        Atualiza campos de um produto existente.
+    def update_product(self, original_product_dto: ProductDTO, edited_product_dto: ProductDTO) -> None:
+        #Chama a função para retornar a lista de alterações
+        diff_list = diff_product_dto(
+            product_old=original_product_dto,
+            product_new=edited_product_dto
+        )
 
-        Args:
-            id_produto: ID do produto a ser atualizado.
-            list_to_update: Lista de tuplas (coluna, novo_valor) para atualização.
-        """
-        product_old = self._product_repository.get_by_id(id=id_produto)
+        #Verifica se a lista de alterações está vazia
+        if len(diff_list) == 0:
+            raise NoChangesError("Não há alterações para salvar.")
 
-        pass
+        else:
+            #Chama o repositório para atualizar o produto
+            if original_product_dto.id is not None:
+                self._product_repository.update(
+                    id=original_product_dto.id,
+                    list_to_update=diff_list
+                )
 
     def get_product_lower_minimum_balance(self) -> List[ProductCardDTO]:
         """
@@ -90,18 +103,16 @@ class ProductService:
             Lista de ProductCardDTO prontos para exibição na tabela do dashboard.
         """
         products_lower_minimum_balance = self._product_repository.get_product_lower_minimum_balance()
-        list_product_card_dtos = [
-            dict_to_product_card_dto(product=product)
+        return [
+            replace(
+                dict_to_product_card_dto(product=product),
+                stock_level=sort_level(
+                    current_stock=int(product["estoque_atual"]),
+                    min_stock=int(product["saldo_min"]),
+                ),
+            )
             for product in products_lower_minimum_balance
         ]
-
-        for product in list_product_card_dtos:
-            product.stock_level = sort_level(
-                current_stock=product.current_balance,
-                min_stock=product.minimun_balance,
-            )
-
-        return list_product_card_dtos
 
     def get_product_by_id(self, id_produto: int) -> ProductDTO:
         """

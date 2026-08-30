@@ -5,7 +5,7 @@ Usado acima de cada input para identificar o campo ao usuário.
 """
 
 from customtkinter import CTkLabel
-from src.gui.theme.theme import COLORS, FONTS
+from src.gui.theme import COLORS, FONTS
 
 
 class LabelNameField:

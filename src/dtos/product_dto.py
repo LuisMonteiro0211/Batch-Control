@@ -32,7 +32,7 @@ class ProductDTO:
     updated_at: Optional[datetime] = None
 
 
-@dataclass()
+@dataclass(frozen=True)
 class ProductCardDTO:
     """
     Dados resumidos de um produto para exibição na tabela de alertas.
