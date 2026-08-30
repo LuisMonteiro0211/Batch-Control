@@ -136,6 +136,13 @@ def diff_product_dto(product_old: ProductDTO, product_new: ProductDTO) -> List[T
         "product_status"
     ]
 
+    DATABASE_COLUMNS = {
+        "name": "nome_produto",
+        "minimun_balance": "saldo_min",
+        "product_firm": "empresa",
+        "product_status": "ativo"
+    }
+
     diff_list = []
 
     for field in fields(product_old):
@@ -147,7 +154,7 @@ def diff_product_dto(product_old: ProductDTO, product_new: ProductDTO) -> List[T
             new_value = getattr(product_new, field.name)
 
             if old_value != new_value:
-                diff_list.append((field.name, new_value))
+                diff_list.append((DATABASE_COLUMNS[field.name], new_value))
 
     return diff_list
 

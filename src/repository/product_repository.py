@@ -86,30 +86,20 @@ class ProductRepository (Entity):
         if not list_to_update:
             return
 
-        fields = []
-        values = []
-
-        for field_name, value in list_to_update:
-            fields.append(f"{field_name} = ?")
-            values.append(value)
-
-        query = f"UPDATE produtos SET {", ".join(fields)} WHERE id_produto = ?"
-
-        values.append(id)
-
         try:
             with get_connection(self._database_name) as cursor:
-                cursor.execute(query, values)
-                
-                if cursor.rowcount == 0:
-                    raise ProductNotFoundError(f"Produto com ID {id} não encontrado.")
+                for field_name, value in list_to_update:
+                    query = f"UPDATE produtos SET {field_name} = ? WHERE id_produto = ?"
+                    values = (value, id)
+                    cursor.execute(query, values)
+
+                    if cursor.rowcount == 0:
+                        raise ProductNotFoundError(f"Produto com ID {id} não encontrado.")
 
         except IntegrityError as e:
-            for field_name, value in list_to_update:
-                if field_name == "cod_sku":
-                    raise DuplicateSkuError(value) from e # Erro personalizado para código SKU duplicado
-                else:
-                    raise DatabaseOperationError(f"Erro ao atualizar produto: {e}") from e # Erro personalizado para erro de banco de dados
+            if field_name == "cod_sku":
+                raise DuplicateSkuError(value) from e
+            raise DatabaseOperationError(f"Erro ao atualizar produto: {e}") from e # Erro personalizado para erro de banco de dados
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao atualizar produto: {e}") from e # Erro personalizado para erro de banco de dados
 

@@ -29,6 +29,10 @@ class BatchControlError(Exception):
 
     pass
 
+class NoChangesError(BatchControlError):
+    """Não há alterações para salvar."""
+
+    pass
 
 class ValidationError(BatchControlError):
     """Dados inválidos antes de chegar ao banco (camada service/GUI)."""
@@ -77,3 +81,4 @@ class BootloaderError(BatchControlError):
     """Erro ao carregar a aplicação."""
 
     pass
+

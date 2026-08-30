@@ -8,8 +8,8 @@ ao ProductRepository e convertendo dados para DTOs.
 from dataclasses import replace
 from typing import List
 from src.dtos.product_dto import ProductDTO, ProductCardDTO
-from src.exceptions import DuplicateSkuError, ProductHasBalanceError
-from src.helpers.helpers import dict_to_product_card_dto, dict_to_product_dto
+from src.exceptions import DuplicateSkuError, ProductHasBalanceError, NoChangesError
+from src.helpers.helpers import dict_to_product_card_dto, dict_to_product_dto, diff_product_dto
 from src.model.product import Product
 from src.model.stock_level import sort_level
 from src.repository.product_repository import ProductRepository
@@ -72,9 +72,23 @@ class ProductService:
             self._product_repository.delete(id=id_produto)
 
     def update_product(self, original_product_dto: ProductDTO, edited_product_dto: ProductDTO) -> None:
+        #Chama a função para retornar a lista de alterações
+        diff_list = diff_product_dto(
+            product_old=original_product_dto,
+            product_new=edited_product_dto
+        )
 
+        #Verifica se a lista de alterações está vazia
+        if len(diff_list) == 0:
+            raise NoChangesError("Não há alterações para salvar.")
 
-        pass
+        else:
+            #Chama o repositório para atualizar o produto
+            if original_product_dto.id is not None:
+                self._product_repository.update(
+                    id=original_product_dto.id,
+                    list_to_update=diff_list
+                )
 
     def get_product_lower_minimum_balance(self) -> List[ProductCardDTO]:
         """
