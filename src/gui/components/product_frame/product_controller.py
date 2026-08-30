@@ -130,9 +130,6 @@ class ProductController:
         Args:
             product_id: ID do produto selecionado na tabela.
         """
-        product_dto = self.get_product_id_to_edit(product_id=product_id)
-        self._original_product_dto = product_dto #Salva o produto no estado antes da edição
-
         if self._product_frame is None:
             ErrorWindow(message="Frame de produtos não inicializado.")
             return
@@ -141,9 +138,13 @@ class ProductController:
         if current_state != ProductFrameState.NEW_PRODUCT:
             return
 
+        product_dto = self.get_product_id_to_edit(product_id=product_id)
+
         if product_dto is None:
             ErrorWindow(message="Produto não encontrado.")
             return
+
+        self._original_product_dto = product_dto
 
         self._product_frame.hide_new_product_frame()
         self._product_frame.show_edit_product(product_dto=product_dto)

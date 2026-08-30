@@ -84,8 +84,8 @@ def build_edit_product_dto(raw_data_edit: EditProductRawData, original_product_d
 
     return replace(
         original_product_dto,
-        name=sanitize_string(value=raw_data_edit["nome_produto"]),
-        product_firm=sanitize_string(value=raw_data_edit["empresa"]),
+        name=raw_data_edit["nome_produto"].strip(),
+        product_firm=raw_data_edit["empresa"].strip(),
         minimun_balance=int(raw_data_edit["saldo_min"]),
         product_status=1 if raw_data_edit["ativo"] == "Ativo" else 0,
     )
