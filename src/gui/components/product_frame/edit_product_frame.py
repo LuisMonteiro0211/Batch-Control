@@ -15,6 +15,8 @@ from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory, LabelNameField
 from typing import Callable
 from src.forms.product_form_types import EditProductRawData
+from src.helpers.image_helper import resize_image
+from src.paths import ICONS_DIR
 PRIMEIRA_MARGEM_LABEL, SEGUNDA_MARGEM_LABEL, TERCEIRA_MARGEM_LABEL = 24, 230, 436
 PRIMEIRA_LINHA_LABEL, SEGUNDA_LINHA_LABEL, TERCEIRA_LINHA_LABEL = 24, 87, 150
 
@@ -96,6 +98,21 @@ class EditProductFrame(CTkFrame):
 
         self._cancel_button = CTkButton(master=self, text="Cancelar", command=self._cancel_callback, width=69, height=27, fg_color=COLORS.elevado, hover_color=COLORS.botao_selecionado, text_color=COLORS.texto_botao_principal, font=FONTS.texto_tabela, corner_radius=5, border_width=1, border_color=COLORS.bordas)
 
+        self._delete_product_button = CTkButton(
+            self,
+            text="",
+            fg_color=COLORS.erro,
+            image= resize_image(file_name=ICONS_DIR / "trash-2.png", size=(22, 22)),
+            command=None
+        )
+        self._delete_product_button.configure(
+            width=30,
+            height=30,
+            border_width=1,
+            border_color=COLORS.bordas,
+            corner_radius=5,
+        )
+
     def _layout_widgets(self) -> None:
         """Posiciona labels, campos e botões usando coordenadas fixas."""
         self._name_product_label.place(x=PRIMEIRA_MARGEM_LABEL, y=PRIMEIRA_LINHA_LABEL)
@@ -118,6 +135,8 @@ class EditProductFrame(CTkFrame):
 
         self._save_button.place(x=481, y=180, anchor="nw")
         self._cancel_button.place(x=405, y=180, anchor="nw")
+
+        self._delete_product_button.place(x=575, y=145, anchor="nw")
 
     def get_raw_values(self) -> EditProductRawData:
         """
