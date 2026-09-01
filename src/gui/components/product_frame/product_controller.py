@@ -17,9 +17,8 @@ from customtkinter import CTk
 from src.dtos import ProductCardDTO, ProductDTO
 from src.exceptions import DatabaseOperationError, ProductNotFoundError, DuplicateSkuError
 from src.gui.components.product_frame import ProductFrame
-from src.gui.error_window import ErrorWindow
-from src.gui.alert_window import AlertWindow
 from src.service.product_service import ProductService
+from src.gui.interaction_window import FactoryInteractionWindow
 from src.forms.product_form import build_edit_product_dto
 from src.gui.components.product_frame.product_frame_state import ProductFrameState
 
@@ -67,7 +66,10 @@ class ProductController:
             raw_data_edit = self._product_frame.get_raw_values()#Coleta os valores do formulário de edição
             
             if raw_data_edit is None:
-                AlertWindow(message="Nenhum formulário de edição ativo.")
+                FactoryInteractionWindow.alert_window(
+                    master=self._product_frame,
+                    message="Nenhum formulário de edição ativo."
+                )
                 return
 
             if self._original_product_dto is not None:
@@ -78,7 +80,10 @@ class ProductController:
 
                 if editing_product_dto == self._original_product_dto:
                     #Se os valores do formulário de edição são iguais aos valores do produto original, não há alterações para salvar.
-                    AlertWindow(message="Não há alterações para salvar.")
+                    FactoryInteractionWindow.alert_window(
+                        master=self._product_frame,
+                        message="Não há alterações para salvar."
+                    )
                 else:
                     #Se os valores do formulário de edição são diferentes dos valores do produto original, atualiza o produto.
                     try:
@@ -89,16 +94,25 @@ class ProductController:
                         self._product_frame.hide_edit_product_frame()
                         self._product_frame.show_new_product()
                     except DuplicateSkuError as e:
-                        ErrorWindow(message=str(e))
+                        FactoryInteractionWindow.error_window(
+                            master=self._product_frame,
+                            message=str(e)
+                        )
                         return None
                     except DatabaseOperationError as e:
-                        ErrorWindow(message=str(e))
+                        FactoryInteractionWindow.error_window(
+                            master=self._product_frame,
+                            message=str(e)
+                        )
                         return None
 
 
             else:
                 #Se o produto original não foi encontrado, exibe uma mensagem de erro.
-                AlertWindow(message="Produto não encontrado.")
+                FactoryInteractionWindow.alert_window(
+                    master=self._product_frame,
+                    message="Produto não encontrado."
+                )
 
     def get_product_id_to_edit(self, product_id: int) -> Optional[ProductDTO]:
         """
@@ -115,10 +129,16 @@ class ProductController:
             return product
 
         except ProductNotFoundError as e:
-            ErrorWindow(message=str(e))
+            FactoryInteractionWindow.error_window(
+                master=self._product_frame,
+                message=str(e)
+            )
             return None
         except DatabaseOperationError as e:
-            ErrorWindow(message=str(e))
+            FactoryInteractionWindow.error_window(
+                master=self._product_frame,
+                message=str(e)
+            )
             return None
 
     def edit_product_mode(self, product_id: int) -> None:
@@ -134,7 +154,10 @@ class ProductController:
         self._original_product_dto = product_dto #Salva o produto no estado antes da edição
 
         if self._product_frame is None:
-            ErrorWindow(message="Frame de produtos não inicializado.")
+            FactoryInteractionWindow.error_window(
+                master=self._product_frame,
+                message="Frame de produtos não inicializado."
+            )
             return
 
         current_state = self._product_frame.get_state_product_frame()
@@ -142,7 +165,10 @@ class ProductController:
             return
 
         if product_dto is None:
-            ErrorWindow(message="Produto não encontrado.")
+            FactoryInteractionWindow.error_window(
+                master=self._product_frame,
+                message="Produto não encontrado."
+            )
             return
 
         self._product_frame.hide_new_product_frame()

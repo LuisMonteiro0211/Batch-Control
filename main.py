@@ -13,7 +13,7 @@ sys.dont_write_bytecode = True
 
 from src.gui.app import BatchControlApp
 from src.gui.splash_screen import SplashScreen
-from src.gui.error_window import ErrorWindow
+from src.gui.interaction_window import FactoryInteractionWindow
 
 
 def main() -> None:
@@ -23,8 +23,7 @@ def main() -> None:
     splash_error = splash.get_error()
 
     if splash_error  is not None:
-        error_window = ErrorWindow(message=str(splash_error))
-        error_window.run()
+        FactoryInteractionWindow.error_window(master=None, message=str(splash_error))
 
     else:
         app_context = splash.get_context()
