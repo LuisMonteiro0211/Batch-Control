@@ -107,9 +107,9 @@ class ProductController:
             raw_data_edit = self._product_frame.get_raw_values()#Coleta os valores do formulário de edição
             
             if raw_data_edit is None:
-                FactoryInteractionWindow.alert_window(
+                FactoryInteractionWindow.error_window(
                     master=self._product_frame,
-                    message="Nenhum formulário de edição ativo."
+                    message="Nenhum dado encontrado!"
                 )
                 return
 
@@ -131,6 +131,10 @@ class ProductController:
                         self._product_service.update_product(
                             original_product_dto=self._original_product_dto,
                             edited_product_dto=editing_product_dto
+                        )
+                        FactoryInteractionWindow.success_window(
+                            master=self._product_frame,
+                            message="Produto atualizado com sucesso."
                         )
                         self._product_frame.hide_edit_product_frame()
                         self._product_frame.show_new_product()
