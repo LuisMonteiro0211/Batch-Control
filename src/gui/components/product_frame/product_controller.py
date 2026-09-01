@@ -52,13 +52,19 @@ class ProductController:
             on_click_save_product=self._on_click_save_product,
             on_click_save_edit_product=self._on_click_save_edit_product,
             on_click_edit_product=self.edit_product_mode,
-            products_to_view=self._products_to_view
+            products_to_view=self._products_to_view,
+            on_click_delete_product=self._on_click_delete_product
         )
         self._product_frame.show_new_product()
 
     def _on_click_save_product(self) -> None:
         """Callback do botão salvar no formulário de novo produto. Implementação pendente."""
         pass
+
+    def _on_click_delete_product(self, product_id: int) -> None:
+        """Callback do botão deletar no formulário de produto. Deleta um produto."""
+        if self._product_frame is not None:
+            self._product_service.delete_product(id_produto=product_id)
 
     def _on_click_save_edit_product(self) -> None:
         """Callback do botão salvar no formulário de edição. Coleta os valores do frame."""

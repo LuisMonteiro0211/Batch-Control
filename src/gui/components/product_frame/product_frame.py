@@ -43,6 +43,7 @@ class ProductFrame(CTkFrame):
         on_click_save_product: Callable,
         on_click_save_edit_product: Callable,
         on_click_edit_product: Callable,
+        on_click_delete_product: Callable,
         products_to_view: List[ProductCardDTO],
     ):
         super().__init__(master)
@@ -50,6 +51,7 @@ class ProductFrame(CTkFrame):
         self._on_click_save_product = on_click_save_product
         self._on_click_save_edit_product = on_click_save_edit_product
         self._on_click_edit_product = on_click_edit_product
+        self._on_click_delete_product = on_click_delete_product
         self._edit_product_frame: Optional[EditProductFrame] = None
         self._state_product_frame: Optional[ProductFrameState] = None
         self._configure_layout()
@@ -143,6 +145,7 @@ class ProductFrame(CTkFrame):
             product_dto=product_dto,
             save_callback=self._on_click_save_edit_product,
             cancel_callback=self._cancel_edit_product_frame,
+            delete_callback=self._on_click_delete_product,
         )
         self._edit_product_frame.set_data_product_dto()
         self._edit_product_frame.place(x=12, y=54, anchor="nw")

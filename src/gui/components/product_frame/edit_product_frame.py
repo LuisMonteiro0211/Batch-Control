@@ -41,11 +41,13 @@ class EditProductFrame(CTkFrame):
         product_dto: ProductDTO,
         save_callback: Callable,
         cancel_callback: Callable,
+        delete_callback: Callable,
     ):
         super().__init__(parent)
         self._product_dto: ProductDTO = product_dto
         self._save_callback = save_callback
         self._cancel_callback = cancel_callback
+        self._delete_callback = delete_callback
         self._setup_ui()
 
     def _setup_ui(self) -> None:
@@ -103,7 +105,7 @@ class EditProductFrame(CTkFrame):
             text="",
             fg_color=COLORS.erro,
             image= resize_image(file_name=ICONS_DIR / "trash-2.png", size=(22, 22)),
-            command=None
+            command=self._delete_callback
         )
         self._delete_product_button.configure(
             width=30,
