@@ -64,7 +64,42 @@ class ProductController:
     def _on_click_delete_product(self, product_id: int) -> None:
         """Callback do botão deletar no formulário de produto. Deleta um produto."""
         if self._product_frame is not None:
-            self._product_service.delete_product(id_produto=product_id)
+
+            #Chama a Janela de confirmação
+            action_user = FactoryInteractionWindow.confirm_window(
+                master=self._product_frame,
+                message="Tem certeza que deseja deletar o produto?"
+            )
+
+            if action_user.get_action() == True:
+                try:
+                    #Tenta deletar o produto
+                    self._product_service.delete_product(id_produto=product_id)
+                    FactoryInteractionWindow.success_window(
+                        master=self._product_frame,
+                        message="Produto deletado com sucesso."
+                    )
+                    self._product_frame.hide_edit_product_frame()
+                    self._product_frame.show_new_product()
+
+                except DatabaseOperationError as e:
+                    FactoryInteractionWindow.error_window(
+                        master=self._product_frame,
+                        message=str(e)
+                    )
+                
+                except ProductNotFoundError as e:
+                    FactoryInteractionWindow.error_window(
+                        master=self._product_frame,
+                        message=str(e)
+                    )
+                    
+                
+            else:
+                FactoryInteractionWindow.alert_window(
+                    master=self._product_frame,
+                    message="Operação cancelada."
+                )
 
     def _on_click_save_edit_product(self) -> None:
         """Callback do botão salvar no formulário de edição. Coleta os valores do frame."""

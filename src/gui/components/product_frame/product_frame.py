@@ -34,6 +34,7 @@ class ProductFrame(CTkFrame):
         on_click_save_product: Callback ao salvar um novo produto.
         on_click_save_edit_product: Callback ao salvar edição de produto.
         on_click_edit_product: Callback ao clicar em editar na tabela.
+        on_click_delete_product: Callback ao clicar em deletar na tabela.
         products_to_view: Produtos exibidos na tabela de alertas.
     """
 
