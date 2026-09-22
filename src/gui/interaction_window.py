@@ -10,6 +10,8 @@ from src.gui.theme.theme import COLORS, FONTS
 from src.paths import icon_path
 
 class DialogType(Enum):
+    # Padronização de tipos de janelas de interação
+    
     ALERT = "alert"
     CONFIRM = "confirm"
     ERROR = "error"
@@ -80,6 +82,10 @@ class InteractionWindow(CTkToplevel):
         self._action = True
         self.destroy()
 
+    def _on_click_button_cancel(self):
+        self._action = False
+        self.destroy()
+
     def _build_widgets(self):
         self._icon = Image.open(self._spec.icon_path).convert("RGBA")
         self._icon_ctk = CTkImage(self._icon, size=(36,36))
@@ -116,8 +122,16 @@ class InteractionWindow(CTkToplevel):
             justify="center",
         )
 
-        self._button_action = CTkButton(
+        self._buttons_frame = CTkFrame(
             self,
+            width=288,
+            height=30,
+            fg_color=COLORS.transparente,
+            border_width=0,
+        )
+
+        self._button_action = CTkButton(
+            self._buttons_frame,
             text=self._spec.button_text,
             width=90,
             height=28,
@@ -131,13 +145,30 @@ class InteractionWindow(CTkToplevel):
             command=self._on_click_button
         )
 
+        self._button_cancel = CTkButton(
+            self._buttons_frame,
+            text="Cancelar",
+            width=69,
+            height=28,
+            corner_radius=5,
+            border_width=1,
+            border_color=COLORS.bordas,
+            fg_color=COLORS.elevado,
+            hover_color=COLORS.botao_selecionado,
+            text_color=COLORS.texto_botao_principal,
+            font=FONTS.botao_secundario,
+            command=self._on_click_button_cancel
+        )
+
+
     def _layout_widgets(self):
         self._icon_label.pack(pady=(24, 8))
         self._title_label.pack(padx=24, pady=(0, 12))
         self._detail_frame.pack(padx=24, fill="x")
         self._detail_label.pack(padx=12, pady=10, fill="x")
-        self._button_action.pack(pady=(16, 20))
-
+        self._buttons_frame.pack(pady=(16, 20))
+        self._button_action.pack(side="right", padx=(0, 8))
+        self._button_cancel.pack(side="left")
         
     def get_action(self):
         return self._action
