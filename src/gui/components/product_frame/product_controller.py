@@ -127,30 +127,46 @@ class ProductController:
                     )
                 else:
                     #Se os valores do formulário de edição são diferentes dos valores do produto original, atualiza o produto.
-                    try:
-                        self._product_service.update_product(
-                            original_product_dto=self._original_product_dto,
-                            edited_product_dto=editing_product_dto
-                        )
-                        FactoryInteractionWindow.success_window(
-                            master=self._product_frame,
-                            message="Produto atualizado com sucesso."
-                        )
-                        self._product_frame.hide_edit_product_frame()
-                        self._product_frame.show_new_product()
-                    except DuplicateSkuError as e:
-                        FactoryInteractionWindow.error_window(
-                            master=self._product_frame,
-                            message=str(e)
-                        )
-                        return None
-                    except DatabaseOperationError as e:
-                        FactoryInteractionWindow.error_window(
-                            master=self._product_frame,
-                            message=str(e)
-                        )
-                        return None
 
+                    action_user = FactoryInteractionWindow.confirm_window(
+                        master=self._product_frame,
+                        message="Confirmar alterações no produto?"
+                    )
+
+                    if action_user.get_action() == True:
+
+                        try:
+                            self._product_service.update_product(
+                                original_product_dto=self._original_product_dto,
+                                edited_product_dto=editing_product_dto
+                            )
+                        
+                            FactoryInteractionWindow.success_window(
+                                master=self._product_frame,
+                                message="Produto atualizado com sucesso."
+                            )
+                            self._product_frame.hide_edit_product_frame()
+                            self._product_frame.show_new_product()
+
+
+                        except DuplicateSkuError as e:
+                            FactoryInteractionWindow.error_window(
+                                master=self._product_frame,
+                                message=str(e)
+                            )
+                            return None
+                        except DatabaseOperationError as e:
+                            FactoryInteractionWindow.error_window(
+                                master=self._product_frame,
+                                message=str(e)
+                            )
+                            return None
+
+                    else:
+                        FactoryInteractionWindow.alert_window(
+                            master=self._product_frame,
+                            message="Operação cancelada."
+                        )
 
             else:
                 #Se o produto original não foi encontrado, exibe uma mensagem de erro.
