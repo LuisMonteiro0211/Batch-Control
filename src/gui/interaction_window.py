@@ -19,6 +19,7 @@ class DialogType(Enum):
 
 @dataclass(frozen=True)
 class DialogSpec:
+    #Especificação da janela de interação
     icon_path: Path
     header: str
     button_text: str
@@ -65,6 +66,10 @@ class InteractionWindow(CTkToplevel):
         self._configure_window()
         self._build_widgets()
         self._layout_widgets()
+        
+        # Construção de widgets adicionais
+        self._build_extended_widgets()
+        self.layout_extended_widgets()
     
     def _configure_window(self):
         self.title(self._spec.header)
@@ -77,13 +82,16 @@ class InteractionWindow(CTkToplevel):
         )
         self.transient(self._master)
 
+    def _build_extended_widgets(self):
+        # Gancho para poder ser implementado de forma correta pelas classes filhas
+        pass
+
+    def layout_extended_widgets(self):
+        # Gancho para poder ser implementado de forma correta pelas classes filhas
+        pass
 
     def _on_click_button(self):
         self._action = True
-        self.destroy()
-
-    def _on_click_button_cancel(self):
-        self._action = False
         self.destroy()
 
     def _build_widgets(self):
@@ -145,6 +153,26 @@ class InteractionWindow(CTkToplevel):
             command=self._on_click_button
         )
 
+    def _layout_widgets(self):
+        self._icon_label.pack(pady=(24, 8))
+        self._title_label.pack(padx=24, pady=(0, 12))
+        self._detail_frame.pack(padx=24, fill="x")
+        self._detail_label.pack(padx=12, pady=10, fill="x")
+        self._buttons_frame.pack(pady=(16, 20))
+        self._button_action.pack(side="right", padx=(0, 8))
+        
+    def get_action(self):
+        return self._action
+
+class interactionWindowConfirm(InteractionWindow):
+    def __init__(self, master, spec: DialogSpec, message: str):
+        super().__init__(master, spec, message)
+
+    def _on_click_button_cancel(self):
+        self._action = False
+        self.destroy()
+
+    def _build_extended_widgets(self):
         self._button_cancel = CTkButton(
             self._buttons_frame,
             text="Cancelar",
@@ -160,19 +188,10 @@ class InteractionWindow(CTkToplevel):
             command=self._on_click_button_cancel
         )
 
-
-    def _layout_widgets(self):
-        self._icon_label.pack(pady=(24, 8))
-        self._title_label.pack(padx=24, pady=(0, 12))
-        self._detail_frame.pack(padx=24, fill="x")
-        self._detail_label.pack(padx=12, pady=10, fill="x")
-        self._buttons_frame.pack(pady=(16, 20))
+    def layout_extended_widgets(self):
         self._button_action.pack(side="right", padx=(0, 8))
-        self._button_cancel.pack(side="left")
+        self._button_cancel.pack(side="left", padx=(0, 8))
         
-    def get_action(self):
-        return self._action
-
 
 class FactoryInteractionWindow:
     @staticmethod
@@ -191,8 +210,8 @@ class FactoryInteractionWindow:
         )
 
     @staticmethod
-    def confirm_window(master, message: str) -> InteractionWindow:
-        return InteractionWindow(
+    def confirm_window(master, message: str) -> interactionWindowConfirm:
+        return interactionWindowConfirm(
             master=master,
             spec=TYPES[DialogType.CONFIRM],
             message=message
