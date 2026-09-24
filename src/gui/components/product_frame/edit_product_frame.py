@@ -15,6 +15,7 @@ from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory, LabelNameField
 from typing import Callable
 from src.forms.product_form_types import EditProductRawData
+from src.interface import SaveEditProductProtocol, DeleteProductProtocol
 from src.helpers.image_helper import resize_image
 from src.paths import ICONS_DIR
 PRIMEIRA_MARGEM_LABEL, SEGUNDA_MARGEM_LABEL, TERCEIRA_MARGEM_LABEL = 24, 230, 436
@@ -39,9 +40,9 @@ class EditProductFrame(CTkFrame):
         self,
         parent,
         product_dto: ProductDTO,
-        save_callback: Callable,
+        save_callback: SaveEditProductProtocol,
         cancel_callback: Callable,
-        delete_callback: Callable,
+        delete_callback: DeleteProductProtocol,
     ):
         super().__init__(parent)
         self._product_dto: ProductDTO = product_dto
@@ -105,7 +106,7 @@ class EditProductFrame(CTkFrame):
             text="",
             fg_color=COLORS.erro,
             image= resize_image(file_name=ICONS_DIR / "trash-2.png", size=(22, 22)),
-            command=lambda: self._delete_callback(product_id=self._product_dto.id)
+            command=lambda: self._delete_callback(self._product_dto.id)
         )
         self._delete_product_button.configure(
             width=30,

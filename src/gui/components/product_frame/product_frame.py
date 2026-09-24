@@ -23,6 +23,7 @@ from typing import Callable, List, Optional
 from src.dtos.product_dto import ProductCardDTO, ProductDTO
 from src.forms.product_form_types import EditProductRawData
 from .product_frame_state import ProductFrameState
+from src.interface import SaveEditProductProtocol, DeleteProductProtocol
 
 
 class ProductFrame(CTkFrame):
@@ -42,9 +43,9 @@ class ProductFrame(CTkFrame):
         self,
         master,
         on_click_save_product: Callable,
-        on_click_save_edit_product: Callable,
+        on_click_save_edit_product: SaveEditProductProtocol,
         on_click_edit_product: Callable,
-        on_click_delete_product: Callable,
+        on_click_delete_product: DeleteProductProtocol,
         products_to_view: List[ProductCardDTO],
     ):
         super().__init__(master)
