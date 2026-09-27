@@ -29,10 +29,12 @@ from src.exceptions import (
     DatabaseOperationError,
     DuplicateSkuError,
     ProductNotFoundError,
+    NoChangesError,
 )
-from src.helpers.helpers import row_to_dict
+from src.helpers.helpers import row_to_full_product_data, row_to_product_card_dict
 from src.interface.entity import Entity
 from src.model.product import Product
+from src.repository.types_repository import FullProductData, ProductCardDict
 
 @final
 class ProductRepository (Entity):
@@ -84,7 +86,7 @@ class ProductRepository (Entity):
         """
 
         if not list_to_update:
-            return
+            raise NoChangesError("Não há alterações para atualizar.")
 
         try:
             with get_connection(self._database_name) as cursor:
@@ -125,7 +127,7 @@ class ProductRepository (Entity):
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao deletar produto: {e}") from e # Erro personalizado para erro de banco de dados
 
-    def get_all(self) -> List[dict[str, Any]]:
+    def get_all(self) -> List[FullProductData]:
         """
         Obtém todos os produtos do banco de dados.
 
@@ -133,47 +135,24 @@ class ProductRepository (Entity):
             None
 
         Returns:
-            List[dict[str, Any]]: Lista de produtos como dicionários.
+            List[FullProductData]: Lista de produtos como objetos FullProductData.
         """
 
         try:
             with get_connection(self._database_name) as cursor:
-                query = "SELECT * FROM produtos"
+                query = "SELECT * FROM products_information"
                 cursor.execute(query)
                 products = cursor.fetchall()
 
                 if not products:
                     raise ProductNotFoundError("Não há produtos cadastrados.")
 
-                return [row_to_dict(cursor, product) for product in products]
+                return [row_to_full_product_data(cursor, product) for product in products]
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao obter todos os produtos: {e}") from e # Erro personalizado para erro de banco de dados
 
-    def get_by_id(self, id: int) -> dict[str, Any]:
-        """
-        Obtém um produto pelo ID.
 
-        Args:
-            id: ID do produto a ser obtido.
-
-        Returns:
-            dict[str, Any]: Produto encontrado como dicionário.
-        """
-        try:
-            with get_connection(self._database_name) as cursor:
-                query = "SELECT * FROM produtos WHERE id_produto = ?"
-                values = (id,)
-                cursor.execute(query, values)
-                product = cursor.fetchone()
-
-                if product is None:
-                    raise ProductNotFoundError(f"Produto com ID {id} não encontrado.")
-
-                return row_to_dict(cursor, product)
-        except DatabaseError as e:
-            raise DatabaseOperationError(f"Erro ao obter produto por ID: {e}") from e # Erro personalizado para erro de banco de dados
-
-    def get_by_cod_sku(self, cod_sku: int) -> dict[str, Any]:
+    def get_by_cod_sku(self, cod_sku: int) -> Optional[FullProductData]:
         """
         Obtém um produto pelo código SKU.
 
@@ -181,12 +160,12 @@ class ProductRepository (Entity):
             cod_sku: Código SKU do produto a ser obtido.
 
         Returns:
-            dict[str, Any]: Produto encontrado como dicionário.
+            Optional[FullProductData]: Produto encontrado como objeto FullProductData ou None se não houver produto correspondente.
         """
 
         try:
             with get_connection(self._database_name) as cursor:
-                query = "SELECT * FROM produtos WHERE cod_sku = ?"
+                query = "SELECT * FROM products_information WHERE cod_sku = ?"
                 values = (cod_sku,)
 
                 cursor.execute(query, values)
@@ -195,35 +174,88 @@ class ProductRepository (Entity):
                 if product is None:
                     raise ProductNotFoundError(f"Produto com código SKU {cod_sku} não encontrado.")
 
-                return row_to_dict(cursor, product)
+                return row_to_full_product_data(cursor, product)
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao obter produto por código SKU: {e}") from e # Erro personalizado para erro de banco de dados
 
-    def get_by_nome_produto(self, nome_produto: str) -> dict[str, Any]:
+    def get_product_cards_by_name (self, name_product: str) -> Optional[List[ProductCardDict]]:
         """
-        Obtém um produto pelo nome do produto.
+        Obtém todos os produtos com saldo inferior ao saldo mínimo.
 
         Args:
-            nome_produto: Nome do produto a ser obtido.
+            name_product: Nome do produto a ser buscado.
 
         Returns:
-            dict[str, Any]: Produto encontrado como dicionário.
+            Optional[List[ProductCardDict]]: Lista com as informações dos cards correspondentes aos nomes informados ou None se não houver produtos correspondentes.
+        """
+
+        try:
+            with get_connection(self._database_name) as cursor:
+                query = "SELECT * FROM products_card WHERE nome_produto LIKE ?"
+                cursor.execute(query, (f"%{name_product}%"))
+
+                products = cursor.fetchall()
+
+            if not products:
+                return None
+
+            return [row_to_product_card_dict(row=product) for product in products]
+
+        except DatabaseError as e:
+            raise DatabaseOperationError(f"Não foi possível localizar produtos com esse nome: {e}") from e # Erro personalizado para erro de banco de dados
+
+
+    def get_product_cards_lower_minimum_balance(self) -> List[ProductCardDict]:
+        """
+        Obtém as informações para os cards de produtos com saldo inferior ao saldo mínimo.
+
+        Args:
+            None
+
+        Returns:
+            List[ProductCardDict]: Lista com as informações dos cards correspondentes aos produtos com saldo inferior ao saldo mínimo.
+        """
+
+        try:
+            with get_connection(self._database_name) as cursor:
+                query = "SELECT * FROM products_card WHERE saldo_atual <= saldo_min * 1.5"
+                cursor.execute(query)
+
+                products = cursor.fetchall()
+
+                if not products:
+                    raise ProductNotFoundError("Não há produtos com saldo inferior ao saldo mínimo.")
+
+                return [row_to_product_card_dict(row=product) for product in products]
+
+        except DatabaseError as e:
+            raise DatabaseOperationError(f"Não foi possível localizar produtos com saldo inferior ao saldo mínimo: {e}") from e # Erro personalizado para erro de banco de dados
+
+## Funções auxiliares da aplicação
+    def get_by_id(self, id: int) -> Optional[FullProductData]:
+        """
+        Obtém um produto pelo ID.
+
+        Args:
+            id: ID do produto a ser obtido.
+
+        Returns:
+            Optional[FullProductData]: Produto encontrado como objeto FullProductData ou None se não houver produto correspondente.
         """
         try:
             with get_connection(self._database_name) as cursor:
-                query = "SELECT * FROM produtos WHERE nome_produto = ?"
-                values = (nome_produto,)
+                query = "SELECT * FROM products_information WHERE id_produto = ?"
+                values = (id,)
                 cursor.execute(query, values)
                 product = cursor.fetchone()
 
                 if product is None:
-                    raise ProductNotFoundError(f"Produto com nome {nome_produto} não encontrado.")
+                    raise ProductNotFoundError(f"Produto com ID {id} não encontrado.")
 
-                return row_to_dict(cursor, product)
+                return row_to_full_product_data(cursor, product)
         except DatabaseError as e:
-            raise DatabaseOperationError(f"Erro ao obter produto por nome: {e}") from e # Erro personalizado para erro de banco de dados
-
-
+            raise DatabaseOperationError(f"Erro ao obter produto por ID: {e}") from e # Erro personalizado para erro de banco de dados
+            
     def sku_exists(self, cod_sku: int) -> bool:
         """
         Verifica se o código SKU existe no banco de dados.
@@ -239,84 +271,3 @@ class ProductRepository (Entity):
             return True
         except ProductNotFoundError:
             return False
-
-    def get_id_by_cod_sku(self, cod_sku: int) -> int:
-        """
-        Obtém o ID do produto pelo código SKU.
-
-        Args:
-            cod_sku: Código SKU a ser obtido.
-
-        Returns:
-            int: ID do produto.
-        """
-        try:
-            with get_connection(self._database_name) as cursor:
-                query = "SELECT id_produto FROM produtos WHERE cod_sku = ?"
-                values = (cod_sku,)
-
-                cursor.execute(query, values)
-
-                row = cursor.fetchone()
-
-                if row is None:
-                    raise ProductNotFoundError(f"Produto com código SKU {cod_sku} não encontrado.")
-
-                return row_to_dict(cursor, row)["id_produto"]
-
-        except DatabaseError as e:
-            raise DatabaseOperationError(f"Erro ao obter ID do produto por código SKU: {e}") from e # Erro personalizado para erro de banco de dados
-
-    def search_by_name(self, name: str) -> Optional[List[dict[str, Any]]]:
-        """
-        Busca produtos pelo nome.
-
-        Args:
-            name: Nome do produto a ser buscado.
-
-        Returns:
-            List[dict[str, Any]]: Lista de produtos encontrados como dicionários.
-        """
-        try:
-            with get_connection(self._database_name) as cursor:
-                query = "SELECT * FROM produtos WHERE nome_produto LIKE ?"
-                values = (f"%{name}%",)
-                cursor.execute(query, values)
-                products = cursor.fetchall()
-
-                if not products:
-                    raise ProductNotFoundError(f"Produto com nome {name} não encontrado.")
-
-                return [row_to_dict(cursor, product) for product in products]
-        except DatabaseError as e:
-            raise DatabaseOperationError(f"Erro ao buscar produtos por nome: {e}") from e # Erro personalizado para erro de banco de dados
-
-    def get_product_lower_minimum_balance(self) -> List[dict[str, Any]]:
-        """
-        Obtém todos os produtos com saldo inferior ao saldo mínimo.
-
-        Args:
-            None
-
-        Returns:
-            List[dict[str, Any]]: Lista de produtos com saldo inferior ao saldo mínimo como dicionários.
-        """
-
-        try:
-            with get_connection(self._database_name) as cursor:
-                query = "SELECT p.*, estoque.estoque_atual FROM produtos p JOIN (SELECT cod_produto, SUM(saldo_atual) AS estoque_atual FROM lotes GROUP BY cod_produto) AS estoque ON estoque.cod_produto = p.cod_sku WHERE p.ativo = 1 AND estoque.estoque_atual <= p.saldo_min * 1.5 ORDER BY estoque.estoque_atual ASC"
-                cursor.execute(query)
-
-                products = cursor.fetchall()
-
-            if not products:
-                return []
-
-            return [row_to_dict(cursor, product) for product in products]
-        except DatabaseError as e:
-            raise DatabaseOperationError(f"Erro ao obter produto com saldo inferior ao saldo mínimo: {e}") from e # Erro personalizado para erro de banco de dados
-
-if __name__ == "__main__":
-    product_repository = ProductRepository("test_batch_control.db")
-    products = product_repository.get_product_lower_minimum_balance()
-    print(products)

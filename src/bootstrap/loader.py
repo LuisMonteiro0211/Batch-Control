@@ -26,7 +26,7 @@ class Loader:
         """
         steps = [
             ("Conectando ao banco...", self._step_connect),
-            ("Carregando produtos...", self._step_load_products),
+            ("Carregando produtos...", self._step_load_cards_low_stock),
             ("Carregando lotes...", self._step_load_batches),
             ("Preparando interface...", self._step_prepare_interface)
         ]
@@ -47,14 +47,14 @@ class Loader:
 
         self.context.services = AppServices(product=product_service) #Preparando o contexto para a aplicação
 
-    def _step_load_products(self):
+    def _step_load_cards_low_stock(self):
         if not self.context.services:
             raise BootloaderError("Serviços não foram carregados.")
 
         if not self.context.services.product:
             raise BootloaderError("Serviço de produtos não foi carregado.")
 
-        products_lower_minimum_balance: List[ProductCardDTO] = self.context.services.product.get_product_lower_minimum_balance()
+        products_lower_minimum_balance: List[ProductCardDTO] = self.context.services.product.get_cards_low_stock()
         self.context.dashboard_data.low_stock_products = products_lower_minimum_balance
         
     def _step_load_batches(self):

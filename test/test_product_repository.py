@@ -3,6 +3,7 @@ import pytest
 from src.exceptions import DuplicateSkuError, ProductNotFoundError
 from src.model.product import Product
 from src.repository.product_repository import ProductRepository
+from src.repository.types_repository import FullProductData, ProductCardDict
 
 test_product_repository = ProductRepository("test_batch_control.db")
 

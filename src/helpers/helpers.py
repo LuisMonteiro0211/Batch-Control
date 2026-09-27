@@ -1,25 +1,51 @@
+from re import I
 from src.dtos import ProductCardDTO
 from src.exceptions.exceptions import InvalidDateError
 from src.dtos.product_dto import ProductDTO
 from typing import Any, List, Tuple
-from datetime import datetime
+from datetime import date, datetime
 from dataclasses import fields
+from src.repository.types_repository import FullProductData, ProductCardDict
+from typing import List
 
-def row_to_dict(cursor: Any, row: tuple[Any, ...]) -> dict[str, Any]:
+def row_to_full_product_data(cursor: Any, row: tuple[Any, ...]) -> FullProductData:
     """
-    Converte uma linha retornada pelo SQLite (tuple) em dicionário.
+    Converte uma linha retornada pelo SQLite (tuple) em dicionário FullProductData.
 
     Args:
         cursor: Cursor usado na consulta (fornece os nomes das colunas).
         row: Tupla retornada por fetchone ou item de fetchall.
 
     Returns:
-        dict[str, Any]: Linha convertida com chaves nomeadas pelas colunas.
+        FullProductData: Objeto FullProductData com os valores da linha.
     """
     columns = [column[0] for column in cursor.description]
-    return dict(zip(columns, row))
+    return FullProductData(**dict(zip(columns, row)))
 
-def dict_to_product_dto(product: dict[str, Any]) -> ProductDTO:
+def row_to_product_card_dict(row: tuple[Any, ...]) -> ProductCardDict:
+    """
+    Converte uma linha retornada pelo SQLite (tuple) em dicionário ProductCardDict.
+
+    Args:
+        cursor: Cursor usado na consulta (fornece os nomes das colunas).
+        row: Tupla retornada por fetchone ou item de fetchall.
+
+    Returns:
+        ProductCardDict: Objeto ProductCardDict com os valores da linha.
+    """
+    (id_produto, cod_sku, nome_produto, empresa, saldo_min, ativo, saldo_atual) = row
+
+    return ProductCardDict(
+        id_produto=id_produto,
+        codigo_sku=cod_sku,
+        nome_produto=nome_produto,
+        empresa=empresa,
+        saldo_min=saldo_min,
+        ativo=ativo,
+        saldo_atual=saldo_atual
+    )
+
+def dict_to_product_dto(product: FullProductData) -> ProductDTO:
     """
     Converte um dicionário de produto para um objeto ProductDTO.
 
@@ -37,11 +63,11 @@ def dict_to_product_dto(product: dict[str, Any]) -> ProductDTO:
         consumption_monthly=float(product.get("consumo_mensal", 0.0)),
         product_status=int(product["ativo"]),
         id=int(product["id_produto"]),
-        created_at=product.get("data_cadastro"),
-        updated_at=product.get("data_atualizacao"),
+        created_at=datetime.strptime(product["data_cadastro"], "%Y-%m-%d %H:%M:%S"),#Conversão para um objeto datetime
+        updated_at=datetime.strptime(product["data_atualizacao"], "%Y-%m-%d %H:%M:%S"),#Conversão para um objeto datetime
     )
 
-def dict_to_product_card_dto(product: dict[str, Any]) -> ProductCardDTO:
+def dict_to_product_card_dto(product: ProductCardDict) -> ProductCardDTO:
     """
     Converte um dicionário de produto para um objeto ProductCardDTO.
 
@@ -52,13 +78,13 @@ def dict_to_product_card_dto(product: dict[str, Any]) -> ProductCardDTO:
         ProductCardDTO: Objeto ProductCardDTO com os valores do dicionário.
     """
     return ProductCardDTO(
-        product_id=int(product["id_produto"]),
-        product_code_chb=int(product["cod_sku"]),
+        product_id=int(product.get("id_produto")),
+        product_code_chb=int(product["codigo_sku"]),
         product_name=str(product["nome_produto"]),
         product_firm=str(product["empresa"]),
         minimun_balance=int(product["saldo_min"]),
-        current_balance=int(product["estoque_atual"]),
-        status=int(product["ativo"]),
+        current_balance=int(product["saldo_atual"]),
+        status=int(product.get("ativo")),
         stock_level=None,
     )
 def is_number(value: str) -> bool:
@@ -143,7 +169,7 @@ def diff_product_dto(product_old: ProductDTO, product_new: ProductDTO) -> List[T
         "product_status": "ativo"
     }
 
-    diff_list = []
+    diff_list: List[Tuple[str, Any]]= []
 
     for field in fields(product_old):
         if field.name not in EDITABLE_FIELDS:
@@ -154,7 +180,8 @@ def diff_product_dto(product_old: ProductDTO, product_new: ProductDTO) -> List[T
             new_value = getattr(product_new, field.name)
 
             if old_value != new_value:
-                diff_list.append((DATABASE_COLUMNS[field.name], new_value))
+                tuple_to_update: Tuple[str, Any] = (DATABASE_COLUMNS[field.name], new_value)
+                diff_list.append(tuple_to_update)
 
     return diff_list
 

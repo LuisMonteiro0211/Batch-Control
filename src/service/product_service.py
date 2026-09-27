@@ -8,7 +8,7 @@ ao ProductRepository e convertendo dados para DTOs.
 from dataclasses import replace
 from typing import List
 from src.dtos.product_dto import ProductDTO, ProductCardDTO
-from src.exceptions import DuplicateSkuError, ProductHasBalanceError, NoChangesError, DatabaseOperationError
+from src.exceptions import DuplicateSkuError, ProductHasBalanceError, NoChangesError, DatabaseOperationError, ProductNotFoundError
 from src.helpers.helpers import dict_to_product_card_dto, dict_to_product_dto, diff_product_dto
 from src.model.product import Product
 from src.model.stock_level import sort_level
@@ -95,23 +95,22 @@ class ProductService:
                     list_to_update=diff_list
                 )
 
-    def get_product_lower_minimum_balance(self) -> List[ProductCardDTO]:
+    def get_cards_low_stock(self) -> List[ProductCardDTO]:
         """
-        Retorna produtos com saldo abaixo do mínimo, com nível de estoque calculado.
+        Retorna cards com produtos com saldo abaixo do mínimo, com nível de estoque calculado.
 
         Returns:
             Lista de ProductCardDTO prontos para exibição na tabela do dashboard.
         """
-        products_lower_minimum_balance = self._product_repository.get_product_lower_minimum_balance()
+        cards_low_stock = self._product_repository.get_product_cards_lower_minimum_balance()
         return [
             replace(
                 dict_to_product_card_dto(product=product),
                 stock_level=sort_level(
-                    current_stock=int(product["estoque_atual"]),
+                    current_stock=int(product["saldo_atual"]),
                     min_stock=int(product["saldo_min"]),
                 ),
-            )
-            for product in products_lower_minimum_balance
+            ) for product in cards_low_stock
         ]
 
     def get_product_by_id(self, id_produto: int) -> ProductDTO:
@@ -125,4 +124,7 @@ class ProductService:
             ProductDTO com os dados completos do produto.
         """
         product = self._product_repository.get_by_id(id=id_produto)
+        if product is None:
+            raise ProductNotFoundError(f"Produto com ID {id_produto} não encontrado.")
+            
         return dict_to_product_dto(product=product)
