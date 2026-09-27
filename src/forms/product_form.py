@@ -3,7 +3,7 @@ Módulo de validação e construção de ProductDTO a partir de dados brutos do 
 """
 
 from dataclasses import replace
-from src.dtos.product_dto import ProductDTO
+from src.dtos.product_dto import ProductCreateDTO, ProductDTO
 from typing import Any, Dict, List
 from src.forms.product_form_types import EditProductRawData, NewProductRawData
 from src.exceptions.exceptions import ValidationError
@@ -13,9 +13,9 @@ from src.helpers.helpers import is_number, is_valid_string, sanitize_string
 NUMBER_FIELDS = ["saldo_min", "cod_sku", "consumo_mensal"]
 
 
-def build_product_dto(raw_data: NewProductRawData) -> ProductDTO:
+def build_product_create_dto(raw_data: NewProductRawData) -> ProductCreateDTO:
     """
-    Valida os campos do formulário e constrói um ProductDTO.
+    Valida os campos do formulário e constrói um ProductCreateDTO.
 
     Args:
         raw_data: Dicionário com os valores brutos coletados dos campos do formulário.
@@ -23,7 +23,7 @@ def build_product_dto(raw_data: NewProductRawData) -> ProductDTO:
             product_code_chb, consumption_monthly.
 
     Returns:
-        ProductDTO validado e sanitizado, pronto para persistência.
+        ProductCreateDTO validado e sanitizado, pronto para persistência.
 
     Raises:
         ValidationError: Se algum campo obrigatório estiver ausente ou inválido.
@@ -47,18 +47,13 @@ def build_product_dto(raw_data: NewProductRawData) -> ProductDTO:
             if not is_valid_string(value=value):
                 raise ValidationError(f"O campo {name_field} deve ser uma string válida!")
 
-    return ProductDTO(
+    return ProductCreateDTO(
         name=sanitize_string(value=raw_data["nome_produto"]),
         minimun_balance=int(raw_data["saldo_min"]),
         product_firm=sanitize_string(value=raw_data["empresa"]),
         product_code_chb=int(raw_data["cod_sku"]),
         consumption_monthly=float(raw_data["consumo_mensal"]),
         product_status=1,
-        
-        id=None,
-        created_at=None,
-        updated_at=None,
-
     )
 
 def build_edit_product_dto(raw_data_edit: EditProductRawData, original_product_dto: ProductDTO) -> ProductDTO:

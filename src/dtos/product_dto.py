@@ -10,9 +10,22 @@ from datetime import datetime
 from typing import Optional
 from src.model.stock_level import StockLevel
 
+@dataclass(frozen=True)
+class _ProductBaseDTO:
+    name: str
+    minimun_balance: int
+    product_firm: str
+    product_code_chb: int
+    consumption_monthly: float
+    product_status: int
+@dataclass(frozen=True)
+class ProductCreateDTO(_ProductBaseDTO):
+    """
+    Classe base sem os campos opcionais (id, created_at, updated_at)
+    """
 
 @dataclass(frozen=True)
-class ProductDTO:
+class ProductDTO(_ProductBaseDTO):
     """
     Dados completos de um produto para cadastro, edição e persistência.
 
@@ -20,18 +33,9 @@ class ProductDTO:
     apenas em produtos já existentes no banco.
     """
 
-    name: str
-    minimun_balance: int
-    product_firm: str
-    product_code_chb: int
-    consumption_monthly: float
-    product_status: int
-
-    id: Optional[int] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
-
-
+    id: int
+    created_at: datetime
+    updated_at: datetime
 @dataclass(frozen=True)
 class ProductCardDTO:
     """
