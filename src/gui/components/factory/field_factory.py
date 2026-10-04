@@ -15,10 +15,12 @@ Uso recomendado:
     >>> data_entry.pack(pady=20)
 """
 
-from typing import List, Optional
+from typing import Any, List, Optional
 from customtkinter import CTkEntry, CTkSegmentedButton
 from src.gui.theme import COLORS, FONTS
 from .form_field import FormField
+from src.dtos.product_dto import ProductCardDTO
+from src.interface.protocols import SearchProductByNameProtocol
 
 
 class FieldFactory:
@@ -53,7 +55,7 @@ class FieldFactory:
         return FormField(field=entry)
 
     @staticmethod
-    def set_value_entry(entry: CTkEntry, value: str):
+    def set_value_entry(entry: CTkEntry, value: Any):
         """
         Método para definir o valor de um campo de entrada de texto.
         Args:
@@ -187,7 +189,7 @@ class FieldFactory:
         return entry
 
     @staticmethod
-    def set_value_locked_entry(entry: CTkEntry, value: str):
+    def set_value_locked_entry(entry: CTkEntry, value: Any):
         """
         Método para definir o valor de um campo de entrada de texto bloqueado.
         Args:
@@ -205,7 +207,7 @@ class FieldFactory:
     def create_search_entry(
         master,
         placeholder,
-        #search_fn: Callable[[str], list[str]],
+        search_fn: Optional[SearchProductByNameProtocol] = None,
         width=159,
         height=27,
     ) -> FormField:
@@ -217,6 +219,7 @@ class FieldFactory:
         Args:
             master: Widget pai do campo.
             placeholder: Texto de placeholder.
+            search_fn: Função de busca por nome de produto.
             width: Largura do campo.
             height: Altura do campo.
 
@@ -235,12 +238,24 @@ class FieldFactory:
             font=FONTS.subtitulo_menor,
         )
 
-        after_id = None
+        after_id = None # Tem que ficar do lado de fora para persistir o estado/valor da variável
 
-        def _search(text: str):
-            print(text)
+        def _search(text: str)-> Optional[List[ProductCardDTO]]:
+            """
+            Método responsável por fazer a chamada da função de busca por nome de produto do banco de dados
 
-        def get_search_value(event):
+            Args:
+                text: Texto digitado no campo de busca.
+            Returns:
+                Optional[List[ProductCardDTO]]: Lista com as informações para montar o card do produto ou None se não houver produtos com o nome informado.
+            """
+
+            if search_fn is None:
+                return None
+
+            return search_fn(name_product=text)
+
+        def debounce_search(event):
             """
             Método para buscar o produto.
             Args:
@@ -249,7 +264,7 @@ class FieldFactory:
                 None
             """
             nonlocal after_id #Impede que a variável seja local no escopo da função
-            #O nonlocal é usado para acessar a variável global after_id
+            #O nonlocal é usado para acessar a variável fora da função get_search_value
 
 
             if event.keysym in ("BackSpace", "Delete", "Left", "Right", "Tab", "Up", "Down"):
@@ -266,7 +281,7 @@ class FieldFactory:
             after_id = search_entry.after(300, lambda: _search(search_value))
             
 
-        search_entry.bind("<KeyRelease>", get_search_value)
+        search_entry.bind("<KeyRelease>", debounce_search)
 
         return FormField(field=search_entry)
 
