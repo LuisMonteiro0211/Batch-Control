@@ -45,6 +45,16 @@ class RepositoryError(BatchControlError):
 
     pass
 
+class DeleteProductError(RepositoryError):
+    """Erro ao deletar produto."""
+
+    pass
+
+class UpdateProductError(RepositoryError):
+    """Erro ao atualizar produto."""
+
+    pass
+
 
 class ProductNotFoundError(RepositoryError):
     """Produto não encontrado em uma busca."""

@@ -7,6 +7,9 @@ from src.exceptions.exceptions import (
     ProductHasBalanceError,
     BootloaderError,
     NoChangesError,
+    ValidationError,
+    DeleteProductError,
+    UpdateProductError,
 )
 
 __all__ = [
@@ -18,4 +21,7 @@ __all__ = [
     "ProductHasBalanceError",
     "BootloaderError",
     "NoChangesError",
+    "ValidationError",
+    "DeleteProductError",
+    "UpdateProductError",
 ]
