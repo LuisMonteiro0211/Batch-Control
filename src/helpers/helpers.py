@@ -121,7 +121,7 @@ def is_valid_string(value: str) -> bool:
 
 def sanitize_string(value: str) -> str:
     """
-    Sanitiza um valor de string. Remove espaços e converte para title case.
+    Sanitiza um valor de string. Remove espaços e converte para uppercase.
 
     Args:
         value: Valor a ser sanitizado.
@@ -129,7 +129,7 @@ def sanitize_string(value: str) -> str:
     Returns:
         str: Valor sanitizado.
     """
-    return value.strip().title()
+    return value.strip().upper()
 
 def sanitize_date(value: str) -> str:
     """
