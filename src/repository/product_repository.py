@@ -73,7 +73,7 @@ class ProductRepository (Entity):
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao criar produto: {e}") from e # Erro personalizado para erro de banco de dados
 
-    def update(self, id: int, list_to_update: List[Tuple[str, Any]]) -> None:
+    def update(self, id: int, list_to_update: List[Tuple[str, Any]]) -> Optional[int]:
         """
         Atualiza um produto no banco de dados.
 
@@ -82,7 +82,7 @@ class ProductRepository (Entity):
             list_to_update: Lista de tuplas contendo o nome do campo e o valor a ser atualizado (ex: [("nome_produto", "Novo nome"), ("empresa", "Nova empresa")]).
 
         Returns:
-            None
+            Optional[int]: quantidade de linhas afetadas.
         """
 
         if not list_to_update:
@@ -95,17 +95,15 @@ class ProductRepository (Entity):
                     values = (value, id)
                     cursor.execute(query, values)
 
-                    if cursor.rowcount == 0:
-                        raise ProductNotFoundError(f"Produto com ID {id} não encontrado.")
+                    return cursor.rowcount
 
         except IntegrityError as e:
-            if field_name == "cod_sku":
-                raise DuplicateSkuError(value) from e
-            raise DatabaseOperationError(f"Erro ao atualizar produto: {e}") from e # Erro personalizado para erro de banco de dados
+            raise DuplicateSkuError(value) from e # Erro personalizado para código SKU duplicado
+
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao atualizar produto: {e}") from e # Erro personalizado para erro de banco de dados
 
-    def delete(self, id: int) -> None:
+    def delete(self, id: int) -> Optional[int]:
         """
         Deleta um produto no banco de dados.
 
@@ -113,16 +111,15 @@ class ProductRepository (Entity):
             id: ID do produto a ser deletado.
 
         Returns:
-            None
+            Optional[int]: quantidade de linhas afetadas.
         """
         try:
             with get_connection(self._database_name) as cursor:
                 query = "DELETE FROM produtos WHERE id_produto = ?"
                 values = (id,)
                 cursor.execute(query, values)
-                
-                if cursor.rowcount == 0:
-                    raise ProductNotFoundError(f"Produto com ID {id} não encontrado.")
+
+                return cursor.rowcount
 
         except DatabaseError as e:
             raise DatabaseOperationError(f"Erro ao deletar produto: {e}") from e # Erro personalizado para erro de banco de dados
@@ -180,19 +177,21 @@ class ProductRepository (Entity):
 
     def get_product_cards_by_name (self, name_product: str) -> Optional[List[ProductCardDict]]:
         """
-        Obtém todos os produtos com saldo inferior ao saldo mínimo.
+        Obtém informações para poder montar os cards de produtos com o nome informado
 
         Args:
             name_product: Nome do produto a ser buscado.
 
         Returns:
-            Optional[List[ProductCardDict]]: Lista com as informações dos cards correspondentes aos nomes informados ou None se não houver produtos correspondentes.
+            Optional[List[ProductCardDict]]: Lista com as informações dos cards correspondentes aos nomes informados ou None se não houver produtos com o nome informado.
         """
 
         try:
             with get_connection(self._database_name) as cursor:
                 query = "SELECT * FROM products_card WHERE nome_produto LIKE ?"
-                cursor.execute(query, (f"%{name_product}%"))
+                values = (f"%{name_product}%",)
+
+                cursor.execute(query, values)
 
                 products = cursor.fetchall()
 
@@ -205,7 +204,7 @@ class ProductRepository (Entity):
             raise DatabaseOperationError(f"Não foi possível localizar produtos com esse nome: {e}") from e # Erro personalizado para erro de banco de dados
 
 
-    def get_product_cards_lower_minimum_balance(self) -> List[ProductCardDict]:
+    def get_product_cards_lower_minimum_balance(self) -> Optional[List[ProductCardDict]]:
         """
         Obtém as informações para os cards de produtos com saldo inferior ao saldo mínimo.
 
@@ -213,7 +212,7 @@ class ProductRepository (Entity):
             None
 
         Returns:
-            List[ProductCardDict]: Lista com as informações dos cards correspondentes aos produtos com saldo inferior ao saldo mínimo.
+            Optional[List[ProductCardDict]]: Lista com as informações dos cards correspondentes aos produtos com saldo inferior ao saldo mínimo ou None se não houver produtos com saldo inferior ao saldo mínimo.
         """
 
         try:
