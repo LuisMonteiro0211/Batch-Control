@@ -1,3 +1,3 @@
 from .entity import Entity
 
-from .protocols import SaveEditProductProtocol, DeleteProductProtocol
+from .protocols import SaveEditProductProtocol, DeleteProductProtocol, SearchProductByNameProtocol
