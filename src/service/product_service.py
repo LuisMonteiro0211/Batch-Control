@@ -6,9 +6,9 @@ ao ProductRepository e convertendo dados para DTOs.
 """
 
 from dataclasses import replace
-from typing import List
+from typing import List, Optional
 from src.dtos.product_dto import ProductDTO, ProductCardDTO
-from src.exceptions import DuplicateSkuError, ProductHasBalanceError, NoChangesError, DatabaseOperationError, ProductNotFoundError
+from src.exceptions import (DuplicateSkuError, ProductHasBalanceError, NoChangesError, DatabaseOperationError, ProductNotFoundError, ValidationError, DeleteProductError, UpdateProductError)
 from src.helpers.helpers import dict_to_product_card_dto, dict_to_product_dto, diff_product_dto
 from src.model.product import Product
 from src.model.stock_level import sort_level
@@ -74,7 +74,10 @@ class ProductService:
                 f'Não é possível deletar o produto com ID {id_produto} pois ele possui saldo ativo.'
             )
         else:
-            self._product_repository.delete(id=id_produto)
+            delete_product_result = self._product_repository.delete(id=id_produto)
+
+            if delete_product_result is None:
+                raise DeleteProductError(f"Erro ao deletar produto com ID {id_produto}.")
 
     def update_product(self, original_product_dto: ProductDTO, edited_product_dto: ProductDTO) -> None:
         #Chama a função para retornar a lista de alterações
@@ -90,10 +93,13 @@ class ProductService:
         else:
             #Chama o repositório para atualizar o produto
             if original_product_dto.id is not None:
-                self._product_repository.update(
+                update_product_result = self._product_repository.update(
                     id=original_product_dto.id,
                     list_to_update=diff_list
                 )
+
+                if update_product_result is None:
+                    raise UpdateProductError(f"Erro ao atualizar produto com ID {original_product_dto.id}.")
 
     def get_cards_low_stock(self) -> List[ProductCardDTO]:
         """
@@ -103,16 +109,35 @@ class ProductService:
             Lista de ProductCardDTO prontos para exibição na tabela do dashboard.
         """
         cards_low_stock = self._product_repository.get_product_cards_lower_minimum_balance()
-        return [
-            replace(
-                dict_to_product_card_dto(product=product),
-                stock_level=sort_level(
-                    current_stock=int(product["saldo_atual"]),
-                    min_stock=int(product["saldo_min"]),
-                ),
-            ) for product in cards_low_stock
-        ]
 
+        if cards_low_stock is not None:
+            return [
+                replace(
+                    dict_to_product_card_dto(product=product),
+                    stock_level=sort_level(
+                        current_stock=int(product["saldo_atual"]),
+                        min_stock=int(product["saldo_min"]),
+                    ),
+                ) for product in cards_low_stock
+            ]
+        else:
+            raise ProductNotFoundError("Não há produtos com saldo inferior ao saldo mínimo.")
+
+    def get_product_cards_by_name(self, name_product: str) -> Optional[List[ProductCardDTO]]:     
+        if not name_product:
+            raise ValidationError("Nome do produto não pode ser vazio.")
+
+        else:
+            list_products_cards_dict = self._product_repository.get_product_cards_by_name(name_product=name_product)
+
+            if list_products_cards_dict is not None:
+                return [
+                    dict_to_product_card_dto(product=product) for product in list_products_cards_dict
+                ]
+
+            else:
+                raise ProductNotFoundError("Produto não encontrado pelo nome.")
+                
     def get_product_by_id(self, id_produto: int) -> ProductDTO:
         """
         Busca um produto pelo ID e converte para DTO.
@@ -128,3 +153,4 @@ class ProductService:
             raise ProductNotFoundError(f"Produto com ID {id_produto} não encontrado.")
             
         return dict_to_product_dto(product=product)
+
