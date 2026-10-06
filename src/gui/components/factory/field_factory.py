@@ -15,7 +15,8 @@ Uso recomendado:
     >>> data_entry.pack(pady=20)
 """
 
-from typing import Any, List, Optional
+from pydoc import text
+from typing import Any, Callable, List, Optional
 from customtkinter import CTkEntry, CTkSegmentedButton
 from src.gui.theme import COLORS, FONTS
 from .form_field import FormField
@@ -220,6 +221,7 @@ class FieldFactory:
         master,
         placeholder,
         search_fn: Optional[SearchProductByNameProtocol] = None,
+        trigger_controller: Optional[Callable] = None,
         width=159,
         height=27,
     ) -> FormField:
@@ -250,9 +252,9 @@ class FieldFactory:
             font=FONTS.subtitulo_menor,
         )
 
-        after_id = None # Tem que ficar do lado de fora para persistir o estado/valor da variável
+        after_id = None # Tem que ficar do lado de fora para persistir o estado/valor da variáve
 
-        def _search(text: str)-> Optional[List[ProductCardDTO]]:
+        def _search(text: str)-> None:
             """
             Método responsável por fazer a chamada da função de busca por nome de produto do banco de dados
 
@@ -262,10 +264,11 @@ class FieldFactory:
                 Optional[List[ProductCardDTO]]: Lista com as informações para montar o card do produto ou None se não houver produtos com o nome informado.
             """
 
-            if search_fn is None:
-                return None
+            if search_fn is not None and trigger_controller is not None:
+                search_values = search_fn(name_product=text)
+                trigger_controller(search_values)
+                
 
-            return search_fn(name_product=text)
 
         def debounce_search(event):
             """
@@ -282,18 +285,19 @@ class FieldFactory:
             if event.keysym in ("BackSpace", "Delete", "Left", "Right", "Tab", "Up", "Down"):
                 return
             
-            search_value = search_entry.get().strip()
+            search_entry_value = search_entry.get().strip()
 
             if after_id is not None:
                 search_entry.after_cancel(after_id) #Cancela o evento de busca anterior
 
-            if len(search_value) < 2:
+            if len(search_entry_value) < 2:
                 return #Valor muito curto para pesquisa
 
-            after_id = search_entry.after(300, lambda: _search(search_value))
+            after_id = search_entry.after(300, lambda: _search(search_entry_value))
             
 
         search_entry.bind("<KeyRelease>", debounce_search)
+
 
         return FormField(field=search_entry)
 

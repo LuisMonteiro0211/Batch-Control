@@ -51,7 +51,8 @@ class ProductController:
             master=self._product_frame_parent,
             on_click_save_product=self._on_click_save_product,
             on_click_save_edit_product=self._on_click_save_edit_product,
-            search_product_by_name=self.search_product_by_name,
+            trigger_search_product_by_name=self.trigger_search_product_by_name,
+            search_product_by_name=self._product_service.get_product_cards_by_name,
             on_click_edit_product=self.edit_product_mode,
             products_to_view=self._products_to_view,
             on_click_delete_product=self._on_click_delete_product
@@ -246,14 +247,15 @@ class ProductController:
         if self._product_frame is not None:
             self._product_frame.place_forget()
 
-    def search_product_by_name(self, name_product: str) -> Optional[List[ProductCardDTO]]:
-        try:
-            list_products_cards = self._product_service.get_product_cards_by_name(
-                name_product=name_product)
+    def trigger_search_product_by_name(self, list_products_cards: List[ProductCardDTO]) -> None:
+        """
+        Callback para a factory chamar quando finalizar a busca por nome
 
-            return list_products_cards
-
-        except ProductNotFoundError as e:
-            self._message = str(e)
-        except DatabaseOperationError as e:
-            raise DatabaseOperationError(str(e))
+        Args:
+            list_products_cards: Lista com as informações para montar o card do produto ou None se não houver produtos com o nome informado.
+        Returns:
+            None
+        """
+        self._list_products_cards = list_products_cards
+        if self._product_frame is not None:
+            self._product_frame.update_products_cards(products_to_view=self._list_products_cards)

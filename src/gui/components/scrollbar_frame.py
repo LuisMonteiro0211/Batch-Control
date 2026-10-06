@@ -26,6 +26,7 @@ class ScrollbarFrame(CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         self._configure_layout()
+        self._cards_itens = []
 
     def _configure_layout(self):
         """
@@ -95,8 +96,18 @@ class ScrollbarFrame(CTkFrame):
         """
         Método para inserir um frame item no frame canvas.
         """
+        self._cards_itens.append(frame_item) # Persiste o estado dos cards
         frame_item.pack(side="top", fill="x")
         frame_item.pack_propagate(False)
+
+    def clear_cards_itens(self) -> None:
+        """
+        Método para limpar os frame items do frame canvas.
+        """
+        if len(self._cards_itens) > 0:
+            for card_item in self._cards_itens:
+                card_item.destroy()
+            self._cards_itens = []
 
     def initialization_message(self, message: str, icon: CTkImage):
         """

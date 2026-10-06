@@ -99,50 +99,51 @@ class ProductTable(ScrollbarFrame):
         products = self._products_to_view
         product_cards: List[CTkFrame] = []
 
-        for product in products:
-            card_item: CTkFrame = CTkFrame(
-                self,
-                width=681,
-                height=32,
-                corner_radius=0,
-                border_width=1,
-                border_color=COLORS.bordas,
-                fg_color=COLORS.fundo_primario,
-            )
+        if products is not None:
+            for product in products:
+                card_item: CTkFrame = CTkFrame(
+                    self,
+                    width=681,
+                    height=32,
+                    corner_radius=0,
+                    border_width=1,
+                    border_color=COLORS.bordas,
+                    fg_color=COLORS.fundo_primario,
+                )
 
-            label_sku = LabelValueTable.create_label_value_table(card_item, product.product_code_chb)
-            label_name_product = LabelValueTable.create_label_value_table(card_item, product.product_name)
-            label_product_firm = LabelValueTable.create_label_value_table(card_item, product.product_firm)
-            label_minimum_balance = LabelValueTable.create_label_value_table(card_item, product.minimun_balance)
-            label_current_balance = LabelValueTable.create_label_value_table(card_item, product.current_balance)
+                label_sku = LabelValueTable.create_label_value_table(card_item, product.product_code_chb)
+                label_name_product = LabelValueTable.create_label_value_table(card_item, product.product_name)
+                label_product_firm = LabelValueTable.create_label_value_table(card_item, product.product_firm)
+                label_minimum_balance = LabelValueTable.create_label_value_table(card_item, product.minimun_balance)
+                label_current_balance = LabelValueTable.create_label_value_table(card_item, product.current_balance)
 
-            if not product.stock_level:
-                raise BatchControlError("Stock level is required")
+                if not product.stock_level:
+                    raise BatchControlError("Stock level is required")
 
-            status_icon = TABLE_ICONS.get(product.stock_level)
-            label_status = CTkLabel(card_item, text="", image=status_icon, compound="left")
-            button_action = CTkButton(
-                card_item,
-                text="Editar",
-                width=51,
-                height=15,
-                corner_radius=5,
-                fg_color=COLORS.fundo_secundario,
-                hover_color="#3A3A3A",
-                text_color=COLORS.texto_secundario,
-                font=FONTS.texto_tabela,
+                status_icon = TABLE_ICONS.get(product.stock_level)
+                label_status = CTkLabel(card_item, text="", image=status_icon, compound="left")
+                button_action = CTkButton(
+                    card_item,
+                    text="Editar",
+                    width=51,
+                    height=15,
+                    corner_radius=5,
+                    fg_color=COLORS.fundo_secundario,
+                    hover_color="#3A3A3A",
+                    text_color=COLORS.texto_secundario,
+                    font=FONTS.texto_tabela,
                     command=lambda product_id=product.product_id: self._on_edit_product(product_id)
-            )
+                )
 
-            label_sku.place(x=9, y=2, anchor="nw")
-            label_name_product.place(x=119, y=2, anchor="nw")
-            label_product_firm.place(x=222, y=2, anchor="nw")
-            label_minimum_balance.place(x=334, y=2, anchor="nw")
-            label_current_balance.place(x=455, y=2, anchor="nw")
-            label_status.place(x=551, y=2, anchor="nw")
-            button_action.place(x=603, y=2, anchor="nw")
+                label_sku.place(x=9, y=2, anchor="nw")
+                label_name_product.place(x=81, y=2, anchor="nw")
+                label_product_firm.place(x=222, y=2, anchor="nw")
+                label_minimum_balance.place(x=334, y=2, anchor="nw")
+                label_current_balance.place(x=455, y=2, anchor="nw")
+                label_status.place(x=551, y=2, anchor="nw")
+                button_action.place(x=603, y=2, anchor="nw")
 
-            product_cards.append(card_item)
+                product_cards.append(card_item)
 
         return product_cards
 
@@ -155,3 +156,21 @@ class ProductTable(ScrollbarFrame):
                 self.insert_frame_item(product_card)
         else:
             self.initialization_message("Nenhum alerta disponível", self._icon_check)
+
+
+    def _clear_products_cards(self) -> None:
+        self._products_to_view = None
+        self.clear_cards_itens()
+
+    def update_products_cards(self, products_to_view: List[ProductCardDTO]) -> None:
+        self._clear_products_cards()
+        self._products_to_view = products_to_view
+
+        if self._products_to_view is not None:
+            product = self._create_cards_items()
+                
+            for product_card in product:
+                self.insert_frame_item(product_card)
+
+
+

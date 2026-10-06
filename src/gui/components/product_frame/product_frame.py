@@ -45,14 +45,18 @@ class ProductFrame(CTkFrame):
         on_click_save_product: Callable,
         on_click_save_edit_product: SaveEditProductProtocol,
         search_product_by_name: SearchProductByNameProtocol,
+        trigger_search_product_by_name: Callable,
         on_click_edit_product: Callable,
         on_click_delete_product: DeleteProductProtocol,
         products_to_view: List[ProductCardDTO],
     ):
         super().__init__(master)
         self._products_to_view = products_to_view
+
+        #Callbacks
         self._on_click_save_product = on_click_save_product
         self._on_click_save_edit_product = on_click_save_edit_product
+        self._trigger_search_product_by_name = trigger_search_product_by_name
         self._on_click_edit_product = on_click_edit_product
         self._search_product_by_name = search_product_by_name
         self._on_click_delete_product = on_click_delete_product
@@ -108,7 +112,8 @@ class ProductFrame(CTkFrame):
         self._search_entry = FieldFactory.create_search_entry(
             master=self._product_search_frame,
             placeholder="Buscar produto...",
-            search_fn=self._search_product_by_name
+            search_fn=self._search_product_by_name,
+            trigger_controller=self._trigger_search_product_by_name
             
         )
         self._product_table = ProductTable(
@@ -204,3 +209,9 @@ class ProductFrame(CTkFrame):
         if self._edit_product_frame is not None:
             return self._edit_product_frame.get_raw_values()
         return None
+
+    def update_products_cards(self, products_to_view: List[ProductCardDTO]) -> None:
+        """
+        Atualiza os cards de produtos na tabela.
+        """
+        self._product_table.update_products_cards(products_to_view)
