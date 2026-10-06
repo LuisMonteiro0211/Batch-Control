@@ -132,8 +132,14 @@ class ProductService:
 
             if list_products_cards_dict is not None:
                 return [
-                    dict_to_product_card_dto(product=product) for product in list_products_cards_dict
-                ]
+                    replace(
+                    dict_to_product_card_dto(product=product),
+                    stock_level=sort_level(
+                        current_stock=int(product["saldo_atual"]),
+                        min_stock=int(product["saldo_min"]),
+                    ),
+                ) for product in list_products_cards_dict
+            ]
 
             else:
                 raise ProductNotFoundError("Produto não encontrado pelo nome.")
