@@ -99,6 +99,18 @@ class FieldFactory:
         )
 
         def _just_number(novo_valor):
+            """
+            Método para validar se o valor digitado é um número.
+
+            Args:
+                novo_valor: Valor digitado no campo de entrada. Enviado pelo evento do teclado.
+            Returns:
+                True se o valor digitado é um número, False caso contrário.
+            """
+
+            if novo_valor == placeholder:
+                return True
+
             apenas_numeros = "".join(filter(str.isdigit, novo_valor))
             if novo_valor != apenas_numeros:
                 return False
