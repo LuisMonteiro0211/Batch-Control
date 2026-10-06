@@ -15,7 +15,6 @@ Uso recomendado:
     >>> data_entry.pack(pady=20)
 """
 
-from pydoc import text
 from typing import Any, Callable, List, Optional
 from customtkinter import CTkEntry, CTkSegmentedButton
 from src.gui.theme import COLORS, FONTS
@@ -252,7 +251,7 @@ class FieldFactory:
             font=FONTS.subtitulo_menor,
         )
 
-        after_id = None # Tem que ficar do lado de fora para persistir o estado/valor da variáve
+        after_id = None # Tem que ficar do lado de fora para persistir o estado/valor da variável
 
         def _search(text: str)-> None:
             """
