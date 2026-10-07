@@ -19,8 +19,9 @@ from typing import Any, Callable, List, Optional
 from customtkinter import CTkEntry, CTkSegmentedButton
 from src.gui.theme import COLORS, FONTS
 from .form_field import FormField
-from src.dtos.product_dto import ProductCardDTO
+from src.dtos.product_dto import ProductCardDTO, SearchObjectTransfer
 from src.interface.protocols import SearchProductByNameProtocol
+from src.exceptions.exceptions import NoSearchValueError
 
 
 class FieldFactory:
@@ -265,7 +266,11 @@ class FieldFactory:
 
             if search_fn is not None and trigger_controller is not None:
                 search_values = search_fn(name_product=text)
-                trigger_controller(search_values)
+                search_object = SearchObjectTransfer(
+                    product_cards=search_values,
+                    text_search=text
+                )
+                trigger_controller(search_object)
                 
 
 
@@ -281,13 +286,26 @@ class FieldFactory:
             #O nonlocal é usado para acessar a variável fora da função get_search_value
 
 
-            if event.keysym in ("BackSpace", "Delete", "Left", "Right", "Tab", "Up", "Down"):
+            if event.keysym in ("Left", "Right", "Tab", "Up", "Down"):
                 return
             
             search_entry_value = search_entry.get().strip()
 
             if after_id is not None:
                 search_entry.after_cancel(after_id) #Cancela o evento de busca anterior
+
+            if event.keysym == "BackSpace" and search_entry_value == "":
+                """
+                Caso o usuário apague o texto do campo de busca
+                e acionado o trigger para poder atualizar a lista com os produtos com estoque baixo.
+                """
+                if trigger_controller is not None:
+                    search_value = SearchObjectTransfer(
+                        product_cards=None,
+                        text_search=None
+                    )
+                    trigger_controller(search_value)
+                    return
 
             if len(search_entry_value) < 2:
                 return #Valor muito curto para pesquisa

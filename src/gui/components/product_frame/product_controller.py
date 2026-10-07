@@ -14,9 +14,9 @@ Métodos públicos:
 from typing import List, Optional
 
 from customtkinter import CTk
-from src.dtos import ProductCardDTO, ProductDTO
+from src.dtos import ProductCardDTO, ProductDTO, SearchObjectTransfer
 from src.exceptions import DatabaseOperationError, ProductNotFoundError, DuplicateSkuError
-from src.exceptions.exceptions import ProductHasBalanceError
+from src.exceptions.exceptions import NoSearchValueError, ProductHasBalanceError
 from src.gui.components.product_frame import ProductFrame
 from src.service.product_service import ProductService
 from src.gui.interaction_window import FactoryInteractionWindow
@@ -184,6 +184,8 @@ class ProductController:
                     message="Produto não encontrado."
                 )
 
+                ##Sair do modo de edição
+
     def get_product_id_to_edit(self, product_id: int) -> Optional[ProductDTO]:
         """
         Busca um produto pelo ID para preencher o formulário de edição.
@@ -254,7 +256,7 @@ class ProductController:
         if self._product_frame is not None:
             self._product_frame.place_forget()
 
-    def trigger_search_product_by_name(self, list_products_cards: List[ProductCardDTO]) -> None:
+    def trigger_search_product_by_name(self, search_object: SearchObjectTransfer) -> None:
         """
         Callback para a factory chamar quando finalizar a busca por nome
 
@@ -263,6 +265,16 @@ class ProductController:
         Returns:
             None
         """
-        self._list_products_cards = list_products_cards
+
+        self._search_object = search_object
+        self._list_products_cards = self._search_object.product_cards
+
         if self._product_frame is not None:
-            self._product_frame.update_products_cards(products_to_view=self._list_products_cards)
+            if self._list_products_cards is not None and search_object.text_search is not None:
+                self._product_frame.update_products_cards(products_to_view=self._list_products_cards)
+
+            if search_object.text_search is None and self._list_products_cards is None:
+                self._low_products_cards = self._product_service.get_cards_low_stock()
+                self._product_frame.update_products_cards(self._low_products_cards)
+
+    ##Criar função para sempre que precisar chamar a busca de cadastro de produtos com saldo baixo.

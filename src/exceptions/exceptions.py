@@ -92,3 +92,7 @@ class BootloaderError(BatchControlError):
 
     pass
 
+class NoSearchValueError(ValidationError):
+    """Não há valor para buscar."""
+
+    pass

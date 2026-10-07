@@ -7,7 +7,7 @@ entre camadas (repository → service → GUI).
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from src.model.stock_level import StockLevel
 
 @dataclass(frozen=True)
@@ -52,3 +52,9 @@ class ProductCardDTO:
     current_balance: int
     status: int
     stock_level: Optional[StockLevel] = None
+
+
+@dataclass(frozen=True)
+class SearchObjectTransfer:
+    product_cards: Optional[List[ProductCardDTO]]
+    text_search: Optional[str]
