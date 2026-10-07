@@ -175,7 +175,7 @@ class ProductFrame(CTkFrame):
 
     def show_new_product(self) -> None:
         """Exibe o formulário de cadastro de novo produto."""
-        if self._edit_product_frame is not None:
+        if self._edit_product_frame is not None and self._state_product_frame == ProductFrameState.EDIT_PRODUCT:
             self.hide_edit_product_frame()
         self._new_product_frame.place(x=12, y=70, anchor="nw")
 
@@ -189,6 +189,7 @@ class ProductFrame(CTkFrame):
         if self._edit_product_frame is not None:
             self._edit_product_frame.destroy()
             self._edit_product_frame = None
+            self._state_product_frame = ProductFrameState.NEW_PRODUCT
 
     def get_state_product_frame(self) -> Optional[ProductFrameState]:
         """
