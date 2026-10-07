@@ -67,9 +67,9 @@ class ProductService:
         Raises:
             ProductHasBalanceError: Se o produto possuir saldo em lotes.
         """
-        saldo_produto = None  # Futura chamada do repo de lote
+        saldo_produto = self._product_repository.has_balance(id=id_produto)  # Futura chamada do repo de lote
 
-        if saldo_produto > 0:
+        if saldo_produto:
             raise ProductHasBalanceError(
                 f'Não é possível deletar o produto com ID {id_produto} pois ele possui saldo ativo.'
             )

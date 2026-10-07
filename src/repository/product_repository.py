@@ -270,3 +270,27 @@ class ProductRepository (Entity):
             return True
         except ProductNotFoundError:
             return False
+
+    def has_balance(self, id: int) -> bool:
+        """
+        Verifica se o produto possui saldo ativo.
+
+        Args:
+            id: ID do produto a ser verificado.
+
+        Returns:
+            bool: True se o produto possui saldo ativo, False caso contrário.
+        """
+        try:
+            with get_connection(self._database_name) as cursor:
+                query = "SELECT * FROM saldo_produto WHERE id_produto = ?"
+                values = (id,)
+                cursor.execute(query, values)
+                saldo = cursor.fetchone()
+
+                if saldo is None:
+                    return False
+                return True
+
+        except DatabaseError as e:
+            raise DatabaseOperationError(f"Erro ao verificar se o produto tem saldo: {e}") from e # Erro personalizado para erro de banco de dados

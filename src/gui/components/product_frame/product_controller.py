@@ -16,6 +16,7 @@ from typing import List, Optional
 from customtkinter import CTk
 from src.dtos import ProductCardDTO, ProductDTO
 from src.exceptions import DatabaseOperationError, ProductNotFoundError, DuplicateSkuError
+from src.exceptions.exceptions import ProductHasBalanceError
 from src.gui.components.product_frame import ProductFrame
 from src.service.product_service import ProductService
 from src.gui.interaction_window import FactoryInteractionWindow
@@ -91,6 +92,12 @@ class ProductController:
                     )
                 
                 except ProductNotFoundError as e:
+                    FactoryInteractionWindow.error_window(
+                        master=self._product_frame,
+                        message=str(e)
+                    )
+
+                except ProductHasBalanceError as e:
                     FactoryInteractionWindow.error_window(
                         master=self._product_frame,
                         message=str(e)
