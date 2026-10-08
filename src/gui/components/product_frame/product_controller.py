@@ -128,6 +128,15 @@ class ProductController:
                     original_product_dto=self._original_product_dto
                 )
 
+                if editing_product_dto.product_status != self._original_product_dto.product_status:
+                    #Se houver tentativa de bloquear um item
+                    if self._product_service.has_balance(id_produto=self._original_product_dto.id):
+                        FactoryInteractionWindow.error_window(
+                            master=self._product_frame,
+                            message="Não é possível bloquear um produto com saldo ativo."
+                        )
+                        return
+
                 if editing_product_dto == self._original_product_dto:
                     #Se os valores do formulário de edição são iguais aos valores do produto original, não há alterações para salvar.
                     FactoryInteractionWindow.alert_window(
@@ -156,6 +165,8 @@ class ProductController:
                             )
                             self._product_frame.hide_edit_product_frame()
                             self._product_frame.show_new_product()
+                            self._low_products_cards = self._product_service.get_cards_low_stock()
+                            self._product_frame.update_products_cards(self._low_products_cards)
 
 
                         except DuplicateSkuError as e:

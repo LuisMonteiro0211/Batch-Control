@@ -160,3 +160,14 @@ class ProductService:
             
         return dict_to_product_dto(product=product)
 
+    def has_balance(self, id_produto: int) -> bool:
+        """
+        Verifica se o produto possui saldo ativo.
+
+        Args:
+            id_produto: ID do produto a ser verificado.
+
+        Returns:
+            bool: True se o produto possui saldo ativo, False caso contrário.
+        """
+        return self._product_repository.has_balance(id=id_produto)
