@@ -253,6 +253,7 @@ class FieldFactory:
         )
 
         after_id = None # Tem que ficar do lado de fora para persistir o estado/valor da variável
+        empty_search_notified = False
 
         def _search(text: str)-> None:
             """
@@ -264,7 +265,10 @@ class FieldFactory:
                 Optional[List[ProductCardDTO]]: Lista com as informações para montar o card do produto ou None se não houver produtos com o nome informado.
             """
 
+            nonlocal empty_search_notified
+
             if search_fn is not None and trigger_controller is not None:
+                empty_search_notified = False
                 search_values = search_fn(name_product=text)
                 search_object = SearchObjectTransfer(
                     product_cards=search_values,
@@ -284,6 +288,7 @@ class FieldFactory:
             """
             nonlocal after_id #Impede que a variável seja local no escopo da função
             #O nonlocal é usado para acessar a variável fora da função get_search_value
+            nonlocal empty_search_notified
 
 
             if event.keysym in ("Left", "Right", "Tab", "Up", "Down"):
@@ -294,11 +299,12 @@ class FieldFactory:
             if after_id is not None:
                 search_entry.after_cancel(after_id) #Cancela o evento de busca anterior
 
-            if event.keysym == "BackSpace" and search_entry_value == "":
+            if event.keysym == "BackSpace" and search_entry_value == "" and not empty_search_notified:
                 """
                 Caso o usuário apague o texto do campo de busca
                 e acionado o trigger para poder atualizar a lista com os produtos com estoque baixo.
                 """
+                empty_search_notified = True
                 if trigger_controller is not None:
                     search_value = SearchObjectTransfer(
                         product_cards=None,
