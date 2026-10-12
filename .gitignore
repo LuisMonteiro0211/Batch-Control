@@ -8,6 +8,9 @@ __pycache__/
 venv/
 .env/
 
+# Editor / IDE
+.cursor/
+
 # Packaging
 *.egg-info/
 dist/
