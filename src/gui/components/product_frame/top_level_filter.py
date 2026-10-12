@@ -8,7 +8,6 @@ devolve o resultado ao chamador por meio de um callback ao fechar.
 from typing import Callable
 from customtkinter import CTkToplevel, CTkCheckBox, BooleanVar
 from src.gui.theme import COLORS, FONTS
-from src.gui.components.factory import LabelNameField
 from src.gui.components.primary_action_button import PrimaryActionButton
 
 class TopLevelFilter(CTkToplevel):
