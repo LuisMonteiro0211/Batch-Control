@@ -108,7 +108,7 @@ class ProductService:
         Returns:
             Lista de ProductCardDTO prontos para exibição na tabela do dashboard.
         """
-        cards_low_stock = self._product_repository.get_product_cards_lower_minimum_balance()
+        cards_low_stock = self._product_repository.get_active_product_cards_lower_minimum_balance()
 
         if cards_low_stock is not None:
             return [
@@ -123,7 +123,30 @@ class ProductService:
         else:
             raise ProductNotFoundError("Não há produtos com saldo inferior ao saldo mínimo.")
 
-    def get_product_cards_by_name(self, name_product: str) -> Optional[List[ProductCardDTO]]:     
+    def get_all_product_cards_by_name(self, name_product: str) -> List[ProductCardDTO]:
+        """
+        Retorna cards com todos os produtos com o nome informado.
+
+        Returns:
+            Lista de ProductCardDTO prontos para exibição na tabela do dashboard.
+        """
+        list_products_cards_dict = self._product_repository.get_all_product_cards_by_name(name_product=name_product)
+        
+        if list_products_cards_dict is not None:
+            return [
+                replace(
+                    dict_to_product_card_dto(product=product),
+                    stock_level=sort_level(
+                        current_stock=int(product["saldo_atual"]),
+                        min_stock=int(product["saldo_min"]),
+                    ),
+                ) for product in list_products_cards_dict
+            ]
+        else:
+            raise ProductNotFoundError("Produto não encontrado pelo nome.")
+
+
+    def get_product_cards_by_name(self, name_product: str) -> List[ProductCardDTO]:     
         if not name_product:
             raise ValidationError("Nome do produto não pode ser vazio.")
 
@@ -142,7 +165,7 @@ class ProductService:
             ]
 
             else:
-                raise ProductNotFoundError("Produto não encontrado pelo nome.")
+                    raise ProductNotFoundError("Produto não encontrado pelo nome.")
                 
     def get_product_by_id(self, id_produto: int) -> ProductDTO:
         """

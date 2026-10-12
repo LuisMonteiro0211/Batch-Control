@@ -22,6 +22,7 @@ from src.service.product_service import ProductService
 from src.gui.interaction_window import FactoryInteractionWindow
 from src.forms.product_form import build_edit_product_dto
 from src.gui.components.product_frame.product_frame_state import ProductFrameState
+from src.interface.protocols import SearchProductByNameProtocol
 
 class ProductController:
     """
@@ -45,6 +46,7 @@ class ProductController:
         self._product_frame = None
         self._original_product_dto = None
         self._init_product_frame()
+        self._status_filter = False
 
     def _init_product_frame(self) -> None:
         """Cria o ProductFrame e configura os callbacks de ação."""
@@ -53,7 +55,7 @@ class ProductController:
             on_click_save_product=self._on_click_save_product,
             on_click_save_edit_product=self._on_click_save_edit_product,
             trigger_search_product_by_name=self.trigger_search_product_by_name,
-            search_product_by_name=self._product_service.get_product_cards_by_name,
+            search_product_by_name=self.search_product_by_name,
             on_click_edit_product=self.edit_product_mode,
             products_to_view=self._products_to_view,
             on_click_delete_product=self._on_click_delete_product
@@ -288,4 +290,34 @@ class ProductController:
                 self._low_products_cards = self._product_service.get_cards_low_stock()
                 self._product_frame.update_products_cards(self._low_products_cards)
 
-    ##Criar função para sempre que precisar chamar a busca de cadastro de produtos com saldo baixo.
+    
+    def search_product_by_name(self, name_product: str) -> Optional[List[ProductCardDTO]]:
+        if self._product_frame is not None:
+            self._status_filter = self._product_frame.get_status_filter()
+
+            if self._status_filter:
+                #Caso o filtro seja True para todos os produtos inclusive os bloqueados
+                try:
+                    product_cards =  self._product_service.get_all_product_cards_by_name(name_product=name_product)
+                    if product_cards is not None:
+                        return product_cards
+                except DatabaseOperationError as e:
+                    FactoryInteractionWindow.error_window(
+                        master=self._product_frame,
+                        message=str(e)
+                    )
+                except ProductNotFoundError as e:
+                    self._product_frame.message_table(str(e))
+            else:
+                #Caso seja false e queira somente os produtos ativos
+                try:
+                    product_cards = self._product_service.get_product_cards_by_name(name_product=name_product)
+                    if product_cards is not None:
+                        return product_cards
+                except DatabaseOperationError as e:
+                    FactoryInteractionWindow.error_window(
+                        master = self._product_frame,
+                        message=str(e)
+                    )
+                except ProductNotFoundError as e:
+                    self._product_frame.message_table(str(e))

@@ -13,9 +13,10 @@ Métodos públicos:
     - get_raw_values(): Coleta os valores do formulário de edição ativo.
 """
 
-from customtkinter import CTkFrame, CTkLabel, CTkEntry
+from customtkinter import CTkFrame, CTkLabel, CTkEntry, CTkButton
 from src.gui.theme import COLORS, FONTS
 from src.gui.components.factory import FieldFactory
+from src.helpers.image_helper import resize_image
 from .new_product_frame import NewProductFrame
 from .edit_product_frame import EditProductFrame
 from .product_table import ProductTable
@@ -24,6 +25,7 @@ from src.dtos.product_dto import ProductCardDTO, ProductDTO
 from src.forms.product_form_types import EditProductRawData
 from .product_frame_state import ProductFrameState
 from src.interface import SaveEditProductProtocol, DeleteProductProtocol, SearchProductByNameProtocol
+from src.gui.components.product_frame.top_level_filter import TopLevelFilter
 
 
 class ProductFrame(CTkFrame):
@@ -52,6 +54,7 @@ class ProductFrame(CTkFrame):
     ):
         super().__init__(master)
         self._products_to_view = products_to_view
+        self._status_filter = False
 
         #Callbacks
         self._on_click_save_product = on_click_save_product
@@ -62,6 +65,7 @@ class ProductFrame(CTkFrame):
         self._on_click_delete_product = on_click_delete_product
         self._edit_product_frame: Optional[EditProductFrame] = None
         self._state_product_frame: Optional[ProductFrameState] = None
+        self._master = master
         self._configure_layout()
         self._build_widgets()
         self._layout_widgets()
@@ -116,6 +120,7 @@ class ProductFrame(CTkFrame):
             trigger_controller=self._trigger_search_product_by_name
             
         )
+
         self._product_table = ProductTable(
             self,
             products_to_view=self._products_to_view,
@@ -123,6 +128,18 @@ class ProductFrame(CTkFrame):
         )
         self._product_table.initialization()
 
+        self._filter_button = CTkButton(
+            master=self,
+            width=36,
+            height=27,
+            corner_radius=5, 
+            border_color=COLORS.bordas,
+            image=resize_image(file_name="funnel.png", size=(16,16)),
+            text="",
+            border_width=1,
+            fg_color=COLORS.elevado,
+            command=self._show_filter
+        )
     def _layout_widgets(self) -> None:
         """Posiciona os widgets na tela."""
         self._title_product.place(x=12, y=8, anchor="nw")
@@ -143,6 +160,8 @@ class ProductFrame(CTkFrame):
 
         self._product_table.place(x=16, y=365, anchor="nw")
         self._product_table.pack_propagate(False)
+
+        self._filter_button.place(x=185, y=329, anchor="nw")
 
     def show_edit_product(self, product_dto: ProductDTO) -> None:
         """
@@ -216,3 +235,24 @@ class ProductFrame(CTkFrame):
         Atualiza os cards de produtos na tabela.
         """
         self._product_table.update_products_cards(products_to_view)
+
+    def set_status_filter(self, status:bool) -> None:
+        self._status_filter = status
+
+    def get_status_filter(self) -> bool:
+        return self._status_filter
+
+    def _show_filter(self):
+        self._top_level_filter = TopLevelFilter(
+            master=self,
+            status=self._status_filter,
+            callback=self.set_status_filter
+        )
+
+    def message_table(self, message: str):
+        self._product_table.clear_products_cards()
+        self._product_table.message(message=message,
+        icon=resize_image("circle-x.png", 
+        size=(16, 16)
+        )
+    )

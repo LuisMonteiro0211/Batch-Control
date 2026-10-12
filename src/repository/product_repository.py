@@ -177,7 +177,7 @@ class ProductRepository (Entity):
 
     def get_product_cards_by_name (self, name_product: str) -> Optional[List[ProductCardDict]]:
         """
-        Obtém informações para poder montar os cards de produtos com o nome informado
+        Obtém informações para poder montar os cards de produtos com o nome informado e que estão ativos.
 
         Args:
             name_product: Nome do produto a ser buscado.
@@ -188,6 +188,35 @@ class ProductRepository (Entity):
 
         try:
             with get_connection(self._database_name) as cursor:
+                query = "SELECT * FROM products_card WHERE nome_produto LIKE ? AND ativo = 1"
+                values = (f"%{name_product}%",)
+
+                cursor.execute(query, values)
+
+                products = cursor.fetchall()
+
+                if len(products) > 0:
+                    return [row_to_product_card_dict(row=product) for product in products]
+                else:
+                    return None
+
+        except DatabaseError as e:
+            raise DatabaseOperationError(f"Não foi possível localizar produtos com esse nome: {e}") from e # Erro personalizado para erro de banco de dados
+
+
+    def get_all_product_cards_by_name(self, name_product: str) -> Optional[List[ProductCardDict]]:
+        """
+
+        Obtém as informações para poder montar os cards de produtos com o nome informado
+
+        Args:
+            name_product: Nome do produto a ser buscado.
+
+        Returns:
+            Optional[List[ProductCardDict]]: Lista com as informações dos cards correspondentes aos nomes informados ou None se não houver produtos com o nome informado.
+        """
+        try:
+            with get_connection(self._database_name) as cursor:
                 query = "SELECT * FROM products_card WHERE nome_produto LIKE ?"
                 values = (f"%{name_product}%",)
 
@@ -195,18 +224,17 @@ class ProductRepository (Entity):
 
                 products = cursor.fetchall()
 
-            if not products:
-                return None
-
-            return [row_to_product_card_dict(row=product) for product in products]
-
+                if len(products) > 0:
+                    return [row_to_product_card_dict(row=product) for product in products]
+                else:
+                    return None
+                    
         except DatabaseError as e:
             raise DatabaseOperationError(f"Não foi possível localizar produtos com esse nome: {e}") from e # Erro personalizado para erro de banco de dados
 
-
-    def get_product_cards_lower_minimum_balance(self) -> Optional[List[ProductCardDict]]:
+    def get_active_product_cards_lower_minimum_balance(self) -> Optional[List[ProductCardDict]]:
         """
-        Obtém as informações para os cards de produtos com saldo inferior ao saldo mínimo.
+        Obtém as informações para os cards de produtos com saldo inferior ao saldo mínimo e que estão ativos.
 
         Args:
             None
@@ -217,16 +245,16 @@ class ProductRepository (Entity):
 
         try:
             with get_connection(self._database_name) as cursor:
-                query = "SELECT * FROM products_card WHERE saldo_atual <= saldo_min * 1.5"
+                query = "SELECT * FROM products_card WHERE saldo_atual <= saldo_min * 1.5 AND ativo = 1"
                 cursor.execute(query)
 
                 products = cursor.fetchall()
 
-                if not products:
-                    raise ProductNotFoundError("Não há produtos com saldo inferior ao saldo mínimo.")
-
-                return [row_to_product_card_dict(row=product) for product in products]
-
+                if len(products) > 0:
+                    return [row_to_product_card_dict(row=product) for product in products]
+                else:
+                    return None
+                    
         except DatabaseError as e:
             raise DatabaseOperationError(f"Não foi possível localizar produtos com saldo inferior ao saldo mínimo: {e}") from e # Erro personalizado para erro de banco de dados
 
