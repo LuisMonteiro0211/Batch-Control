@@ -125,10 +125,16 @@ class ProductService:
 
     def get_all_product_cards_by_name(self, name_product: str) -> List[ProductCardDTO]:
         """
-        Retorna cards com todos os produtos com o nome informado.
+        Retorna cards de todos os produtos com o nome informado, inclusive os bloqueados.
+
+        Args:
+            name_product: Nome (ou parte dele) do produto a ser buscado.
 
         Returns:
             Lista de ProductCardDTO prontos para exibição na tabela do dashboard.
+
+        Raises:
+            ProductNotFoundError: Se nenhum produto for encontrado com o nome informado.
         """
         list_products_cards_dict = self._product_repository.get_all_product_cards_by_name(name_product=name_product)
         
@@ -147,6 +153,19 @@ class ProductService:
 
 
     def get_product_cards_by_name(self, name_product: str) -> List[ProductCardDTO]:     
+        """
+        Retorna cards apenas dos produtos ativos com o nome informado.
+
+        Args:
+            name_product: Nome (ou parte dele) do produto a ser buscado.
+
+        Returns:
+            Lista de ProductCardDTO prontos para exibição na tabela do dashboard.
+
+        Raises:
+            ValidationError: Se o nome do produto for vazio.
+            ProductNotFoundError: Se nenhum produto ativo for encontrado com o nome informado.
+        """
         if not name_product:
             raise ValidationError("Nome do produto não pode ser vazio.")
 

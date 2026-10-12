@@ -156,17 +156,27 @@ class ProductTable(ScrollbarFrame):
 
 
     def clear_products_cards(self) -> None:
+        """Esvazia a lista de produtos e remove todos os cards da tabela."""
         self._products_to_view = None
         self.clear_cards_itens()
 
     def update_products_cards(self, products_to_view: List[ProductCardDTO]) -> None:
+        """
+        Substitui os cards atuais da tabela pelos produtos informados.
+
+        Limpa os cards existentes e, se houver uma mensagem exibida na tabela,
+        remove-a antes de inserir os novos cards.
+
+        Args:
+            products_to_view: Lista de produtos a serem exibidos na tabela.
+        """
         self.clear_products_cards()
         self._products_to_view = products_to_view
 
         if self._products_to_view is not None:
             status_message = self._get_message_status()
-            #Antes de dar o comanda de update verifica se tem uma mensage na tabela
-            #Caso sim destroy a mesma
+            #Antes de dar o comando de update verifica se há uma mensagem na tabela
+            #Caso haja, destrói a mesma
 
             if status_message:
                 self._destroy_message_label()

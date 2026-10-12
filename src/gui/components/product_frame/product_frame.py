@@ -11,6 +11,10 @@ Métodos públicos:
     - hide_edit_product_frame(): Destroi o formulário de edição.
     - get_state_product_frame(): Retorna o estado atual (new_product ou edit_product).
     - get_raw_values(): Coleta os valores do formulário de edição ativo.
+    - update_products_cards(): Atualiza os cards de produtos na tabela.
+    - set_status_filter(): Define se a busca deve incluir produtos bloqueados.
+    - get_status_filter(): Retorna o status atual do filtro de produtos bloqueados.
+    - message_table(): Exibe uma mensagem informativa no lugar da tabela.
 """
 
 from customtkinter import CTkFrame, CTkLabel, CTkEntry, CTkButton
@@ -237,12 +241,25 @@ class ProductFrame(CTkFrame):
         self._product_table.update_products_cards(products_to_view)
 
     def set_status_filter(self, status:bool) -> None:
+        """
+        Define se a busca deve incluir produtos bloqueados.
+
+        Args:
+            status: True para incluir produtos bloqueados, False para apenas ativos.
+        """
         self._status_filter = status
 
     def get_status_filter(self) -> bool:
+        """
+        Retorna o status atual do filtro de produtos bloqueados.
+
+        Returns:
+            bool: True se produtos bloqueados devem ser incluídos na busca.
+        """
         return self._status_filter
 
     def _show_filter(self):
+        """Abre a janela (TopLevelFilter) com as opções de filtro da busca."""
         self._top_level_filter = TopLevelFilter(
             master=self,
             status=self._status_filter,
@@ -250,6 +267,12 @@ class ProductFrame(CTkFrame):
         )
 
     def message_table(self, message: str):
+        """
+        Limpa a tabela e exibe uma mensagem informativa no lugar dos cards.
+
+        Args:
+            message: Texto a ser exibido na tabela.
+        """
         self._product_table.clear_products_cards()
         self._product_table.message(message=message,
         icon=resize_image("circle-x.png", 

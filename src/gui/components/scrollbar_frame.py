@@ -3,6 +3,9 @@ Módulo para criação do frame com scrollbar.
 
 Métodos públicos:
     - insert_frame_item(frame_item: CTkFrame): Método para inserir um frame item no frame canvas.
+    - clear_cards_itens(): Remove todos os frame items do frame canvas.
+    - message(message, icon): Exibe um label com mensagem informativa no centro do frame.
+    - create_canvas(): Monta o canvas (frame, janela, scroll e scrollbar).
 
 Uso recomendado:
     >>> from src.gui.components.scrollbar_frame import ScrollbarFrame
@@ -127,6 +130,7 @@ class ScrollbarFrame(CTkFrame):
         self._message = True
 
     def _destroy_message_label(self) -> None:
+        """Remove da tela o label de mensagem exibido por message()."""
         self._message_label.destroy()   
         
     def create_canvas(self):

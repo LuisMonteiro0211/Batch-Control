@@ -292,6 +292,21 @@ class ProductController:
 
     
     def search_product_by_name(self, name_product: str) -> Optional[List[ProductCardDTO]]:
+        """
+        Busca produtos pelo nome respeitando o filtro de produtos bloqueados.
+
+        Lê o status do filtro no ProductFrame: se estiver ativo, retorna todos os
+        produtos (inclusive os bloqueados); caso contrário, retorna apenas os ativos.
+        Erros de banco são exibidos em janela de erro e "produto não encontrado"
+        vira uma mensagem na própria tabela.
+
+        Args:
+            name_product: Nome (ou parte dele) do produto a ser buscado.
+
+        Returns:
+            Optional[List[ProductCardDTO]]: Cards correspondentes ao nome, ou None
+            quando nenhum produto é encontrado.
+        """
         if self._product_frame is not None:
             self._status_filter = self._product_frame.get_status_filter()
 
