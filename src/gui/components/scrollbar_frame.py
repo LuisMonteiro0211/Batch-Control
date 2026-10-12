@@ -27,6 +27,7 @@ class ScrollbarFrame(CTkFrame):
         super().__init__(master)
         self._configure_layout()
         self._cards_itens = []
+        self._message: bool = False
 
     def _configure_layout(self):
         """
@@ -109,7 +110,7 @@ class ScrollbarFrame(CTkFrame):
                 card_item.destroy()
             self._cards_itens = []
 
-    def initialization_message(self, message: str, icon: CTkImage):
+    def message(self, message: str, icon: CTkImage):
         """
         Método para criar um label com uma mensagem de informação no meio do frame.
         """
@@ -122,7 +123,11 @@ class ScrollbarFrame(CTkFrame):
             font=FONTS.subtitulo_tela,
             anchor="center",
         )
-        self._message_label.place(x=266, y=92)    
+        self._message_label.place(x=266, y=92)
+        self._message = True
+
+    def _destroy_message_label(self) -> None:
+        self._message_label.destroy()   
         
     def create_canvas(self):
         """
@@ -133,3 +138,15 @@ class ScrollbarFrame(CTkFrame):
         self._create_window_to_canvas()
         self._bind_mouse_wheel()
         self._configure_scrollbar()
+
+    def _get_message_status(self) -> bool:
+        """
+        Função para retornar o status da variável de message
+        """
+        return self._message
+    
+    def _set_message_status(self, status: bool) -> None:
+        """
+        Função para poder alterar o status da variável message
+        """
+        self._message = status

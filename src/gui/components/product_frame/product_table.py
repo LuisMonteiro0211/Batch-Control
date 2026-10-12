@@ -86,14 +86,11 @@ class ProductTable(ScrollbarFrame):
         Returns:
             Lista de CTkFrame, um por produto, prontos para inserção na tabela.
         """
-        path_icon_yellow_alert = icon_path("circle-alert_yellow.png")
-        path_icon_red_alert = icon_path("circle-alert_red.png")
-        path_icon_green_alert = icon_path("circle-alert_green.png")
 
         TABLE_ICONS = {
-            StockLevel.ALERTA: resize_image(path_icon_yellow_alert, (17, 17)),
-            StockLevel.CRITICO: resize_image(path_icon_red_alert, (17, 17)),
-            StockLevel.NORMAL: resize_image(path_icon_green_alert, (17, 17)),
+            StockLevel.ALERTA: resize_image("circle-alert_yellow.png", (17, 17)),
+            StockLevel.CRITICO: resize_image("circle-alert_red.png", (17, 17)),
+            StockLevel.NORMAL: resize_image("circle-alert_green.png", (17, 17)),
         }
 
         products = self._products_to_view
@@ -155,22 +152,27 @@ class ProductTable(ScrollbarFrame):
             for product_card in product_cards:
                 self.insert_frame_item(product_card)
         else:
-            self.initialization_message("Nenhum alerta disponível", self._icon_check)
+            self.message("Nenhum alerta disponível", self._icon_check)
 
 
-    def _clear_products_cards(self) -> None:
+    def clear_products_cards(self) -> None:
         self._products_to_view = None
         self.clear_cards_itens()
 
     def update_products_cards(self, products_to_view: List[ProductCardDTO]) -> None:
-        self._clear_products_cards()
+        self.clear_products_cards()
         self._products_to_view = products_to_view
 
         if self._products_to_view is not None:
+            status_message = self._get_message_status()
+            #Antes de dar o comanda de update verifica se tem uma mensage na tabela
+            #Caso sim destroy a mesma
+
+            if status_message:
+                self._destroy_message_label()
+                self._set_message_status(status=False)
+
             product = self._create_cards_items()
                 
             for product_card in product:
                 self.insert_frame_item(product_card)
-
-
-

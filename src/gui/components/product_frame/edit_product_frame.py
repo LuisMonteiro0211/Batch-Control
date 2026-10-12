@@ -105,7 +105,7 @@ class EditProductFrame(CTkFrame):
             self,
             text="",
             fg_color=COLORS.erro,
-            image= resize_image(file_name=ICONS_DIR / "trash-2.png", size=(22, 22)),
+            image= resize_image(file_name="trash-2.png", size=(22, 22)),
             command=lambda: self._delete_callback(self._product_dto.id)
         )
         self._delete_product_button.configure(
