@@ -9,7 +9,12 @@ from dataclasses import replace
 from typing import List, Optional
 from src.dtos.product_dto import ProductDTO, ProductCardDTO, ProductCreateDTO
 from src.exceptions import (DuplicateSkuError, ProductHasBalanceError, NoChangesError, DatabaseOperationError, ProductNotFoundError, ValidationError, DeleteProductError, UpdateProductError)
-from src.helpers.helpers import dict_to_product_card_dto, dict_to_product_dto, diff_product_dto
+from src.helpers.helpers import (
+    current_balance_from_db,
+    dict_to_product_card_dto,
+    dict_to_product_dto,
+    diff_product_dto,
+)
 from src.model.product import Product
 from src.model.stock_level import sort_level
 from src.repository.product_repository import ProductRepository
@@ -115,7 +120,7 @@ class ProductService:
                 replace(
                     dict_to_product_card_dto(product=product),
                     stock_level=sort_level(
-                        current_stock=int(product["saldo_atual"]),
+                        current_stock=current_balance_from_db(product["saldo_atual"]),
                         min_stock=int(product["saldo_min"]),
                     ),
                 ) for product in cards_low_stock
@@ -143,7 +148,7 @@ class ProductService:
                 replace(
                     dict_to_product_card_dto(product=product),
                     stock_level=sort_level(
-                        current_stock=int(product["saldo_atual"]),
+                        current_stock=current_balance_from_db(product["saldo_atual"]),
                         min_stock=int(product["saldo_min"]),
                     ),
                 ) for product in list_products_cards_dict
@@ -177,7 +182,7 @@ class ProductService:
                     replace(
                     dict_to_product_card_dto(product=product),
                     stock_level=sort_level(
-                        current_stock=0 if product["saldo_atual"] == None else int(product["saldo_atual"]), #current_balance = 0 if product["saldo_atual"] == None else int(product["saldo_atual"]),
+                        current_stock=current_balance_from_db(product["saldo_atual"]),
                         min_stock=int(product["saldo_min"]),
                     ),
                 ) for product in list_products_cards_dict

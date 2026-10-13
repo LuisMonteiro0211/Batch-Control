@@ -63,6 +63,12 @@ class ProductController:
         self._product_frame.show_new_product()
 
     def _on_click_save_product(self) -> None:
+        """
+        Callback do botão salvar no formulário de novo produto.
+
+        Coleta os valores do frame, monta o DTO de criação, persiste via serviço
+        e exibe janela de sucesso ou erro (validação, SKU duplicado ou banco).
+        """
         if self._product_frame is not None:
             raw_data = self._product_frame.get_raw_new_product_values()
             if raw_data is not None:

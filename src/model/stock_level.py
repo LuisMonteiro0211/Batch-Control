@@ -10,14 +10,13 @@ class StockLevel(Enum):
 def sort_level(current_stock: int, min_stock: int) -> StockLevel:
     """
     Função de classificação de nível de estoque.
-    - Critico: Quando o saldo atual é menor ou igual ao saldo mínimo.
-    - Alerta: Quando o saldo atual é menor ou igual a 1.5 vezes o saldo mínimo.
-    - Normal: Quando o saldo atual é maior que 1.5 vezes o saldo mínimo.
-    - Sem estoque: Quando o saldo atual é 0.
-    
+    - Critico: Saldo zero ou saldo atual menor ou igual ao saldo mínimo.
+    - Alerta: Saldo acima do mínimo e menor ou igual a 1,5 vezes o saldo mínimo.
+    - Normal: Saldo acima de 1,5 vezes o saldo mínimo.
+
     Args:
-        saldo_atual: int
-        saldo_min: int
+        current_stock: Saldo atual do produto.
+        min_stock: Saldo mínimo configurado.
 
     Returns:
         StockLevel: Nível de estoque.

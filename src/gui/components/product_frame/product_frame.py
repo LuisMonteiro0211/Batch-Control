@@ -10,7 +10,8 @@ Métodos públicos:
     - hide_new_product_frame(): Oculta o formulário de novo produto.
     - hide_edit_product_frame(): Destroi o formulário de edição.
     - get_state_product_frame(): Retorna o estado atual (new_product ou edit_product).
-    - get_raw_values(): Coleta os valores do formulário de edição ativo.
+    - get_raw_edit_values(): Coleta os valores do formulário de edição ativo.
+    - get_raw_new_product_values(): Coleta os valores do formulário de novo produto.
     - update_products_cards(): Atualiza os cards de produtos na tabela.
     - set_status_filter(): Define se a busca deve incluir produtos bloqueados.
     - get_status_filter(): Retorna o status atual do filtro de produtos bloqueados.
@@ -239,7 +240,7 @@ class ProductFrame(CTkFrame):
         Coleta os valores do formulário de novo produto ativo.
 
         Returns:
-            NewProductRawData com os valores digitados, ou None se não houver edição ativa.
+            NewProductRawData com os valores digitados, ou None se o formulário de novo produto não estiver ativo.
         """
 
         if self._new_product_frame is not None:

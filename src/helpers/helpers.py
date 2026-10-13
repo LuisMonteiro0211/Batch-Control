@@ -22,6 +22,22 @@ def row_to_full_product_data(cursor: Any, row: tuple[Any, ...]) -> FullProductDa
     columns = [column[0] for column in cursor.description]
     return FullProductData(**dict(zip(columns, row)))
 
+def current_balance_from_db(saldo_atual: int | None) -> int:
+    """
+    Normaliza o saldo atual vindo do banco para exibição e cálculo de nível de estoque.
+
+    Produtos recém-cadastrados podem ter ``saldo_atual`` NULL na view; nesse caso
+    tratamos como zero.
+
+    Args:
+        saldo_atual: Valor da coluna saldo_atual ou None.
+
+    Returns:
+        int: Saldo atual como inteiro (0 quando None).
+    """
+    return 0 if saldo_atual is None else int(saldo_atual)
+
+
 def row_to_product_card_dict(row: tuple[Any, ...]) -> ProductCardDict:
     """
     Converte uma linha retornada pelo SQLite (tuple) em dicionário ProductCardDict.
@@ -83,12 +99,12 @@ def dict_to_product_card_dto(product: ProductCardDict) -> ProductCardDTO:
         product_name=str(product["nome_produto"]),
         product_firm=str(product["empresa"]),
         minimun_balance=int(product["saldo_min"]),
-        current_balance = 0 if product["saldo_atual"] == None else int(product["saldo_atual"]),
+        current_balance=current_balance_from_db(product["saldo_atual"]),
         status=int(product.get("ativo")),
         stock_level=None,
     )
 
-    #int(product["saldo_atual"])
+
 def is_number(value: str) -> bool:
     """
     Verifica se um valor é um número.
