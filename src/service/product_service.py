@@ -7,7 +7,7 @@ ao ProductRepository e convertendo dados para DTOs.
 
 from dataclasses import replace
 from typing import List, Optional
-from src.dtos.product_dto import ProductDTO, ProductCardDTO
+from src.dtos.product_dto import ProductDTO, ProductCardDTO, ProductCreateDTO
 from src.exceptions import (DuplicateSkuError, ProductHasBalanceError, NoChangesError, DatabaseOperationError, ProductNotFoundError, ValidationError, DeleteProductError, UpdateProductError)
 from src.helpers.helpers import dict_to_product_card_dto, dict_to_product_dto, diff_product_dto
 from src.model.product import Product
@@ -26,7 +26,7 @@ class ProductService:
     def __init__(self, product_repository: ProductRepository) -> None:
         self._product_repository = product_repository
 
-    def create_product(self, product_dto: ProductDTO) -> int:
+    def create_product(self, product_dto: ProductCreateDTO) -> int:
         """
         Cria um novo produto após validar unicidade do código SKU.
 
@@ -177,7 +177,7 @@ class ProductService:
                     replace(
                     dict_to_product_card_dto(product=product),
                     stock_level=sort_level(
-                        current_stock=int(product["saldo_atual"]),
+                        current_stock=0 if product["saldo_atual"] == None else int(product["saldo_atual"]), #current_balance = 0 if product["saldo_atual"] == None else int(product["saldo_atual"]),
                         min_stock=int(product["saldo_min"]),
                     ),
                 ) for product in list_products_cards_dict

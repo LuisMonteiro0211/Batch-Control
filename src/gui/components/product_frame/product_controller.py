@@ -15,12 +15,12 @@ from typing import List, Optional
 
 from customtkinter import CTk
 from src.dtos import ProductCardDTO, ProductDTO, SearchObjectTransfer
-from src.exceptions import DatabaseOperationError, ProductNotFoundError, DuplicateSkuError
+from src.exceptions import DatabaseOperationError, ProductNotFoundError, DuplicateSkuError, ValidationError
 from src.exceptions.exceptions import NoSearchValueError, ProductHasBalanceError
 from src.gui.components.product_frame import ProductFrame
 from src.service.product_service import ProductService
 from src.gui.interaction_window import FactoryInteractionWindow
-from src.forms.product_form import build_edit_product_dto
+from src.forms.product_form import build_edit_product_dto, build_product_create_dto
 from src.gui.components.product_frame.product_frame_state import ProductFrameState
 from src.interface.protocols import SearchProductByNameProtocol
 
@@ -63,8 +63,31 @@ class ProductController:
         self._product_frame.show_new_product()
 
     def _on_click_save_product(self) -> None:
-        """Callback do botão salvar no formulário de novo produto. Implementação pendente."""
-        pass
+        if self._product_frame is not None:
+            raw_data = self._product_frame.get_raw_new_product_values()
+            if raw_data is not None:
+                try:
+                    create_product_dto = build_product_create_dto(raw_data=raw_data)
+                    new_product = self._product_service.create_product(product_dto=create_product_dto)
+                    FactoryInteractionWindow.success_window(
+                        master=self._product_frame,
+                        message=(f"Produto com o ID {new_product} criado com sucesso!")
+                    )
+
+                except ValidationError as e:
+                    FactoryInteractionWindow.error_window(
+                    master=self._product_frame,
+                    message=str(e))
+
+                except DuplicateSkuError as e:
+                    FactoryInteractionWindow.error_window(
+                        master=self._product_frame,
+                        message=str(e))
+
+                except DatabaseOperationError as e:
+                    FactoryInteractionWindow.error_window(
+                        master=self._product_frame,
+                        message=str(e))
 
     def _on_click_delete_product(self, product_id: int) -> None:
         """Callback do botão deletar no formulário de produto. Deleta um produto."""
@@ -115,7 +138,7 @@ class ProductController:
     def _on_click_save_edit_product(self) -> None:
         """Callback do botão salvar no formulário de edição. Coleta os valores do frame."""
         if self._product_frame is not None:
-            raw_data_edit = self._product_frame.get_raw_values()#Coleta os valores do formulário de edição
+            raw_data_edit = self._product_frame.get_raw_edit_values()#Coleta os valores do formulário de edição
             
             if raw_data_edit is None:
                 FactoryInteractionWindow.error_window(

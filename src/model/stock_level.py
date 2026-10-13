@@ -24,7 +24,7 @@ def sort_level(current_stock: int, min_stock: int) -> StockLevel:
     """
 
     if current_stock == 0:
-        return StockLevel.SEM_ESTOQUE
+        return StockLevel.CRITICO
     
     if current_stock <= min_stock:
         return StockLevel.CRITICO

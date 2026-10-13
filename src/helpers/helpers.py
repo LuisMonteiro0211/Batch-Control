@@ -83,10 +83,12 @@ def dict_to_product_card_dto(product: ProductCardDict) -> ProductCardDTO:
         product_name=str(product["nome_produto"]),
         product_firm=str(product["empresa"]),
         minimun_balance=int(product["saldo_min"]),
-        current_balance=int(product["saldo_atual"]),
+        current_balance = 0 if product["saldo_atual"] == None else int(product["saldo_atual"]),
         status=int(product.get("ativo")),
         stock_level=None,
     )
+
+    #int(product["saldo_atual"])
 def is_number(value: str) -> bool:
     """
     Verifica se um valor é um número.

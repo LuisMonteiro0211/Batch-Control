@@ -26,7 +26,7 @@ from .edit_product_frame import EditProductFrame
 from .product_table import ProductTable
 from typing import Callable, List, Optional
 from src.dtos.product_dto import ProductCardDTO, ProductDTO
-from src.forms.product_form_types import EditProductRawData
+from src.forms.product_form_types import EditProductRawData, NewProductRawData
 from .product_frame_state import ProductFrameState
 from src.interface import SaveEditProductProtocol, DeleteProductProtocol, SearchProductByNameProtocol
 from src.gui.components.product_frame.top_level_filter import TopLevelFilter
@@ -223,7 +223,7 @@ class ProductFrame(CTkFrame):
         """
         return self._state_product_frame
 
-    def get_raw_values(self) -> Optional[EditProductRawData]:
+    def get_raw_edit_values(self) -> Optional[EditProductRawData]:
         """
         Coleta os valores do formulário de edição ativo.
 
@@ -233,6 +233,19 @@ class ProductFrame(CTkFrame):
         if self._edit_product_frame is not None:
             return self._edit_product_frame.get_raw_values()
         return None
+
+    def get_raw_new_product_values(self) -> Optional[NewProductRawData]:
+        """
+        Coleta os valores do formulário de novo produto ativo.
+
+        Returns:
+            NewProductRawData com os valores digitados, ou None se não houver edição ativa.
+        """
+
+        if self._new_product_frame is not None:
+            return self._new_product_frame.get_raw_values()
+        else:
+            return None
 
     def update_products_cards(self, products_to_view: List[ProductCardDTO]) -> None:
         """
